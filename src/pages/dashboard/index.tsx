@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Image from "next/image";
 import { HeaderResponsive } from "../../components/Header";
+
 const Dashboard = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   // This is a hook that allows us to navigate to other pages, we can use this instead of <Link> if we want
