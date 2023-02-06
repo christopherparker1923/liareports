@@ -29,12 +29,8 @@ const Home: NextPage = () => {
         className="container w-2/3 max-w-lg justify-center rounded-md border-2 border-black p-10 text-center"
       >
         <Card
-          style={{
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.rhino
-                : theme.colors.rhino,
-          }}
+          style={{ backgroundColor: "black" }}
+          bg={theme.colorScheme === "dark" ? "dark" : "gray"}
           shadow="sm"
           p="lg"
           radius="md"
