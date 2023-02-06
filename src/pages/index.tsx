@@ -15,9 +15,16 @@ import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "../utils/api";
 import { theme } from "../../tailwind.config.cjs";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
+  const { data: sessionData } = useSession();
+  const router = useRouter();
   const theme = useMantineTheme();
+
+  if (sessionData) {
+    router.push("/dashboard");
+  }
 
   // I added justify-center to the main, so that the grid would be centered, getting rid of margin on both sides, just a little cleaner and doesn't require any extra divs
   return (
@@ -29,7 +36,7 @@ const Home: NextPage = () => {
         className="container w-2/3 max-w-lg justify-center rounded-md border-2 border-black p-10 text-center"
       >
         <Card
-          style={{ backgroundColor: "black" }}
+          style={{ backgroundColor: "white" }}
           bg={theme.colorScheme === "dark" ? "dark" : "gray"}
           shadow="sm"
           p="lg"
@@ -46,19 +53,7 @@ const Home: NextPage = () => {
             />
           </Card.Section>
 
-          <Group position="apart" mt="md" mb="xs">
-            <Text weight={500}>Norway Fjord Adventures</Text>
-            <Badge color="pink" variant="light">
-              On Sale
-            </Badge>
-          </Group>
-
-          <Text size="sm" color="dimmed">
-            With Fjord Tours you can explore more of the magical fjord
-            landscapes with tours and activities on and around the fjords of
-            Norway
-          </Text>
-
+          <Title className="m-4">LIAReports</Title>
           <Auth />
         </Card>
 
@@ -69,14 +64,9 @@ const Home: NextPage = () => {
           alt="Lineside Industrial Automation logo"
           className="m-auto h-[200px] w-[320px]"
         />
-        <Title className="m-4">LIAReports</Title>
-        {/* think of this Link component as an <a> tag, you can wrap it around something for going to a new page, The page is /src/inventory/index.tsx */}
+
         <Link href="/dashboard">
           {/* With this now the button takes the full width of the parent, minus the padding, if you want a smaller button you can just change the width directly (w-full to something else) or remove it completely*/}
-          <Button className="w-full bg-rhino text-white hover:bg-gray-600">
-            Enter
-          </Button>
-          <Auth />
         </Link>
       </SimpleGrid>
     </main>
@@ -85,6 +75,8 @@ const Home: NextPage = () => {
 
 const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
+
+  console.log(sessionData);
 
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input

@@ -6,6 +6,8 @@ import {
   useMantineTheme,
   Button,
 } from "@mantine/core";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { Logo } from "./Logo";
 
 type HeaderProps = {
@@ -15,6 +17,13 @@ type HeaderProps = {
 
 export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
   const theme = useMantineTheme();
+  const { data: sessionData } = useSession();
+  const router = useRouter();
+
+  if (!sessionData) {
+    router.push("/");
+  }
+
   return (
     <Header height={{ base: 50, md: 70 }}>
       <Group sx={{ height: "100%" }} px={20} position="apart">
@@ -36,7 +45,7 @@ export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
         <Button.Group className="d-flex align-items-center m-auto flex">
           <Button color="teal">Dashboard</Button>
           <Button>Inventory</Button>
-          <Button>Sign Out</Button>
+          <Button onClick={() => void signOut()}>Sign Out</Button>
         </Button.Group>
       </Group>
     </Header>
