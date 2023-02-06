@@ -5,21 +5,37 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 import { api } from "../utils/api";
-import { Button } from "@mantine/core";
+import { Button, SimpleGrid, Title } from "@mantine/core";
 import Image from "next/image";
 
 const Home: NextPage = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center  bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-      <div className="mt-12 rounded-md border-4 border-black bg-orange-600 p-10 text-center">
-        <Image
-          src="/lia_logo.png"
-          width="240"
-          height="240"
-          alt="Lineside Industrial Automation logo"
-        />
-        <h1>LIAReports</h1>
-        <Button className="bg-white hover:bg-orange-200">Enter</Button>
+    <main
+      className="min-w-screen flex min-h-screen items-center
+     bg-gradient-to-b from-blackSqueeze to-neptune"
+    >
+      <div
+        className="container mx-auto w-2/3 max-w-lg
+      justify-center rounded-md border-2 border-black bg-gray-100 p-10 text-center"
+      >
+        <SimpleGrid cols={1} verticalSpacing="xl">
+          <div style={{ width: 240, marginLeft: "auto", marginRight: "auto" }}>
+            <Image
+              src="/lia_logo.png"
+              width="480"
+              height="480"
+              alt="Lineside Industrial Automation logo"
+            />
+          </div>
+          <div>
+            <Title className="m-4">LIAReports</Title>
+          </div>
+          <div>
+            <Button className="bg-rhino text-white hover:bg-gray-600">
+              Enter
+            </Button>
+          </div>
+        </SimpleGrid>
       </div>
     </main>
   );
