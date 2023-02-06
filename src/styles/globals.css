@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  height: 100vh;
+}
+
+:root {
+  /* CSS HEX */
+  --rhino: #252f4c;
+  --puerto-rico: #3cb8ad;
+  --neptune: #77b4b5;
+  --shuttle-gray: #646879;
+  --black-squeeze: #eef6f8;
+  --santas-gray: #a4a7b7;
+  --powder-blue: #b2e6e8;
+  --oslo-gray: #81868c;
+  --tower-gray: #a8c0c4;
+}
