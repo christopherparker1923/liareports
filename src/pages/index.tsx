@@ -43,6 +43,7 @@ const Home: NextPage = () => {
         className="container w-2/3 max-w-lg justify-center rounded-md border-2 border-black p-10 text-center"
       >
         <Card
+          className="bg-gray-100 dark:bg-gray-800"
           bg={theme.colorScheme === "dark" ? "theme.colors.neptune" : "white"}
           shadow="sm"
           p="lg"
@@ -61,8 +62,12 @@ const Home: NextPage = () => {
 
           <Title className="m-4">LIAReports</Title>
           <Auth />
-          <Button onClick={() => toggleColorScheme(colorScheme)}>
-            {console.log(theme.colorScheme)}
+          <Button
+            onClick={() => {
+              toggleColorScheme(colorScheme);
+              console.log(theme.colorScheme);
+            }}
+          >
             Toggle Mode
           </Button>
         </Card>
