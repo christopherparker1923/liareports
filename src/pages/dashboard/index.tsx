@@ -41,14 +41,11 @@ const Dashboard = () => {
       </Head>
 
       <AppShell
-        styles={{
-          main: {
-            background:
-              theme.colorScheme === "dark"
-                ? theme.colors.gray[8]
-                : theme.colors.gray[0],
-          },
-        }}
+        className={`children ${
+          theme.colorScheme === "dark"
+            ? theme.colors.gray[8]
+            : theme.colors.gray[0]
+        }`}
         navbarOffsetBreakpoint="sm"
         asideOffsetBreakpoint="sm"
         navbar={

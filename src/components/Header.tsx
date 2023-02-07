@@ -17,10 +17,10 @@ type HeaderProps = {
 
 export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
   const theme = useMantineTheme();
-  const { data: sessionData } = useSession();
   const router = useRouter();
+  const { data: sessionData, status } = useSession();
 
-  if (!sessionData) {
+  if (status === "unauthenticated") {
     router.push("/");
   }
 
