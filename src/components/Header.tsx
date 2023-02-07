@@ -20,9 +20,9 @@ export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
   const { data: sessionData } = useSession();
   const router = useRouter();
 
-  if (!sessionData) {
-    router.push("/");
-  }
+  // if (!sessionData) {
+  //   router.push("/");
+  // }
 
   return (
     <Header height={{ base: 50, md: 70 }}>
