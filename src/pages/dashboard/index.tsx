@@ -41,11 +41,7 @@ const Dashboard = () => {
       </Head>
 
       <AppShell
-        className={`children ${
-          theme.colorScheme === "dark"
-            ? theme.colors.gray[8]
-            : theme.colors.gray[0]
-        }`}
+        className="bg-white dark:bg-black"
         navbarOffsetBreakpoint="sm"
         asideOffsetBreakpoint="sm"
         navbar={
@@ -73,9 +69,7 @@ const Dashboard = () => {
         header={<HeaderResponsive open={opened} setOpen={setOpened} />}
       >
         <Text>Resize app to see responsive navbar in action</Text>
-        <Button onClick={() => toggleColorScheme(colorScheme)}>
-          Toggle Mode
-        </Button>
+        <Button onClick={() => toggleColorScheme()}>Toggle Mode</Button>
       </AppShell>
     </>
   );
