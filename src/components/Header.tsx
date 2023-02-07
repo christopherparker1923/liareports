@@ -20,14 +20,14 @@ type HeaderProps = {
 export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
   const theme = useMantineTheme();
   const router = useRouter();
-  const { data: sessionData, status } = useSession();
+  const { status } = useSession();
 
   if (status === "loading") {
     return <div>loading...</div>;
   }
 
   if (status === "unauthenticated") {
-    router.push("/");
+    void router.push("/");
   }
 
   return (

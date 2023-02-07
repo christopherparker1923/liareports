@@ -1,12 +1,6 @@
 import { type NextPage } from "next";
 import Link from "next/link";
-import {
-  Card,
-  SimpleGrid,
-  Title,
-  useMantineColorScheme,
-  useMantineTheme,
-} from "@mantine/core";
+import { Card, SimpleGrid, Title, useMantineTheme } from "@mantine/core";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 
@@ -15,7 +9,6 @@ import { DarkModeToggle } from "../components/DarkModeToggle";
 import { LoginButton } from "../components/LoginButton";
 
 const Home: NextPage = () => {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { data: sessionData, status } = useSession();
   const router = useRouter();
   const theme = useMantineTheme();
@@ -25,7 +18,7 @@ const Home: NextPage = () => {
   }
 
   if (sessionData) {
-    router.push("/dashboard");
+    void router.push("/dashboard");
   }
 
   // I added justify-center to the main, so that the grid would be centered, getting rid of margin on both sides, just a little cleaner and doesn't require any extra divs

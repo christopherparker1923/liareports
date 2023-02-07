@@ -7,6 +7,13 @@
       "files": ["*.ts", "*.tsx"],
       "parserOptions": {
         "project": "tsconfig.json"
+      },
+      "rules": {
+        "@typescript-eslint/no-floating-promises": [
+          "warn",
+          { "ignoreVoid": true }
+        ],
+        "@typescript-eslint/unbound-method": "off"
       }
     }
   ],
@@ -18,6 +25,6 @@
   "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
   "rules": {
     "@typescript-eslint/consistent-type-imports": "warn",
-    "@typescript-eslint/unbound-method": "error"
+    "@typescript-eslint/no-floating-promises": "off"
   }
 }

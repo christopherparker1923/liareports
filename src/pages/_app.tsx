@@ -7,7 +7,6 @@ import { api } from "../utils/api";
 import "../styles/globals.css";
 import type { ColorScheme } from "@mantine/core";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
-import { useState } from "react";
 import { useLocalStorage } from "@mantine/hooks";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -23,7 +22,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const toggleColorScheme = (value?: ColorScheme) => {
     if (colorScheme === "light") document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
-    return setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
   };
   return (
     <SessionProvider session={session}>
@@ -32,8 +31,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         toggleColorScheme={toggleColorScheme}
       >
         <MantineProvider
-          //@ts-ignore
-          theme={{ colorScheme: colorScheme, breakpoints: { xxs: 488 } }}
+          theme={{ colorScheme: colorScheme, breakpoints: { xs: 422 } }}
           withGlobalStyles
           withNormalizeCSS
         >
