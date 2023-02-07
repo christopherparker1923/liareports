@@ -32,7 +32,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
         toggleColorScheme={toggleColorScheme}
       >
         <MantineProvider
-          theme={{ colorScheme: colorScheme }}
+          //@ts-ignore
+          theme={{ colorScheme: colorScheme, breakpoints: { xxs: 488 } }}
           withGlobalStyles
           withNormalizeCSS
         >

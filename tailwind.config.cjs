@@ -15,6 +15,13 @@ module.exports = {
         towerGray: "#a8c0c4",
       },
     },
+    screens: {
+      xxs: "488px",
+      xs: "576px",
+      md: "768px",
+      lg: "992px",
+      xl: "1400px",
+    },
   },
   plugins: [],
   corePlugins: {
