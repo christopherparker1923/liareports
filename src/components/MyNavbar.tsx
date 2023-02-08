@@ -11,17 +11,23 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import {
   IconAlignBoxBottomCenter,
+  IconBread,
   IconChevronLeft,
   IconChevronRight,
+  IconCircles,
   IconFileArrowRight,
+  IconTriangle,
+  IconTriangleSquareCircle,
 } from "@tabler/icons-react";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
+import { generatePackingSlip } from "../utils/generatePackingSlip";
 
 interface MainLinkProps {
   icon: React.ReactNode;
   color: string;
   label: string;
+  onClick?: () => void;
 }
 
 export function MyNavbar({ opened }: { opened: boolean }) {
@@ -39,10 +45,15 @@ export function MyNavbar({ opened }: { opened: boolean }) {
           icon={<IconAlignBoxBottomCenter />}
           label="Projects"
         />
-        <MainLink color="teal" icon={<IconFileArrowRight />} label="Generate" />
+        <MainLink
+          onClick={() => generatePackingSlip()}
+          color="teal"
+          icon={<IconFileArrowRight />}
+          label="Generate"
+        />
         <MainLink
           color="violet"
-          icon={<IconAlignBoxBottomCenter />}
+          icon={<IconTriangleSquareCircle />}
           label="Parts"
         />
       </Navbar.Section>
@@ -53,9 +64,10 @@ export function MyNavbar({ opened }: { opened: boolean }) {
   );
 }
 
-function MainLink({ icon, color, label }: MainLinkProps) {
+function MainLink({ icon, color, label, onClick }: MainLinkProps) {
   return (
     <UnstyledButton
+      onClick={onClick}
       sx={(theme) => ({
         display: "block",
         width: "100%",
