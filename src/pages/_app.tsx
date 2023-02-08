@@ -20,7 +20,6 @@ const MyApp: AppType<{ session: Session | null; theme: ColorScheme }> = ({
   };
   return (
     <>
-      <Script src="/theme.js" strategy="beforeInteractive" />
       <SessionProvider session={session}>
         <ColorSchemeProvider
           toggleColorScheme={toggleColorScheme}
