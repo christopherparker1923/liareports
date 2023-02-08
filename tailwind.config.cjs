@@ -24,8 +24,7 @@ module.exports = {
     },
   },
   plugins: [],
-  corePlugins: {
-    preflight: false,
-  },
+
   darkMode: "class",
+  important: true,
 };
