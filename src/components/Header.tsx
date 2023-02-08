@@ -8,6 +8,8 @@ import {
   Flex,
 } from "@mantine/core";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { Logo } from "./Logo";
 
@@ -21,36 +23,45 @@ export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
 
   return (
     <Header
-      height={{ base: 120, xxs: 70 }}
-      className="flex min-h-fit flex-wrap"
+      height={{ base: 120, xs: 70 }}
+      className="flex flex-wrap items-center justify-center px-4 xs:justify-between xs:whitespace-nowrap"
     >
-      <Group
-        className="flex min-w-full flex-wrap justify-center xs:justify-between"
-        sx={{ height: "100%" }}
-        px={20}
-        position="apart"
-      >
-        <div>
-          <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-            <Burger
-              opened={open}
-              onClick={() => setOpen((o: boolean) => !o)}
-              size="sm"
-              color={theme.colors.gray[6]}
-              mr="xl"
-            />
-          </MediaQuery>
+      <div className="flex w-full items-center justify-between xs:w-fit">
+        <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+          <Burger
+            className="float-left"
+            opened={open}
+            onClick={() => setOpen((o: boolean) => !o)}
+            size="sm"
+            color={theme.colors.gray[6]}
+            mr="xl"
+          />
+        </MediaQuery>
+        <Link href="/" className="pointer">
           <Logo width={48} height={48} />
-        </div>
-        <Flex>
-          <Button.Group className="align-items-center flex">
-            <Button color="teal">Dashboard</Button>
-            <Button>Inventory</Button>
-            <Button onClick={() => void signOut()}>Sign Out</Button>
-          </Button.Group>
-          <DarkModeToggle />
-        </Flex>
-      </Group>
+        </Link>
+      </div>
+      <div className="flex w-full justify-evenly xs:w-fit">
+        <NavButton>Dashboard</NavButton>
+        <NavButton>Inventory</NavButton>
+        <NavButton onClick={() => void signOut()}>Sign Out</NavButton>
+        <DarkModeToggle />
+      </div>
     </Header>
   );
 };
+
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+}
+
+function NavButton({ children, ...props }: Props) {
+  return (
+    <button
+      className="mx-2 whitespace-nowrap rounded-md bg-none px-2 py-2 hover:bg-gray-600 dark:hover:bg-gray-700"
+      onClick={props.onClick}
+    >
+      {children}
+    </button>
+  );
+}
