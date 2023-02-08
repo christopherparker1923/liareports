@@ -14,14 +14,14 @@ export const exampleRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.manufacturerPart.findMany({
       where: {
-        tag: {
+        partTags: {
           some: {
             name: "Ethernet",
           },
         },
       },
       include: {
-        tag: true,
+        partTags: true,
       },
     });
   }),
