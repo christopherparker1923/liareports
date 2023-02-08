@@ -8,6 +8,7 @@ import {
   Box,
   useMantineTheme,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   IconAlignBoxBottomCenter,
   IconChevronLeft,
@@ -16,7 +17,6 @@ import {
 } from "@tabler/icons-react";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
-import { string } from "zod";
 
 interface MainLinkProps {
   icon: React.ReactNode;
@@ -84,6 +84,14 @@ function MainLink({ icon, color, label }: MainLinkProps) {
 
 export function User({ session }: { session: Session }) {
   const theme = useMantineTheme();
+  const matches = useMediaQuery("(min-width: 1200px)");
+
+  function shortenString(str: string | null | undefined, maxLength: number) {
+    if (!str) return "";
+    if (str.length <= maxLength) return str;
+    const halfway = Math.floor(maxLength / 2);
+    return str.slice(0, halfway) + "..." + str.slice(str.length - halfway);
+  }
 
   return (
     <Box
@@ -100,7 +108,7 @@ export function User({ session }: { session: Session }) {
         sx={{
           display: "block",
           width: "100%",
-          padding: theme.spacing.xs,
+          padding: "0px",
           borderRadius: theme.radius.sm,
           color:
             theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
@@ -126,10 +134,14 @@ export function User({ session }: { session: Session }) {
             }}
           >
             <Text size="sm" weight={500}>
-              {session.user.name}
+              {matches
+                ? shortenString(session.user.name, 27)
+                : shortenString(session.user.name, 10)}
             </Text>
             <Text color="dimmed" size="xs">
-              {session.user.email}
+              {matches
+                ? shortenString(session.user.email, 30)
+                : shortenString(session.user.email, 12)}
             </Text>
           </Box>
 
