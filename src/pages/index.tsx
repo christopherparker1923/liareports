@@ -14,13 +14,7 @@ const Home: NextPage = () => {
         cols={1}
         className="container max-w-lg justify-center rounded-md p-10 text-center"
       >
-        <Card
-          className="min-w-fit bg-gray-100 dark:bg-gray-600"
-          shadow="sm"
-          p="lg"
-          radius="md"
-          withBorder
-        >
+        <Card className="min-w-fit rounded-md bg-gray-100 p-5 shadow-md dark:bg-gray-600">
           <Card.Section className="m-1">
             <Image
               src="/lia_logo.png"
@@ -32,7 +26,9 @@ const Home: NextPage = () => {
             />
           </Card.Section>
           <Card.Section>
-            <Title className="m-4">LIAReports</Title>
+            <Title className="m-4 text-3xl text-black dark:text-gray-300">
+              LIAReports
+            </Title>
           </Card.Section>
           <Card.Section>
             <LoginButton />
