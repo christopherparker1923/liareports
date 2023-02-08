@@ -9,10 +9,7 @@ import {
   ThemeIcon,
   useMantineColorScheme,
 } from "@mantine/core";
-import {
-  IconAlignBoxBottomCenter,
-  IconFileArrowRight,
-} from "@tabler/icons-react";
+
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useState } from "react";
