@@ -4,13 +4,20 @@ import {
   Button,
   Footer,
   Navbar,
+  NavLink,
   Text,
+  ThemeIcon,
   useMantineColorScheme,
 } from "@mantine/core";
+import {
+  IconAlignBoxBottomCenter,
+  IconFileArrowRight,
+} from "@tabler/icons-react";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { HeaderResponsive } from "../../components/Header";
+import { MyNavbar } from "../../components/MyNavbar";
 import { getBasicServerSideProps } from "../../services/getBasicSeverSideProps";
 
 const Dashboard = () => {
@@ -29,16 +36,7 @@ const Dashboard = () => {
         className="textit bg-white dark:bg-black"
         navbarOffsetBreakpoint="sm"
         asideOffsetBreakpoint="sm"
-        navbar={
-          <Navbar
-            p="md"
-            hiddenBreakpoint="sm"
-            hidden={!opened}
-            width={{ sm: 200, lg: 300 }}
-          >
-            <Text>Application navbar</Text>
-          </Navbar>
-        }
+        navbar={<MyNavbar opened={opened} />}
         // aside={
         //   <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
         //     <Aside p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
@@ -46,12 +44,12 @@ const Dashboard = () => {
         //     </Aside>
         //   </MediaQuery>
         // }
-        footer={
-          <Footer height={60} p="md">
-            Application footer
-          </Footer>
-        }
-        header={<HeaderResponsive open={opened} setOpen={setOpened} />}
+        // footer={
+        //   <Footer height={60} p="md">
+        //     Application footer
+        //   </Footer>
+        // }
+        header={<HeaderResponsive opened={opened} setOpen={setOpened} />}
       >
         <Text>Resize app to see responsive navbar in action</Text>
         <Button
