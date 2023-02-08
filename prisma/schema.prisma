@@ -67,22 +67,70 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Part {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  manufacturer String
-  partNumber String @unique
-  vendorName String 
-  vendorPartNumber String
-  price String
-  currency String
-  amountStock Int
-  ownStock Int
-  partType String
-  size String
-  expectedLeadTime String
-  csaUlVerif String
-  preference Int
-  description String
+model ManufacturerPart {
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  partNumber     String
+  partType       PartType
+  length         Float
+  width          Float
+  height         Float
+  CSACert        Boolean
+  ULCert         Boolean
+  preference     Int
+  description    String?
+  tag         PartTags[]
+  image          String?
+  Manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id])
+  manufacturerId String
+
+  @@unique([manufacturerId, partNumber])
+}
+
+model PartTags {
+  id             Int        @id @default(autoincrement())
+  name           PartTag
+  manufacturerParts ManufacturerPart[]
+}
+
+model Manufacturer {
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  name              String             @unique
+  manufacturerParts ManufacturerPart[]
+}
+
+enum PartType {
+  Misc
+  Cable
+  Card
+  PowerSupply
+  EthernetSwitch
+  SelectorSwitch
+  PushButton
+  CircuitBreaker
+  IO
+  Transformer
+  Disconnect
+  Fuse
+  Wire
+  Fastener
+  Relay
+  Light
+  Enclosure
+  Contactor
+  Guarding
+  Receptacle
+  Wireway
+  Terminals
+}
+
+enum PartTag {
+  ControlLogix
+  GuardLogix
+  CompactLogix
+  NX
+  Ethernet
 }

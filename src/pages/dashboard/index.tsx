@@ -16,10 +16,13 @@ import { useState } from "react";
 import { HeaderResponsive } from "../../components/Header";
 import { MyNavbar } from "../../components/MyNavbar";
 import { getBasicServerSideProps } from "../../services/getBasicSeverSideProps";
+import { api } from "../../utils/api";
 
 const Dashboard = () => {
   const { toggleColorScheme } = useMantineColorScheme();
   const [opened, setOpened] = useState(false);
+  const { data } = api.example.getAll.useQuery();
+  console.log(data);
 
   return (
     <>

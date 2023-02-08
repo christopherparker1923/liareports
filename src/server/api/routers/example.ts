@@ -12,7 +12,18 @@ export const exampleRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
+    return ctx.prisma.manufacturerPart.findMany({
+      where: {
+        tag: {
+          some: {
+            name: "Ethernet",
+          },
+        },
+      },
+      include: {
+        tag: true,
+      },
+    });
   }),
 
   getSecretMessage: protectedProcedure.query(() => {
