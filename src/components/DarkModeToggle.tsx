@@ -3,7 +3,6 @@ import { IconSun, IconMoonStars } from "@tabler/icons-react";
 
 export function DarkModeToggle() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
   return (
     <Group>
       <ActionIcon

@@ -7,9 +7,11 @@ import {
   Text,
   useMantineColorScheme,
 } from "@mantine/core";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { HeaderResponsive } from "../../components/Header";
+import { getBasicServerSideProps } from "../../services/getBasicSeverSideProps";
 
 const Dashboard = () => {
   const { toggleColorScheme } = useMantineColorScheme();
@@ -52,10 +54,34 @@ const Dashboard = () => {
         header={<HeaderResponsive open={opened} setOpen={setOpened} />}
       >
         <Text>Resize app to see responsive navbar in action</Text>
-        <Button onClick={() => toggleColorScheme()}>Toggle Mode</Button>
+        <Button
+          className="tw-bg-blue-500 dark:bg-green-500"
+          onClick={() => toggleColorScheme()}
+        >
+          Toggle Mode
+        </Button>
       </AppShell>
     </>
   );
 };
 
 export default Dashboard;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const basicProps = await getBasicServerSideProps(context);
+  if (!basicProps.session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+      props: {
+        ...basicProps,
+      },
+    };
+  }
+  return {
+    props: {
+      ...basicProps,
+    },
+  };
+};

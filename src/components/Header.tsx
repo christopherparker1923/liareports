@@ -7,8 +7,7 @@ import {
   Button,
   Flex,
 } from "@mantine/core";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { Logo } from "./Logo";
 
@@ -19,16 +18,6 @@ type HeaderProps = {
 
 export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
   const theme = useMantineTheme();
-  const router = useRouter();
-  const { status } = useSession();
-
-  if (status === "loading") {
-    return <div>loading...</div>;
-  }
-
-  if (status === "unauthenticated") {
-    void router.push("/");
-  }
 
   return (
     <Header

@@ -1,36 +1,21 @@
 import { type NextPage } from "next";
 import Link from "next/link";
-import { Card, SimpleGrid, Title, useMantineTheme } from "@mantine/core";
+import { Card, SimpleGrid, Title } from "@mantine/core";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
-
-import { useRouter } from "next/router";
 import { DarkModeToggle } from "../components/DarkModeToggle";
 import { LoginButton } from "../components/LoginButton";
+import type { GetServerSideProps } from "next";
+import { getBasicServerSideProps } from "../services/getBasicSeverSideProps";
 
 const Home: NextPage = () => {
-  const { data: sessionData, status } = useSession();
-  const router = useRouter();
-  const theme = useMantineTheme();
-
-  if (status === "loading") {
-    return <div>loading...</div>;
-  }
-
-  if (sessionData) {
-    void router.push("/dashboard");
-  }
-
-  // I added justify-center to the main, so that the grid would be centered, getting rid of margin on both sides, just a little cleaner and doesn't require any extra divs
   return (
     <main className="min-w-screen flex min-h-screen items-center justify-center bg-gradient-to-b from-blackSqueeze to-neptune dark:from-blackSqueeze dark:to-rhino">
       <SimpleGrid
         cols={1}
-        className="container max-w-lg justify-center rounded-md border-2 border-black p-10 text-center"
+        className="container max-w-lg justify-center rounded-md p-10 text-center"
       >
         <Card
           className="min-w-fit bg-gray-100 dark:bg-gray-600"
-          bg={theme.colorScheme === "dark" ? "theme.colors.neptune" : "white"}
           shadow="sm"
           p="lg"
           radius="md"
@@ -59,6 +44,26 @@ const Home: NextPage = () => {
       </SimpleGrid>
     </main>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const basicProps = await getBasicServerSideProps(context);
+  if (basicProps.session) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+      props: {
+        ...basicProps,
+      },
+    };
+  }
+  return {
+    props: {
+      ...basicProps,
+    },
+  };
 };
 
 export default Home;

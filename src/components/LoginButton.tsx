@@ -3,7 +3,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 export function LoginButton() {
   const { data: sessionData } = useSession();
-
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <Button

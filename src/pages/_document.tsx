@@ -1,23 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// _document.tsx
+import type { DocumentContext } from "next/document";
+import Document from "next/document";
+import { ServerStyles, createStylesServer } from "@mantine/next";
 
-import { createGetInitialProps } from "@mantine/next";
-import Document, { Head, Html, Main, NextScript } from "next/document";
-
-const getInitialProps = createGetInitialProps();
+const stylesServer = createStylesServer();
 
 export default class _Document extends Document {
-  static getInitialProps = getInitialProps;
+  static async getInitialProps(ctx: DocumentContext) {
+    const initialProps = await Document.getInitialProps(ctx);
 
-  render() {
-    return (
-      <Html>
-        <Head />
-        <body>
-          <Main />
-          <NextScript />
-        </body>
-      </Html>
-    );
+    return {
+      ...initialProps,
+      styles: [
+        initialProps.styles,
+        <ServerStyles
+          html={initialProps.html}
+          server={stylesServer}
+          key="styles"
+        />,
+      ],
+    };
   }
 }
