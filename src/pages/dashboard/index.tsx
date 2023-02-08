@@ -70,10 +70,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const basicProps = await getBasicServerSideProps(context);
   if (!basicProps.session) {
     return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
+      // redirect: {
+      //   destination: "/",
+      //   permanent: false,
+      // },
       props: {
         ...basicProps,
       },
