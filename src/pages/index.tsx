@@ -24,10 +24,11 @@ const Home: NextPage = () => {
           <Card.Section className="m-1">
             <Image
               src="/lia_logo.png"
-              width={320}
-              height={240}
+              width={362}
+              height={208}
+              loading="eager"
               alt="Lineside Industrial Automation logo"
-              className="m-auto h-[200px] w-[320px]"
+              className="m-auto "
             />
           </Card.Section>
           <Card.Section>
