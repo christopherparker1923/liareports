@@ -14,11 +14,11 @@ import { DarkModeToggle } from "./DarkModeToggle";
 import { Logo } from "./Logo";
 
 type HeaderProps = {
-  open: boolean;
+  opened: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
+export const HeaderResponsive = ({ opened, setOpen }: HeaderProps) => {
   const theme = useMantineTheme();
 
   return (
@@ -30,7 +30,7 @@ export const HeaderResponsive = ({ open, setOpen }: HeaderProps) => {
         <MediaQuery largerThan="sm" styles={{ display: "none" }}>
           <Burger
             className="float-left"
-            opened={open}
+            opened={opened}
             onClick={() => setOpen((o: boolean) => !o)}
             size="sm"
             color={theme.colors.gray[6]}
@@ -58,7 +58,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 function NavButton({ children, ...props }: Props) {
   return (
     <button
-      className="mx-2 whitespace-nowrap rounded-md bg-none px-2 py-2 hover:bg-gray-600 dark:hover:bg-gray-700"
+      className="mx-2 whitespace-nowrap rounded-md bg-none px-2 py-2 hover:bg-gray-400 dark:hover:bg-gray-700"
       onClick={props.onClick}
     >
       {children}
