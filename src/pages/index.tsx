@@ -1,12 +1,11 @@
 import { type NextPage } from "next";
 import Link from "next/link";
-import { Card, SimpleGrid, Title } from "@mantine/core";
+import { Card } from "@mantine/core";
 import Image from "next/image";
 import { DarkModeToggle } from "../components/DarkModeToggle";
 import { LoginButton } from "../components/LoginButton";
 import type { GetServerSideProps } from "next";
 import { getBasicServerSideProps } from "../services/getBasicSeverSideProps";
-import { useContext } from "react";
 
 const Home: NextPage = () => {
   // const  theme = useCon[]text(Theme)

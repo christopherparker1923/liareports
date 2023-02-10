@@ -11,17 +11,14 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import {
   IconAlignBoxBottomCenter,
-  IconBread,
   IconChevronLeft,
   IconChevronRight,
-  IconCircles,
   IconFileArrowRight,
-  IconTriangle,
   IconTriangleSquareCircle,
 } from "@tabler/icons-react";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 import { useSession } from "next-auth/react";
-import { generatePackingSlip } from "../utils/generatePackingSlip";
+import Link from "next/link";
 
 interface MainLinkProps {
   icon: React.ReactNode;
@@ -29,8 +26,11 @@ interface MainLinkProps {
   label: string;
   onClick?: () => void;
 }
-
-export function MyNavbar({ opened }: { opened: boolean }) {
+type NavBarProps = {
+  opened: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+};
+export function MyNavbar({ opened }: NavBarProps) {
   const { data: sessionData } = useSession();
   return (
     <Navbar
@@ -45,12 +45,22 @@ export function MyNavbar({ opened }: { opened: boolean }) {
           icon={<IconAlignBoxBottomCenter />}
           label="Projects"
         />
-        <MainLink
-          onClick={() => generatePackingSlip()}
-          color="teal"
-          icon={<IconFileArrowRight />}
-          label="Generate"
-        />
+        <Link href="/dashboard/generate/packing-slip">
+          <MainLink
+            // onClick={() => generatePackingSlip()}
+            color="teal"
+            icon={<IconFileArrowRight />}
+            label="Generate Packing Slip"
+          />
+        </Link>
+        <Link href="/dashboard/generate/purchase-order">
+          <MainLink
+            // onClick={() => generatePackingSlip()}
+            color="teal"
+            icon={<IconFileArrowRight />}
+            label="Generate Purchase Order"
+          />
+        </Link>
         <MainLink
           color="violet"
           icon={<IconTriangleSquareCircle />}

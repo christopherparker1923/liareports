@@ -1,15 +1,7 @@
-import {
-  Header,
-  Group,
-  Burger,
-  MediaQuery,
-  useMantineTheme,
-  Button,
-  Flex,
-} from "@mantine/core";
+import { Header, Burger, MediaQuery, useMantineTheme } from "@mantine/core";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { Logo } from "./Logo";
 
@@ -37,7 +29,7 @@ export const HeaderResponsive = ({ opened, setOpen }: HeaderProps) => {
             mr="xl"
           />
         </MediaQuery>
-        <Link href="/" className="pointer">
+        <Link href="/dashboard" className="pointer">
           <Logo width={48} height={48} />
         </Link>
       </div>

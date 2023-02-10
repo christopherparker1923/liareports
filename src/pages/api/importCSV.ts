@@ -15,8 +15,8 @@ function importCSV() {
   const file = readFileSync("./src/pages/api/Parts_Data.csv", "utf8");
 
   Papa.parse(file, {
-    complete: async function ({ data }: { data: string[][] }) {
-      await Promise.all(
+    complete: function ({ data }: { data: string[][] }) {
+      Promise.all(
         data.slice(1, -1).map((row) => {
           if (row[1] === undefined) return;
           const part = {
@@ -39,7 +39,6 @@ function importCSV() {
                     },
                   }
                 : {},
-
             Manufacturer: {
               connectOrCreate: {
                 create: {
@@ -51,7 +50,6 @@ function importCSV() {
               },
             },
           };
-
           return prisma.manufacturerPart.upsert({
             create: part,
             update: part,
@@ -63,7 +61,7 @@ function importCSV() {
             },
           });
         })
-      );
+      ).catch((e) => console.error(e));
     },
   });
 }
