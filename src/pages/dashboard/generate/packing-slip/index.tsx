@@ -15,6 +15,7 @@ import { ReactElement, useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import { api } from "../../../../utils/api";
+import { generatePackingSlip } from "../../../../utils/generatePackingSlip";
 import type { NextPageWithLayout } from "../../../_app";
 
 const PackingSlip: NextPageWithLayout = () => {
@@ -128,12 +129,17 @@ const PackingSlip: NextPageWithLayout = () => {
       });
   }
 
-  console.log(selectedPartDescriptions);
-
   return (
     <div className="h-full">
       <h1>Generate Packing Slip</h1>
-      <Button variant="outline">Generate</Button>
+      <Button
+        variant="outline"
+        onClick={() =>
+          generatePackingSlip(selectedParts, selectedPartDescriptions, qtyArray)
+        }
+      >
+        Generate
+      </Button>
       {createAutoCompletes().map((a) => a)}
     </div>
   );
