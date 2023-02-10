@@ -135,7 +135,14 @@ const PackingSlip: NextPageWithLayout = () => {
       <Button
         variant="outline"
         onClick={() =>
-          generatePackingSlip(selectedParts, selectedPartDescriptions, qtyArray)
+          generatePackingSlip(
+            selectedParts,
+            selectedPartDescriptions,
+            qtyArray,
+            "TMMC",
+            "Same as Shipping",
+            "Josh Stevens\nTMMC\nHand Delivered"
+          )
         }
       >
         Generate
