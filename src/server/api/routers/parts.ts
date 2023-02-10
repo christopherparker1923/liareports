@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
-export const exampleRouter = createTRPCRouter({
+export const partsRouter = createTRPCRouter({
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(({ input }) => {
@@ -11,19 +11,15 @@ export const exampleRouter = createTRPCRouter({
       };
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.manufacturerPart.findMany({
-      where: {
-        partTags: {
-          some: {
-            name: "Ethernet",
-          },
-        },
-      },
-      include: {
-        partTags: true,
+  getAllParts: publicProcedure.query(async ({ ctx }) => {
+    const parts = await ctx.prisma.manufacturerPart.findMany({
+      select: {
+        description: true,
+        manufacturerName: true,
+        partNumber: true,
       },
     });
+    return parts;
   }),
 
   getSecretMessage: protectedProcedure.query(() => {

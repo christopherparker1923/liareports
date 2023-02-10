@@ -1,4 +1,8 @@
-import { AppShell } from "@mantine/core";
+import {
+  AppShell,
+  useMantineColorScheme,
+  useMantineTheme,
+} from "@mantine/core";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
@@ -10,6 +14,8 @@ export function Layout({ children }: { children: ReactNode }) {
   const [opened, setOpened] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { colorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
   useEffect(() => {
     router.events.on("routeChangeStart", () => setLoading(true));
     router.events.on("routeChangeComplete", () => setLoading(false));
@@ -29,7 +35,13 @@ export function Layout({ children }: { children: ReactNode }) {
       </Head>
 
       <AppShell
-        className="textit bg-white dark:bg-black"
+        //className="textit bg-white dark:bg-[#25262b]"
+        sx={{
+          backgroundColor:
+            colorScheme === "light"
+              ? theme.primaryColor[0]
+              : theme.colors.dark[6],
+        }} //[#27282e]
         navbarOffsetBreakpoint="sm"
         asideOffsetBreakpoint="sm"
         navbar={<MyNavbar opened={opened} setLoading={setLoading} />}
