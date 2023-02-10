@@ -40,7 +40,7 @@ const PackingSlip: NextPageWithLayout = () => {
   }, [selectedParts, data]);
 
   console.log(availableParts);
-  console.log(qtyArray)
+  console.log(qtyArray);
 
   useEffect(() => {
     createAutoCompletes();
@@ -53,26 +53,23 @@ const PackingSlip: NextPageWithLayout = () => {
       if (value === "") {
         newSelectedParts.splice(index, 1);
         deleteQtyArrayIndex.splice(index, 1);
-        setQtyArray(deleteQtyArrayIndex)
+        setQtyArray(deleteQtyArrayIndex);
         //remove qtyArray value
-      }
-      else newSelectedParts[index] = value;
+      } else newSelectedParts[index] = value;
       setSelectedParts([...newSelectedParts]);
     }
     function handleQtyChange(value: number, index: number) {
       const newQtyArray = qtyArray;
       //if (value === "") newSelectedParts.splice(index, 1);
       newQtyArray[index] = value;
-      setQtyArray(newQtyArray);
+      setQtyArray([...newQtyArray]);
     }
 
     return new Array(selectedParts[0] === "" ? 1 : selectedParts.length + 1)
       .fill("")
       .map((_, index) => {
         return (
-          <div
-            key={index}
-            className="my-1 flex w-2/3 justify-between gap-x-1">
+          <div key={index} className="my-1 flex w-2/3 justify-between gap-x-1">
             <Autocomplete
               className="w-3/5"
               value={selectedParts[index] || ""}
@@ -92,8 +89,9 @@ const PackingSlip: NextPageWithLayout = () => {
               defaultValue={1}
               placeholder="Qty"
               onChange={(value) => {
-                handleQtyChange(value, index);
+                handleQtyChange(value || 0, index);
               }}
+              value={qtyArray[index]}
             />
           </div>
         );
