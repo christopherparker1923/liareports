@@ -5,9 +5,12 @@ import {
   AutocompleteItem,
   Button,
   NumberInput,
+  TextInput,
 } from "@mantine/core";
 import type { GetServerSideProps } from "next";
 import { handleClientScriptLoad } from "next/script";
+import { ReadableStreamDefaultController } from "node:stream/web";
+import { describe } from "node:test";
 import { ReactElement, useEffect, useMemo, useState } from "react";
 import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
@@ -16,6 +19,9 @@ import type { NextPageWithLayout } from "../../../_app";
 
 const PackingSlip: NextPageWithLayout = () => {
   const [selectedParts, setSelectedParts] = useState<string[]>([""]);
+  const [selectedPartDescriptions, setSelectedPartDescriptions] = useState<
+    string[]
+  >([""]);
   const [qtyArray, setQtyArray] = useState<number[]>([1]);
   const { data, isError, isLoading } = api.parts.getAllParts.useQuery();
 
@@ -35,12 +41,10 @@ const PackingSlip: NextPageWithLayout = () => {
         return {
           value: part.partNumber,
           group: part.manufacturerName,
+          description: part.description,
         };
       });
   }, [selectedParts, data]);
-
-  console.log(availableParts);
-  console.log(qtyArray);
 
   useEffect(() => {
     createAutoCompletes();
@@ -49,29 +53,49 @@ const PackingSlip: NextPageWithLayout = () => {
   function createAutoCompletes() {
     function handlePartsChange(value: string, index: number) {
       const newSelectedParts = selectedParts;
+      const newSelectedPartDescriptions = selectedPartDescriptions;
       const deleteQtyArrayIndex = qtyArray;
+      if (!data) return;
       if (value === "") {
         newSelectedParts.splice(index, 1);
+        newSelectedPartDescriptions.splice(index, 1);
+        setSelectedPartDescriptions(newSelectedPartDescriptions);
         deleteQtyArrayIndex.splice(index, 1);
         setQtyArray(deleteQtyArrayIndex);
         //remove qtyArray value
-      } else newSelectedParts[index] = value;
+      } else {
+        newSelectedParts[index] = value;
+        newSelectedPartDescriptions[index] =
+          data[
+            data?.findIndex((element) => {
+              return element.partNumber === value;
+            })
+          ]?.description || "";
+      }
       setSelectedParts([...newSelectedParts]);
+      if (selectedParts.length > qtyArray.length) {
+        qtyArray[qtyArray.length] = 1;
+      }
     }
     function handleQtyChange(value: number, index: number) {
       const newQtyArray = qtyArray;
-      //if (value === "") newSelectedParts.splice(index, 1);
       newQtyArray[index] = value;
       setQtyArray([...newQtyArray]);
+    }
+
+    function handleDescriptionChange(value: string, index: number) {
+      const newSelectedPartDescriptions = selectedPartDescriptions;
+      newSelectedPartDescriptions[index] = value;
+      setSelectedPartDescriptions([...newSelectedPartDescriptions]);
     }
 
     return new Array(selectedParts[0] === "" ? 1 : selectedParts.length + 1)
       .fill("")
       .map((_, index) => {
         return (
-          <div key={index} className="my-1 flex w-2/3 justify-between gap-x-1">
+          <div key={index} className="my-1 flex w-full justify-between gap-x-1">
             <Autocomplete
-              className="w-3/5"
+              className="w-2/5"
               value={selectedParts[index] || ""}
               onChange={(value) => {
                 handlePartsChange(value, index);
@@ -81,7 +105,13 @@ const PackingSlip: NextPageWithLayout = () => {
               placeholder="Part number"
               data={availableParts ?? []}
             />
-
+            <TextInput
+              className="w-2/5"
+              variant="filled"
+              placeholder="Description"
+              onChange={(e) => handleDescriptionChange(e.target.value, index)}
+              value={selectedPartDescriptions[index] || ""}
+            />
             <NumberInput
               //inputContainer={(child) => <div className="w-fit">{child}</div>}
               min={0}
@@ -98,7 +128,7 @@ const PackingSlip: NextPageWithLayout = () => {
       });
   }
 
-  console.log(selectedParts);
+  console.log(selectedPartDescriptions);
 
   return (
     <div className="h-full">
