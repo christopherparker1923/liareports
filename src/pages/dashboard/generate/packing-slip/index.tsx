@@ -16,6 +16,7 @@ import type { NextPageWithLayout } from "../../../_app";
 
 const PackingSlip: NextPageWithLayout = () => {
   const [selectedParts, setSelectedParts] = useState<string[]>([""]);
+  const [qtyArray, setQtyArray] = useState<number[]>([1]);
   const { data, isError, isLoading } = api.parts.getAllParts.useQuery();
 
   const autoMap: AutocompleteItem[] | undefined = data?.map((part) => {
@@ -39,6 +40,7 @@ const PackingSlip: NextPageWithLayout = () => {
   }, [selectedParts, data]);
 
   console.log(availableParts);
+  console.log(qtyArray)
 
   useEffect(() => {
     createAutoCompletes();
@@ -47,18 +49,32 @@ const PackingSlip: NextPageWithLayout = () => {
   function createAutoCompletes() {
     function handlePartsChange(value: string, index: number) {
       const newSelectedParts = selectedParts;
-      if (value === "") newSelectedParts.splice(index, 1);
+      const deleteQtyArrayIndex = qtyArray;
+      if (value === "") {
+        newSelectedParts.splice(index, 1);
+        deleteQtyArrayIndex.splice(index, 1);
+        setQtyArray(deleteQtyArrayIndex)
+        //remove qtyArray value
+      }
       else newSelectedParts[index] = value;
       setSelectedParts([...newSelectedParts]);
     }
+    function handleQtyChange(value: number, index: number) {
+      const newQtyArray = qtyArray;
+      //if (value === "") newSelectedParts.splice(index, 1);
+      newQtyArray[index] = value;
+      setQtyArray(newQtyArray);
+    }
+
     return new Array(selectedParts[0] === "" ? 1 : selectedParts.length + 1)
       .fill("")
       .map((_, index) => {
         return (
-          <div className="my-1 flex w-2/3 justify-between gap-x-1">
+          <div
+            key={index}
+            className="my-1 flex w-2/3 justify-between gap-x-1">
             <Autocomplete
               className="w-3/5"
-              key={index}
               value={selectedParts[index] || ""}
               onChange={(value) => {
                 handlePartsChange(value, index);
@@ -75,6 +91,9 @@ const PackingSlip: NextPageWithLayout = () => {
               className="w-20"
               defaultValue={1}
               placeholder="Qty"
+              onChange={(value) => {
+                handleQtyChange(value, index);
+              }}
             />
           </div>
         );
