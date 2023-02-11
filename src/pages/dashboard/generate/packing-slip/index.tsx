@@ -41,34 +41,55 @@ function PartFormLine({
     };
   return (
     <div key={index} className="my-1 flex w-full justify-between gap-x-1">
-      <Autocomplete
-        className="w-2/5"
-        value={part.partNumber}
-        maxDropdownHeight={300}
-        limit={50}
-        placeholder="Part number"
-        onChange={handlePartChange("partNumber")}
-        data={availableParts.map((part, index) => ({
-          value: part.partNumber,
-          group: part.manufacturerName,
-          index,
-        }))}
-      />
-      <TextInput
-        className="w-2/5"
-        variant="filled"
-        placeholder="Description"
-        value={part.description || ""}
-        onChange={(e) => handlePartChange("description")(e.target.value)}
-      />
-      <NumberInput
-        min={0}
-        className="w-20"
-        defaultValue={1}
-        placeholder="Qty"
-        value={part.quantity}
-        onChange={handlePartChange("quantity")}
-      />
+      <div className="flex w-2/5 flex-row">
+        <Autocomplete
+          className="w-full"
+          value={part.partNumber}
+          maxDropdownHeight={300}
+          limit={50}
+          placeholder="Part number"
+          onChange={handlePartChange("partNumber")}
+          data={availableParts.map((part, index) => ({
+            value: part.partNumber,
+            group: part.manufacturerName,
+            index,
+          }))}
+        />
+        {part.partNumber && (
+          <Button
+            className="border border-gray-500 bg-transparent hover:bg-transparent"
+            onClick={() =>
+              onPartChange(index, {
+                partNumber: "",
+                description: "",
+                manufacturerName: "",
+                quantity: 1,
+              })
+            }
+          >
+            Remove
+          </Button>
+        )}
+      </div>
+      {part.partNumber && (
+        <>
+          <TextInput
+            className="w-2/5"
+            variant="filled"
+            placeholder="Description"
+            value={part.description || ""}
+            onChange={(e) => handlePartChange("description")(e.target.value)}
+          />
+          <NumberInput
+            min={0}
+            className="w-20"
+            defaultValue={1}
+            placeholder="Qty"
+            value={part.quantity}
+            onChange={handlePartChange("quantity")}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -90,7 +111,6 @@ const PackingSlip: NextPageWithLayout = () => {
     [setSelectedParts]
   );
   const { data } = api.parts.getAllParts.useQuery();
-  console.log("rendered");
   const availableParts = useMemo(
     () =>
       data
