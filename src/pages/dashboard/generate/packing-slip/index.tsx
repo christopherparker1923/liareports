@@ -1,153 +1,135 @@
 // pages/index.tsx
 
-import {
-  Autocomplete,
-  AutocompleteItem,
-  Button,
-  NumberInput,
-  TextInput,
-} from "@mantine/core";
+import { Autocomplete, Button, NumberInput, TextInput } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { handleClientScriptLoad } from "next/script";
-import { ReadableStreamDefaultController } from "node:stream/web";
-import { describe } from "node:test";
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import type { ReactElement } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import { api } from "../../../../utils/api";
 import { generatePackingSlip } from "../../../../utils/generatePackingSlip";
 import type { NextPageWithLayout } from "../../../_app";
 
-const PackingSlip: NextPageWithLayout = () => {
-  const [selectedParts, setSelectedParts] = useState<string[]>([""]);
-  const [selectedPartDescriptions, setSelectedPartDescriptions] = useState<
-    string[]
-  >([""]);
-  const [qtyArray, setQtyArray] = useState<number[]>([1]);
-  const { data, isError, isLoading } = api.parts.getAllParts.useQuery();
+export type PackingSlipPart = {
+  partNumber: string;
+  description: string | undefined | null;
+  manufacturerName: string;
+  quantity?: number;
+};
 
-  const autoMap: AutocompleteItem[] | undefined = data?.map((part) => {
-    return {
-      value: part.partNumber,
-      group: part.manufacturerName,
+type PartLineProps = {
+  index: number;
+  availableParts: PackingSlipPart[];
+  part: PackingSlipPart;
+  onPartChange: (index: number, part: PackingSlipPart) => void;
+};
+function PartFormLine({
+  index,
+  onPartChange,
+  availableParts,
+  part,
+}: PartLineProps): JSX.Element {
+  const handlePartChange =
+    <T extends keyof PackingSlipPart>(property: T) =>
+    (value: PackingSlipPart[T]) => {
+      // Find the part with the same part number, if it exists
+      const updatedPart = availableParts.find(
+        (part) => part.partNumber === value
+      ) || { ...part, [property]: value };
+      // Call the onPartChange function with the updated part and the index
+      onPartChange(index, updatedPart);
     };
-  });
-
-  //const memoAutoCompletes = useMemo(() => createAutoCompletes(), selectedParts);
-
-  const availableParts = useMemo(() => {
-    return data
-      ?.filter((part) => !selectedParts.includes(part.partNumber))
-      .map((part) => {
-        return {
+  return (
+    <div key={index} className="my-1 flex w-full justify-between gap-x-1">
+      <Autocomplete
+        className="w-2/5"
+        value={part.partNumber}
+        maxDropdownHeight={300}
+        limit={50}
+        placeholder="Part number"
+        onChange={handlePartChange("partNumber")}
+        data={availableParts.map((part, index) => ({
           value: part.partNumber,
           group: part.manufacturerName,
-          description: part.description,
-        };
+          index,
+        }))}
+      />
+      <TextInput
+        className="w-2/5"
+        variant="filled"
+        placeholder="Description"
+        value={part.description || ""}
+        onChange={(e) => handlePartChange("description")(e.target.value)}
+      />
+      <NumberInput
+        min={0}
+        className="w-20"
+        defaultValue={1}
+        placeholder="Qty"
+        value={part.quantity}
+        onChange={handlePartChange("quantity")}
+      />
+    </div>
+  );
+}
+
+const PackingSlip: NextPageWithLayout = () => {
+  const [selectedParts, setSelectedParts] = useState<PackingSlipPart[]>([]);
+  const onPartChange = useCallback(
+    (index: number, part: PackingSlipPart) => {
+      setSelectedParts((parts) => {
+        if (index === parts.length) {
+          return [...parts, part];
+        } else {
+          return parts
+            .map((value, i) => (i === index ? part : value))
+            .filter((part) => part.partNumber !== "");
+        }
       });
-  }, [selectedParts, data]);
-
-  useEffect(() => {
-    createAutoCompletes();
-  }, [selectedParts]);
-
-  function createAutoCompletes() {
-    function handlePartsChange(value: string, index: number) {
-      const newSelectedParts = selectedParts;
-      const newSelectedPartDescriptions = selectedPartDescriptions;
-      const deleteQtyArrayIndex = qtyArray;
-      if (!data) return;
-      if (value === "") {
-        newSelectedParts.splice(index, 1);
-        newSelectedPartDescriptions.splice(index, 1);
-        setSelectedPartDescriptions(newSelectedPartDescriptions);
-        deleteQtyArrayIndex.splice(index, 1);
-        setQtyArray(deleteQtyArrayIndex);
-        //remove qtyArray value
-      } else {
-        newSelectedParts[index] = value;
-        newSelectedPartDescriptions[index] =
-          data[
-            data?.findIndex((element) => {
-              return element.partNumber === value;
-            })
-          ]?.description || "";
-      }
-      setSelectedParts([...newSelectedParts]);
-      if (selectedParts.length > qtyArray.length) {
-        qtyArray[qtyArray.length] = 1;
-      }
-    }
-    function handleQtyChange(value: number, index: number) {
-      const newQtyArray = qtyArray;
-      newQtyArray[index] = value;
-      setQtyArray([...newQtyArray]);
-    }
-
-    function handleDescriptionChange(value: string, index: number) {
-      const newSelectedPartDescriptions = selectedPartDescriptions;
-      newSelectedPartDescriptions[index] = value;
-      setSelectedPartDescriptions([...newSelectedPartDescriptions]);
-    }
-
-    return new Array(selectedParts[0] === "" ? 1 : selectedParts.length + 1)
-      .fill("")
-      .map((_, index) => {
-        return (
-          <div key={index} className="my-1 flex w-full justify-between gap-x-1">
-            <Autocomplete
-              className="w-2/5"
-              value={selectedParts[index] || ""}
-              onChange={(value) => {
-                handlePartsChange(value, index);
-              }}
-              maxDropdownHeight={"300px"}
-              limit={50}
-              placeholder="Part number"
-              data={availableParts ?? []}
-            />
-            <TextInput
-              className="w-2/5"
-              variant="filled"
-              placeholder="Description"
-              onChange={(e) => handleDescriptionChange(e.target.value, index)}
-              value={selectedPartDescriptions[index] || ""}
-            />
-            <NumberInput
-              //inputContainer={(child) => <div className="w-fit">{child}</div>}
-              min={0}
-              className="w-20"
-              defaultValue={1}
-              placeholder="Qty"
-              onChange={(value) => {
-                handleQtyChange(value || 0, index);
-              }}
-              value={qtyArray[index]}
-            />
-          </div>
-        );
-      });
-  }
+    },
+    [setSelectedParts]
+  );
+  const { data } = api.parts.getAllParts.useQuery();
+  console.log("rendered");
+  const availableParts = useMemo(
+    () =>
+      data
+        ?.filter(
+          (part) =>
+            selectedParts.findIndex(
+              (selectedPart) => selectedPart.partNumber === part.partNumber
+            ) === -1
+        )
+        .map((part) => ({ ...part, quantity: 1 })) || [],
+    [selectedParts, data]
+  );
 
   return (
     <div className="h-full">
-      <h1>Generate Packing Slip</h1>
+      {[
+        ...selectedParts,
+        { partNumber: "", description: "", manufacturerName: "", quantity: 1 },
+      ].map((part, index) => (
+        <PartFormLine
+          part={part}
+          key={index}
+          availableParts={availableParts}
+          index={index}
+          onPartChange={onPartChange}
+        />
+      ))}
       <Button
-        variant="outline"
         onClick={() =>
-          generatePackingSlip(
+          void generatePackingSlip(
             selectedParts,
-            selectedPartDescriptions,
-            qtyArray,
-            "TMMC",
-            "Same as Shipping",
-            "Josh Stevens\nTMMC\nHand Delivered"
+            "Jacob Stephenson",
+            "167 Codrington St",
+            "167 Codrington St"
           )
         }
       >
         Generate
       </Button>
-      {createAutoCompletes().map((a) => a)}
     </div>
   );
 };

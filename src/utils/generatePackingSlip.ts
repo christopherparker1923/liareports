@@ -1,37 +1,52 @@
 // Import the pdfmake library
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import { PackingSlipPart } from "../pages/dashboard/generate/packing-slip";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 // Define the PDF document structure
-export function generatePackingSlip(
-  parts: string[],
-  descriptions: string[],
-  qty: number[],
+export async function generatePackingSlip(
+  parts: PackingSlipPart[],
   customer: string,
   billingAdress: string,
   shippingAdress: string
 ) {
+  const getBase64FromUrl = async (url: string): Promise<string> => {
+    const data = await fetch(url);
+    const blob = await data.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        resolve(base64data as string);
+      };
+      6;
+    });
+  };
+
   console.log(
     "\n\n\n\n\n\n\n\n\n\n we're packing a slip here boys \n\n\n\n\n\n\n\n\n"
   );
   const partsList = parts.map((part, index) => {
     return {
-      text: `${part} - ${descriptions[index] || "ERROR"} - ${
-        qty[index] || "ERROR"
+      text: `${part.partNumber} - ${part.description || "ERROR"} - ${
+        part.quantity || "ERROR"
       }`,
     };
   });
 
   const currentDate = new Date();
-  let formattedDate = currentDate.toLocaleDateString();
+  const formattedDate = currentDate.toLocaleDateString();
 
   const docDefinition = {
     content: [
-      // {
-      //   image: "/public/logo_noname.png",
-      //   fit: [100, 100],
-      // },
+      {
+        image: await getBase64FromUrl(
+          "/_next/image?url=%2Flogo_noname.png&w=3840&q=75"
+        ),
+        fit: [100, 100],
+      },
       {
         text: [
           {
