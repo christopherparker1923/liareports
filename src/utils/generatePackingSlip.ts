@@ -88,11 +88,19 @@ export async function generatePackingSlip(
       },
     ],
     ...partsList.map((part) => ([
-      Object.values(part).map((value) => ({
-        text: value
-      })
-      ),
-    ])).flat(),
+      {
+        text: part.text,
+      },
+      {
+        text: part.description,
+      },
+      {
+        text: part.orderQty,
+      },
+      {
+        text: part.shipQty,
+      }
+    ])),
   ];
   const docDef: TDocumentDefinitions = {
     content: [
