@@ -142,9 +142,13 @@ const PackingSlip: NextPageWithLayout = () => {
         onClick={() =>
           void generatePackingSlip(
             selectedParts,
-            "Jacob Stephenson",
-            "167 Codrington St",
-            "167 Codrington St"
+            "Josh Stevens",
+            "TMMC\n1150 Fountain Street\nCambridge, ON",
+            "Same as Billing",
+            "12/25/2022",
+            "000125829",
+            "PO5910",
+            "Engineering"
           )
         }
       >
