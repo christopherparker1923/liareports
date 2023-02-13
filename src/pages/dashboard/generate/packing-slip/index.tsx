@@ -148,7 +148,9 @@ const PackingSlip: NextPageWithLayout = () => {
             "12/25/2022",
             "000125829",
             "PO5910",
-            "Engineering"
+            "Engineering",
+            "Comment",
+            "PAID & \nTESTED"
           )
         }
       >
