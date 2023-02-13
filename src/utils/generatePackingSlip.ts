@@ -188,6 +188,88 @@ export async function generatePackingSlip(
       {
         margin: [-5, 10, -5, 0],
         table: {
+          heights: ["auto", 80, "auto", "auto", "auto", "auto", "auto"],
+          headerRows: 1,
+          widths: ["auto", "*", "auto", "*"],
+          body: [
+            [
+              {
+                text: "BILL TO:",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              { text: "", border: [false, false, false, false] },
+              {
+                text: "SHIP TO:",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              { text: billingAdress, border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: shippingAdress, border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              {
+                text: "ORDER DATE",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              {
+                text: "ORDER #",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              {
+                text: "PO #",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              {
+                text: "CUSTOMER CONTACT",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+            ],
+            [
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              { text: orderDate, border: [false, false, false, false] },
+              { text: orderNumber, border: [false, false, false, false] },
+              { text: purchaseOrder, border: [false, false, false, false] },
+              { text: customerContact, border: [false, false, false, false] },
+            ],
+            [
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+          ],
+        },
+      },
+      {
+        margin: [-5, 10, -5, 0],
+        table: {
           headerRows: 1,
           widths: ["auto", "auto", "auto", "auto"],
           body,
