@@ -87,7 +87,7 @@ export async function generatePackingSlip(
         border: [false, false, false, false],
       },
     ],
-    ...partsList.map((part) => ([
+    ...partsList.map((part) => [
       {
         text: part.text,
       },
@@ -99,8 +99,8 @@ export async function generatePackingSlip(
       },
       {
         text: part.shipQty,
-      }
-    ])),
+      },
+    ]),
   ];
   const docDef: TDocumentDefinitions = {
     content: [
@@ -129,7 +129,7 @@ export async function generatePackingSlip(
               },
             ],
           },
-        ]
+        ],
       },
       {
         canvas: [
@@ -190,9 +190,9 @@ export async function generatePackingSlip(
         table: {
           headerRows: 1,
           widths: ["auto", "auto", "auto", "auto"],
-          body
-        }
-      }
+          body,
+        },
+      },
     ],
     styles: {
       header: {
@@ -318,7 +318,6 @@ export async function generatePackingSlip(
           heights: ["*", 80, "*", "*", "*", "*", "*"],
           headerRows: 1,
           widths: ["auto", "*", "auto", "*"],
-          style: "tableExample",
           body: [
             [
               {
@@ -400,7 +399,6 @@ export async function generatePackingSlip(
         table: {
           headerRows: 1,
           widths: ["auto", "*", "auto", "auto"],
-          style: "tableExample",
           body: [
             [
               {
@@ -435,7 +433,7 @@ export async function generatePackingSlip(
                 orderQty: partsList[0]?.orderQty || 0,
                 shipQty: partsList[0]?.shipQty || 0,
                 border: [false, false, false, false],
-                color: "white"
+                color: "white",
               },
             ],
           ],
