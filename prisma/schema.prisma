@@ -57,6 +57,7 @@ model User {
   image         String?   @db.VarChar(10000)
   accounts      Account[]
   sessions      Session[]
+  Project       Project[]
 }
 
 model VerificationToken {
@@ -104,13 +105,16 @@ model Manufacturer {
 }
 
 model Project {
-  id            Int            @unique
+  id            Int            @id @default(autoincrement())
+  projectNumber String
   name          String
   description   String
   revision      String
   status        String
+  createdBy     User           @relation(fields: [userId], references: [id])
   projectParts  ProjectPart[]
   ProjectChilds ProjectChild[]
+  userId        String
 }
 
 model ProjectChild {
@@ -184,4 +188,3 @@ enum ChildTypes {
   Misc
   Rack
 }
-

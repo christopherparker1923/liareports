@@ -5,13 +5,12 @@ interface AppButtonProps {
   onClick?: () => void;
 }
 
-export function MainButton({ label, onClick }: AppButtonProps) {
+export function AppButton({ label, onClick }: AppButtonProps) {
   return (
     <UnstyledButton
       onClick={onClick}
       sx={(theme) => ({
         display: "block",
-        width: "40px",
         padding: theme.spacing.xs,
         borderRadius: theme.radius.sm,
         color:
@@ -20,14 +19,12 @@ export function MainButton({ label, onClick }: AppButtonProps) {
         "&:hover": {
           backgroundColor:
             theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[0],
+              ? theme.colors.dark[8]
+              : theme.colors.gray[2],
         },
       })}
     >
-      <Group>
-        <Text size="sm">{label}</Text>
-      </Group>
+      <Text size="sm">{label}</Text>
     </UnstyledButton>
   );
 }

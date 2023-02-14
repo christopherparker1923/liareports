@@ -5,7 +5,7 @@ import type { GetServerSideProps } from "next";
 import type { ReactElement } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { Layout } from "../../../../components/Layout";
-import { MainButton } from "../../../../components/AppButton";
+import { AppButton } from "../../../../components/AppButton";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import { api } from "../../../../utils/api";
 import { generatePackingSlip } from "../../../../utils/generatePackingSlip";
@@ -139,18 +139,8 @@ const PackingSlip: NextPageWithLayout = () => {
           onPartChange={onPartChange}
         />
       ))}
-      <Button
-        sx={(theme) => ({
-          color:
-            theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-
-          "&:hover": {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[8]
-                : theme.colors.gray[3],
-          },
-        })}
+      <AppButton
+        label="Generate"
         onClick={() =>
           void generatePackingSlip(
             selectedParts,
@@ -165,9 +155,7 @@ const PackingSlip: NextPageWithLayout = () => {
             "PAID & \nTESTED"
           )
         }
-      >
-        Generate
-      </Button>
+      />
     </div>
   );
 };

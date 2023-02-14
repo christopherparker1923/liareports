@@ -6,46 +6,34 @@ import {
   NumberInput,
   TextInput,
   Text,
+  Modal,
+  Group,
 } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
+import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
+import { ProjectForm } from "../../../components/ProjectForm";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../_app";
 
 const Projects: NextPageWithLayout = () => {
+  const [opened, setOpened] = useState(false);
+  function toggleOpened() {
+    setOpened(!opened);
+  }
   return (
     <>
       <Text>Placeholder for project drill down table</Text>
-      <Button
-        sx={(theme) => ({
-          color:
-            theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-
-          "&:hover": {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[8]
-                : theme.colors.gray[3],
-          },
-        })}
-        //    onClick={() =>
-        //   void generatePackingSlip(
-        //     selectedParts,
-        //     "Josh Stevens",
-        //     "TMMC\n1150 Fountain Street\nCambridge, ON",
-        //     "Same as Billing",
-        //     "12/25/2022",
-        //     "000125829",
-        //     "PO5910",
-        //     "Engineering",
-        //     "Comment",
-        //     "PAID & \nTESTED"
-        //   )
-        // }
+      <AppButton label="New Project" onClick={toggleOpened} />
+      <Modal
+        centered
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title="Introduce yourself!"
       >
-        Generate
-      </Button>
+        <ProjectForm />
+      </Modal>
     </>
   );
 };
