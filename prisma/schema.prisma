@@ -111,6 +111,7 @@ model Project {
   description   String
   revision      String
   status        String?
+  projectLead   String?
   createdBy     User           @relation(fields: [userId], references: [id])
   projectParts  ProjectPart[]
   ProjectChilds ProjectChild[]

@@ -8,6 +8,7 @@ import {
   Text,
   Modal,
   Group,
+  Accordion,
 } from "@mantine/core";
 import type { GetServerSideProps } from "next";
 import { ReactElement, useState } from "react";
@@ -15,16 +16,19 @@ import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { ProjectForm } from "../../../components/ProjectForm";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
+import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
 
 const Projects: NextPageWithLayout = () => {
+  const allProjects = api.projects.getAllProjects.useQuery();
+
+  console.log(allProjects);
   const [opened, setOpened] = useState(false);
   function toggleOpened() {
     setOpened(!opened);
   }
   return (
     <>
-      <Text>Placeholder for project drill down table</Text>
       <AppButton label="New Project" onClick={toggleOpened} />
       <Modal
         centered
@@ -34,6 +38,20 @@ const Projects: NextPageWithLayout = () => {
       >
         <ProjectForm />
       </Modal>
+      <Accordion defaultValue="customization">
+        {allProjects.data?.map((project) => {
+          return (
+            <Accordion.Item value={project.id.toString()}>
+              <Accordion.Control>{project.projectNumber}</Accordion.Control>
+              <Accordion.Panel>
+                <Text>Lead: {project.projectLead ?? ""}</Text>
+                <Text>{project.description}</Text>
+                <AppButton label="Placeholder for Detail View" />
+              </Accordion.Panel>
+            </Accordion.Item>
+          );
+        })}
+      </Accordion>
     </>
   );
 };
