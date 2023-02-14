@@ -1,6 +1,6 @@
 // pages/index.tsx
 
-import { Autocomplete, Button, NumberInput, TextInput } from "@mantine/core";
+import { Autocomplete, Button, NumberInput, TextInput } from "@mantine/core"; //hmmm
 import type { GetServerSideProps } from "next";
 import type { ReactElement } from "react";
 import { useCallback, useMemo, useState } from "react";
@@ -8,7 +8,6 @@ import { Layout } from "../../../../components/Layout";
 import { AppButton } from "../../../../components/AppButton";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import { api } from "../../../../utils/api";
-import { generatePackingSlip } from "../../../../utils/generatePackingSlip";
 import type { NextPageWithLayout } from "../../../_app";
 
 export type PackingSlipPart = {
@@ -141,8 +140,10 @@ const PackingSlip: NextPageWithLayout = () => {
       ))}
       <AppButton
         label="Generate"
-        onClick={() =>
-          void generatePackingSlip(
+        onClick={async () => {
+          return void (await (
+            await import("../../../../utils/generatePackingSlip")
+          ).generatePackingSlip(
             selectedParts,
             "Josh Stevens",
             "TMMC\n1150 Fountain Street\nCambridge, ON",
@@ -153,8 +154,8 @@ const PackingSlip: NextPageWithLayout = () => {
             "Engineering",
             "Comment",
             "PAID & \nTESTED"
-          )
-        }
+          ));
+        }}
       />
     </div>
   );

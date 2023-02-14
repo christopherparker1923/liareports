@@ -16,7 +16,7 @@ async function importCSV() {
   await prisma.manufacturerPart.deleteMany();
 
   Papa.parse(file, {
-    complete: function ({ data }: { data: string[][] }) {
+    complete: function ({ data }: { data: string[][]; }) {
       // Promise.all(
       //   data.slice(1, -1).map((row) => {
       //     if (row[1] === undefined) return;
@@ -67,6 +67,6 @@ async function importCSV() {
   });
 }
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  importCSV();
+  importCSV().catch((e) => console.error(e));
   res.status(200).json({ name: "John Doe" });
 }

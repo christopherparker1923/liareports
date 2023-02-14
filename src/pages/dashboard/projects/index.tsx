@@ -1,17 +1,9 @@
 // pages/index.tsx
 
-import {
-  Autocomplete,
-  Button,
-  NumberInput,
-  TextInput,
-  Text,
-  Modal,
-  Group,
-  Accordion,
-} from "@mantine/core";
+import { Text, Modal, Accordion } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { ReactElement, useState } from "react";
+import type { ReactElement } from "react";
+import { useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { ProjectForm } from "../../../components/ProjectForm";
@@ -41,7 +33,7 @@ const Projects: NextPageWithLayout = () => {
       <Accordion defaultValue="customization">
         {allProjects.data?.map((project) => {
           return (
-            <Accordion.Item value={project.id.toString()}>
+            <Accordion.Item value={project.id.toString()} key={project.id}>
               <Accordion.Control>{project.projectNumber}</Accordion.Control>
               <Accordion.Panel>
                 <Text>Lead: {project.projectLead ?? ""}</Text>

@@ -9,10 +9,7 @@
         "project": "tsconfig.json"
       },
       "rules": {
-        "@typescript-eslint/no-floating-promises": [
-          "warn",
-          { "ignoreVoid": true }
-        ],
+        "@typescript-eslint/no-misused-promises": "off",
         "@typescript-eslint/unbound-method": "off"
       }
     }
@@ -24,7 +21,6 @@
   "plugins": ["@typescript-eslint"],
   "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
   "rules": {
-    "@typescript-eslint/consistent-type-imports": "warn",
-    "@typescript-eslint/no-floating-promises": "off"
+    "@typescript-eslint/consistent-type-imports": "warn"
   }
 }
