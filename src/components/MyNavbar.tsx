@@ -40,11 +40,13 @@ export function MyNavbar({ opened }: NavBarProps) {
       width={{ sm: 200, lg: 300 }}
     >
       <Navbar.Section>
-        <MainLink
-          color="blue"
-          icon={<IconAlignBoxBottomCenter />}
-          label="Projects"
-        />
+        <Link href="/dashboard/projects">
+          <MainLink
+            color="blue"
+            icon={<IconAlignBoxBottomCenter />}
+            label="Projects"
+          />
+        </Link>
         <Link href="/dashboard/generate/packing-slip">
           <MainLink
             // onClick={() => generatePackingSlip()}
@@ -53,14 +55,14 @@ export function MyNavbar({ opened }: NavBarProps) {
             label="Generate Packing Slip"
           />
         </Link>
-        <Link href="/dashboard/generate/purchase-order">
+        {/* <Link href="/dashboard/generate/purchase-order">
           <MainLink
             // onClick={() => generatePackingSlip()}
             color="teal"
             icon={<IconFileArrowRight />}
             label="Generate Purchase Order"
           />
-        </Link>
+        </Link> */}
         <MainLink
           color="violet"
           icon={<IconTriangleSquareCircle />}

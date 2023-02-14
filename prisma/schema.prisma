@@ -68,9 +68,9 @@ model VerificationToken {
 }
 
 model ManufacturerPart {
-  id               String       @id @default(cuid())
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  id               String        @id @default(cuid())
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   partNumber       String
   partType         PartTypes
   length           Float?
@@ -82,8 +82,9 @@ model ManufacturerPart {
   description      String?
   partTags         PartTag[]
   image            String?
-  Manufacturer     Manufacturer @relation(fields: [manufacturerName], references: [name])
+  Manufacturer     Manufacturer  @relation(fields: [manufacturerName], references: [name])
   manufacturerName String
+  ProjectPart      ProjectPart[]
 
   @@unique([manufacturerName, partNumber])
 }
@@ -100,6 +101,41 @@ model Manufacturer {
   updatedAt         DateTime           @updatedAt
   name              String             @unique
   manufacturerParts ManufacturerPart[]
+}
+
+model Project {
+  id            Int            @unique
+  name          String
+  description   String
+  revision      String
+  status        String
+  projectParts  ProjectPart[]
+  ProjectChilds ProjectChild[]
+}
+
+model ProjectChild {
+  id            Int            @id @default(autoincrement())
+  project       Project        @relation(fields: [projectId], references: [id])
+  projectId     Int
+  projectParent ProjectChild?  @relation("ProjectChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId      Int?
+  projectChilds ProjectChild[] @relation("ProjectChild")
+  name          String
+  description   String
+  revision      String
+  status        String
+  ProjectParts  ProjectPart[]
+  childType     ChildTypes
+}
+
+model ProjectPart {
+  id                 Int              @id @default(autoincrement())
+  ManufacturerPart   ManufacturerPart @relation(fields: [manufacturerPartId], references: [id])
+  manufacturerPartId String
+  Project            Project          @relation(fields: [projectId], references: [id])
+  projectId          Int
+  projectChild       ProjectChild?    @relation(fields: [projectChildId], references: [id])
+  projectChildId     Int
 }
 
 enum PartTypes {
@@ -140,3 +176,12 @@ enum PartTags {
   NX
   PointIO
 }
+
+enum ChildTypes {
+  Backplate
+  Panel
+  Phase
+  Misc
+  Rack
+}
+
