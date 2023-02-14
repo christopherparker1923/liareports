@@ -110,7 +110,7 @@ model Project {
   name          String
   description   String
   revision      String
-  status        String
+  status        String?
   createdBy     User           @relation(fields: [userId], references: [id])
   projectParts  ProjectPart[]
   ProjectChilds ProjectChild[]

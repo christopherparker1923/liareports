@@ -13,13 +13,11 @@ const schema = z.object({
         .length(6, { message: "Quote Number should be Q followed by 5 digits" })
         .startsWith("Q")
     ),
-  // name: z.string({ required_error: "Required" }),
-  // age: z
-  //   .number()
-  //   .min(18, { message: "You must be at least 18 to create an account" }),
+  name: z.string({ required_error: "Required" }),
+  description: z.string({ required_error: "Required" }),
+  revision: z.string({ required_error: "Required" }),
+  status: z.string({ required_error: "Required" }),
 });
-
-//console.log(schema.parse({ projectNumber: "12" }));
 
 export function ProjectForm() {
   const form = useForm({
@@ -42,7 +40,7 @@ export function ProjectForm() {
           placeholder="##### or Q#####"
           {...form.getInputProps("projectNumber")}
         />
-        {/* <TextInput
+        <TextInput
           withAsterisk
           label="Project Name"
           placeholder="22130 - BOM"
@@ -64,14 +62,13 @@ export function ProjectForm() {
           {...form.getInputProps("revision")}
         />
         <TextInput
-          withAsterisk
           label="Status"
-          placeholder="22130 - BOM"
+          placeholder=""
           mt="sm"
           {...form.getInputProps("status")}
-        /> */}
+        />
         <Group position="right" mt="xl">
-          <AppButton label="Submit" />
+          <AppButton label="Submit" type="submit" />
         </Group>
       </form>
     </Box>

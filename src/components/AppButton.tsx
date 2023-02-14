@@ -1,14 +1,25 @@
-import { Group, ThemeIcon, UnstyledButton, Text } from "@mantine/core";
+import {
+  Group,
+  ThemeIcon,
+  UnstyledButton,
+  Text,
+  UnstyledButtonProps,
+} from "@mantine/core";
 
-interface AppButtonProps {
+interface AppButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   onClick?: () => void;
 }
 
-export function AppButton({ label, onClick }: AppButtonProps) {
+export function AppButton({
+  type,
+  label,
+  onClick,
+}: AppButtonProps & UnstyledButtonProps) {
   return (
     <UnstyledButton
       onClick={onClick}
+      type={type}
       sx={(theme) => ({
         display: "block",
         padding: theme.spacing.xs,

@@ -30,7 +30,7 @@ const Projects: NextPageWithLayout = () => {
         centered
         opened={opened}
         onClose={() => setOpened(false)}
-        title="Introduce yourself!"
+        title="New Project"
       >
         <ProjectForm />
       </Modal>
