@@ -9,7 +9,6 @@ import { api } from "../../utils/api";
 
 const Dashboard = () => {
   const { toggleColorScheme } = useMantineColorScheme();
-  const { data } = api.example.getAll.useQuery();
 
   return (
     <>
