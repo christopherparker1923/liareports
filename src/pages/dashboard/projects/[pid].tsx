@@ -20,6 +20,7 @@ const ProjectDetailView: NextPageWithLayout = () => {
   if (!project) return <div>Loading...</div>;
   return (
     <>
+      <Text size="lg">{project.data?.projectNumber}</Text>
       <Text size="lg">{project.data?.projectLead}</Text>
     </>
   );
