@@ -14,13 +14,13 @@ const ProjectDetailView: NextPageWithLayout = () => {
   const router = useRouter();
   const { pid } = router.query;
 
-  if (typeof pid != "string") return <div>error</div>;
-
-  const project = api.projects.getProjectById.useQuery(pid);
-
+  const project = api.projects.getProjectById.useQuery(pid, {
+    enabled: !!pid,
+  });
+  if (!project) return <div>Loading...</div>;
   return (
     <>
-      <Text size="lg">{pid}</Text>
+      <Text size="lg">{project.data?.projectLead}</Text>
     </>
   );
 };
@@ -30,3 +30,22 @@ ProjectDetailView.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default ProjectDetailView;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const basicProps = await getBasicServerSideProps(context);
+  if (!basicProps.session) {
+    return {
+      // redirect: {
+      //   destination: "/",
+      //   permanent: false,
+      // },
+      props: {
+        ...basicProps,
+      },
+    };
+  }
+  return {
+    props: {
+      ...basicProps,
+    },
+  };
+};
