@@ -112,10 +112,10 @@ model Project {
   revision      String
   status        String?
   projectLead   String?
-  createdBy     User           @relation(fields: [userId], references: [id])
+  createdBy     User?           @relation(fields: [userId], references: [id])
   projectParts  ProjectPart[]
   ProjectChilds ProjectChild[]
-  userId        String
+  userId        String?
 }
 
 model ProjectChild {
@@ -140,7 +140,7 @@ model ProjectPart {
   Project            Project          @relation(fields: [projectId], references: [id])
   projectId          Int
   projectChild       ProjectChild?    @relation(fields: [projectChildId], references: [id])
-  projectChildId     Int
+  projectChildId     Int?
 }
 
 enum PartTypes {
