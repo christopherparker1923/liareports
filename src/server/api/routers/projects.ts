@@ -1,3 +1,4 @@
+import { Prisma, ProjectChild, ProjectPart } from "@prisma/client";
 import { z } from "zod";
 import { projectSchema } from "../../../components/ProjectForm";
 
@@ -36,21 +37,42 @@ export const projectsRouter = createTRPCRouter({
   }),
 
   getProjectById: publicProcedure
-    .input(z.string())
+    .input(z.number())
     .query(async ({ input, ctx }) => {
-      return await ctx.prisma.project.findUnique({
+      const projectChildren = await ctx.prisma.projectChild.findMany({
         where: {
-          projectNumber: input,
+          projectId: input,
         },
         include: {
-          projectParts: true,
-          ProjectChilds: {
+          projectParts: {
             include: {
-              projectChilds: true,
-              ProjectParts: true,
-            }
+              manufacturerPart: true
+            },
           },
-        }
+        },
+
       });
-    }),
+
+      function buildTree(projectChildren: ProjectChildWithChildren[], parentId: number | null = null) {
+        const tree: ProjectChildWithChildren[] = [];
+        projectChildren
+          .filter(child => child.parentId === parentId)
+          .forEach(child => {
+            child.children = buildTree(projectChildren, child.id);
+            tree.push(child);
+          });
+        return tree;
+      }
+      return buildTree(projectChildren);
+    })
 });
+
+type ProjectPartWithManufacturer = Prisma.ProjectPartGetPayload<{
+  include: {
+    manufacturerPart: true;
+  };
+}>;
+interface ProjectChildWithChildren extends ProjectChild {
+  children?: ProjectChildWithChildren[];
+  projectParts?: ProjectPartWithManufacturer[];
+}

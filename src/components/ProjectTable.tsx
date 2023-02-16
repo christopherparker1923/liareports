@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-table";
 
 import { api } from "../utils/api";
+import { ManufacturerPart } from "@prisma/client";
 
 export function ProjectTable({ pid }: { pid: string }) {
   const rerender = React.useReducer(() => ({}), {})[1];
@@ -126,11 +127,15 @@ export function ProjectTable({ pid }: { pid: string }) {
   //   []
   // );
 
-  const project = api.projects.getProjectById.useQuery(pid);
+  const project = api.projects.getProjectById.useQuery(1);
+  console.log(
+    "🚀 ~ file: ProjectTable.tsx:130 ~ ProjectTable ~ project",
+    project
+  );
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
 
   const table = useReactTable({
-    data: project.data?.ProjectChilds || [],
+    data: project.data || [],
     columns: [
       {
         header: "Name",
@@ -187,8 +192,20 @@ export function ProjectTable({ pid }: { pid: string }) {
     },
     onExpandedChange: setExpanded,
     getSubRows: (row) => {
-      console.log(row);
-      return row.ProjectParts[0]?.manufacturerPartId;
+      if (row.children?.length) {
+        const newRow = [
+          ...row.children,
+          ...(row?.projectParts?.map((p) => ({
+            name: p.manufacturerPart.partNumber,
+          })) || []),
+        ];
+
+        return newRow;
+      } else if (row.projectParts?.length) {
+        return row.projectParts?.map((p) => ({
+          name: `${p.manufacturerPart.partNumber} - ${p.manufacturerPart.manufacturerName}`,
+        }));
+      } else return row;
     },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -311,9 +328,7 @@ export function ProjectTable({ pid }: { pid: string }) {
       <div>
         <button onClick={() => rerender()}>Force Rerender</button>
       </div>
-      <div>
-        <button onClick={() => refreshData()}>Refresh Data</button>
-      </div>
+
       <pre>{JSON.stringify(expanded, null, 2)}</pre>
     </div>
   );
