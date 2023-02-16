@@ -19,7 +19,19 @@ export const projectsRouter = createTRPCRouter({
       });
     }),
 
+  deleteProject: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.prisma.project.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
+
   getAllProjects: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.project.findMany();
+    return await ctx.prisma.project.findMany({
+      orderBy: { projectNumber: "asc" },
+    });
   }),
 });

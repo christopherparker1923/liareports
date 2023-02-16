@@ -3,6 +3,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { NumberInput, TextInput, Box, Group, Textarea } from "@mantine/core";
 import { AppButton } from "./AppButton";
 import { api } from "../utils/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const projectSchema = z.object({
   projectNumber: z
@@ -21,7 +22,11 @@ export const projectSchema = z.object({
   projectLead: z.string({ required_error: "Required" }),
 });
 
-export function ProjectForm() {
+export function ProjectForm({
+  setOpened,
+}: {
+  setOpened: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const form = useForm({
     validate: zodResolver(projectSchema),
     initialValues: {
@@ -34,8 +39,14 @@ export function ProjectForm() {
     },
   });
 
+  const queryClient = api.useContext();
   const { mutate: createProject, data } =
-    api.projects.createProject.useMutation();
+    api.projects.createProject.useMutation({
+      onSuccess: () => {
+        setOpened(false);
+        queryClient.projects.getAllProjects.refetch();
+      },
+    });
 
   console.log(data);
 

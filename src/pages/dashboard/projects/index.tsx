@@ -1,6 +1,6 @@
 // pages/index.tsx
 
-import { Text, Modal, Accordion } from "@mantine/core";
+import { Text, Modal, Accordion, Dialog, Flex } from "@mantine/core";
 import type { GetServerSideProps } from "next";
 import type { ReactElement } from "react";
 import { useState } from "react";
@@ -13,22 +13,50 @@ import type { NextPageWithLayout } from "../../_app";
 
 const Projects: NextPageWithLayout = () => {
   const allProjects = api.projects.getAllProjects.useQuery();
+  const deleteProjects = api.projects.deleteProject.useMutation({
+    onSuccess: async () => {
+      allProjects.refetch();
+    },
+  });
 
   console.log(allProjects);
   const [opened, setOpened] = useState(false);
+  const [openedDialog, setOpenedDialog] = useState(false);
+  const [projectForDelete, setProjectForDelete] = useState(0);
   function toggleOpened() {
     setOpened(!opened);
   }
+
   return (
     <>
       <AppButton label="New Project" onClick={toggleOpened} />
+      <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>
+        <Text>
+          Confirm project deletion?
+          <Flex>
+            <AppButton
+              label="Delete"
+              onClick={() => {
+                setOpenedDialog(false);
+                deleteProjects.mutate(projectForDelete);
+              }}
+            />
+            <AppButton
+              label="Cancel"
+              onClick={() => {
+                setOpenedDialog(false);
+              }}
+            />
+          </Flex>
+        </Text>
+      </Dialog>
       <Modal
         centered
         opened={opened}
         onClose={() => setOpened(false)}
         title="New Project"
       >
-        <ProjectForm />
+        <ProjectForm setOpened={setOpened} />
       </Modal>
       <Accordion defaultValue="customization">
         {allProjects.data?.map((project) => {
@@ -39,6 +67,13 @@ const Projects: NextPageWithLayout = () => {
                 <Text>Lead: {project.projectLead ?? ""}</Text>
                 <Text>{project.description}</Text>
                 <AppButton label="Placeholder for Detail View" />
+                <AppButton
+                  label="Delete"
+                  onClick={() => {
+                    setOpenedDialog(true);
+                    setProjectForDelete(project.id);
+                  }}
+                />
               </Accordion.Panel>
             </Accordion.Item>
           );

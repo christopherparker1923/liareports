@@ -63,11 +63,13 @@ export function MyNavbar({ opened }: NavBarProps) {
             label="Generate Purchase Order"
           />
         </Link> */}
-        <MainLink
-          color="violet"
-          icon={<IconTriangleSquareCircle />}
-          label="Parts"
-        />
+        <Link href="/dashboard/parts" prefetch>
+          <MainLink
+            color="violet"
+            icon={<IconTriangleSquareCircle />}
+            label="Parts"
+          />
+        </Link>
       </Navbar.Section>
       <Navbar.Section>
         {sessionData && <User session={sessionData} />}
