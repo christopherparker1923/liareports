@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
-
-//import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 
 import {
   PaginationState,
@@ -15,59 +15,25 @@ import { api } from "../utils/api";
 import { ManufacturerPart } from "@prisma/client";
 import { QueryClientProvider } from "@tanstack/react-query";
 
-//
-
-//import { fetchData, Person } from './fetchData'
-
-//const queryClient = api.useContext();
-
 type Test = { partNumber: string };
 
 export function PartsTable() {
   const rerender = React.useReducer(() => ({}), {})[1];
-  const columnHelper = createColumnHelper<ManufacturerPart>();
-  const columns = React.useMemo<ColumnDef<Test>[]>(
-    () => [
-      {
-        header: "Name",
-        footer: (props) => props.column.id,
-        columns: [
-          {
-            accessorFn: (row) => row.partNumber,
-            id: "PartName",
-            cell: (info) => info.getValue(),
-            header: () => <span>Last Name</span>,
-            footer: (props) => props.column.id,
-          },
-        ],
-      },
-    ],
-    []
-  );
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
       pageIndex: 0,
       pageSize: 10,
     });
-
   const fetchDataOptions = {
-    pageIndex,
     pageSize,
+    pageIndex,
   };
 
-  const parts = api.parts.getAllPartsFull.useInfiniteQuery(
-    {
-      limit: pageSize,
-    },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    }
-  );
-
-  console.log(parts);
-
-  const defaultData = React.useMemo(() => [], []);
+  const parts = api.parts.getAllPartsFull.useQuery(fetchDataOptions, {
+    queryKey: ["parts.getAllPartsFull", fetchDataOptions],
+    keepPreviousData: true,
+  });
 
   const pagination = React.useMemo(
     () => ({
@@ -76,13 +42,84 @@ export function PartsTable() {
     }),
     [pageIndex, pageSize]
   );
-
-  console.log(pagination);
-
+  console.log(parts);
   const table = useReactTable({
-    data: parts.data?.pages?.flat().parts[] as Test[],
-    columns: columns,
-    pageCount: parts.data?.pages.length ?? -1,
+    data: parts.data?.parts ?? [],
+    columns: [
+      {
+        accessorFn: (part) => part.partNumber,
+        id: "PartName",
+        header: () => <span>Part Number</span>,
+      },
+      {
+        accessorFn: (part) => part.manufacturerName,
+        id: "Manufacturer",
+        header: () => <span>Manufacturer</span>,
+      },
+      {
+        accessorFn: (part) => part.partType,
+        id: "PartType",
+        header: () => <span>Part Type</span>,
+      },
+      // {
+      //   header: "Dimensions",
+
+      //   columns: [
+      //     {
+      //       accessorFn: (part) => part.length,
+      //       id: "Length",
+      //       header: () => <span>Length</span>,
+      //     },
+      //     {
+      //       accessorFn: (part) => part.width,
+      //       id: "Width",
+      //       header: () => <span>Width</span>,
+      //     },
+      //     {
+      //       accessorFn: (part) => part.height,
+      //       id: "Height",
+      //       header: () => <span>Height</span>,
+      //     },
+      //   ],
+      //   id: "Dimensions",
+      // },
+      {
+        accessorFn: (part) => part.length,
+        id: "Length",
+        header: () => <span>Length</span>,
+      },
+      {
+        accessorFn: (part) => part.width,
+        id: "Width",
+        header: () => <span>Width</span>,
+      },
+      {
+        accessorFn: (part) => part.height,
+        id: "Height",
+        header: () => <span>Height</span>,
+      },
+      {
+        accessorFn: (part) => part.CSACert,
+        id: "CSACert",
+        header: () => <span>CSA Cert</span>,
+      },
+      {
+        accessorFn: (part) => part.ULCert,
+        id: "CSACert",
+        header: () => <span>UL Cert</span>,
+      },
+      {
+        accessorFn: (part) => part.description,
+        id: "NOMCert",
+        header: () => <span>Description</span>,
+      },
+      {
+        accessorFn: (part) => part.partTags,
+        id: "PartTags",
+        header: () => <span>Part Tags</span>,
+      },
+    ],
+    pageCount: parts.data?.pageMax,
     state: {
       pagination,
     },
@@ -92,56 +129,65 @@ export function PartsTable() {
     // getPaginationRowModel: getPaginationRowModel(), // If only doing manual pagination, you don't need this
     debugTable: true,
   });
-
-  if (!parts.data) return <div>loading</div>;
-
-  useEffect(() => {
-    parts.fetchNextPage();
-  }, []);
+  if (!parts.data) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-2">
       <div className="h-2" />
-      <table>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <th key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
-                      <div>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </div>
-                    )}
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
+      <div className="overflow-auto rounded-lg border border-b-0 border-zinc-500">
+        <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-zinc-900 dark:text-gray-400">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="rounded">
+                {headerGroup.headers.map((header) => {
                   return (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className="border-none px-6 py-3"
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </div>
                       )}
-                    </td>
+                    </th>
                   );
                 })}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody className="mx-4">
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr
+                  key={row.id}
+                  className="  bg-white hover:bg-gray-50   dark:bg-zinc-800 dark:hover:bg-gray-600"
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td
+                        key={cell.id}
+                        className="border-b  border-zinc-500 px-4 py-2"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       <div className="h-2" />
       <div className="flex items-center gap-2">
         <button

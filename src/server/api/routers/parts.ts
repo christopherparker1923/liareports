@@ -25,24 +25,22 @@ export const partsRouter = createTRPCRouter({
   getAllPartsFull: publicProcedure
     .input(
       z.object({
-        limit: z.number().min(1).max(100),
-        cursor: z.string().nullish(),
+        pageSize: z.number().min(1).max(100),
+        pageIndex: z.number().min(0),
       })
     )
     .query(async ({ ctx, input }) => {
       const parts = await ctx.prisma.manufacturerPart.findMany({
-        take: input.limit + 1,
-        cursor: input.cursor ? { id: input.cursor } : undefined,
-        include: { Manufacturer: true, partTags: true, ProjectPart: true },
+        skip: input.pageSize * input.pageIndex,
+        take: input.pageSize,
+        include: {
+          Manufacturer: true, partTags: true, ProjectPart: true,
+        },
+
         orderBy: { id: "asc" },
       });
-
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (parts.length > input.limit) {
-        const nextItem = parts.pop();
-        nextCursor = nextItem!.id;
-      }
-      return { parts, nextCursor };
+      const pageMax = Math.ceil(await ctx.prisma.manufacturerPart.count() / input.pageSize);
+      return { parts, pageMax };
     }),
 
   getSecretMessage: protectedProcedure.query(() => {
