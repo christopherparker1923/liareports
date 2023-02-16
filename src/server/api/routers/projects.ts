@@ -36,7 +36,7 @@ export const projectsRouter = createTRPCRouter({
     });
   }),
 
-  getProjectById: publicProcedure
+  getProjectChildrenById: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
       const projectChildren = await ctx.prisma.projectChild.findMany({
@@ -78,7 +78,16 @@ export const projectsRouter = createTRPCRouter({
       const fullArray =
         [...partArray, ...topPartArray];
       return fullArray;
-    })
+    }),
+  getProjectById: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      return await ctx.prisma.project.findUnique({
+        where: {
+          projectNumber: input,
+        },
+      });
+    }),
 });
 
 type ProjectPartWithManufacturer = Prisma.ProjectPartGetPayload<{
@@ -86,7 +95,7 @@ type ProjectPartWithManufacturer = Prisma.ProjectPartGetPayload<{
     manufacturerPart: true;
   };
 }>;
-interface ProjectChildWithChildren extends ProjectChild {
+export interface ProjectChildWithChildren extends ProjectChild {
   children?: ProjectChildWithChildren[];
   projectParts?: ProjectPartWithManufacturer[];
 }

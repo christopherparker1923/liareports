@@ -16,7 +16,7 @@ const Projects: NextPageWithLayout = () => {
   const allProjects = api.projects.getAllProjects.useQuery();
   const deleteProjects = api.projects.deleteProject.useMutation({
     onSuccess: async () => {
-      allProjects.refetch();
+      await allProjects.refetch();
     },
   });
 

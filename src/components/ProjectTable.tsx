@@ -16,11 +16,12 @@ import {
 
 import { api } from "../utils/api";
 import { ManufacturerPart } from "@prisma/client";
+import { ProjectChildWithChildren } from "../server/api/routers/projects";
 
 export function ProjectTable({ pid }: { pid: string }) {
   const rerender = React.useReducer(() => ({}), {})[1];
 
-  const project = api.projects.getProjectById.useQuery(pid);
+  const project = api.projects.getProjectChildrenById.useQuery(pid);
 
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
 
@@ -83,19 +84,21 @@ export function ProjectTable({ pid }: { pid: string }) {
     onExpandedChange: setExpanded,
     getSubRows: (row) => {
       if (row.children?.length) {
-        const newRow = [
-          ...row.children,
-          ...(row?.projectParts?.map((p) => ({
-            name: p.manufacturerPart.partNumber,
-          })) || []),
-        ];
+        const parts = row?.projectParts?.map((p) => ({
+          name: p.manufacturerPart.partNumber,
+        })) as ProjectChildWithChildren[];
+        const newRow = [...row.children, ...parts];
 
         return newRow;
       } else if (row.projectParts?.length) {
-        return row.projectParts?.map((p) => ({
-          name: p.manufacturerPart.partNumber,
-        }));
-      } else return row;
+        const newRow = row.projectParts?.map(
+          (p) =>
+            ({
+              name: p.manufacturerPart.partNumber,
+            } as ProjectChildWithChildren)
+        );
+        return newRow;
+      }
     },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
