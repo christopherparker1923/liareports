@@ -35,13 +35,22 @@ export const projectsRouter = createTRPCRouter({
     });
   }),
 
-  getProjectById: protectedProcedure
+  getProjectById: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
       return await ctx.prisma.project.findUnique({
         where: {
           projectNumber: input,
         },
+        include: {
+          projectParts: true,
+          ProjectChilds: {
+            include: {
+              projectChilds: true,
+              ProjectParts: true,
+            }
+          },
+        }
       });
     }),
 });

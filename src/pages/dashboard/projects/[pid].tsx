@@ -9,19 +9,22 @@ import type { NextPageWithLayout } from "../../_app";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
 import { z } from "zod";
+import { ProjectTable } from "../../../components/ProjectTable";
 
 const ProjectDetailView: NextPageWithLayout = () => {
   const router = useRouter();
-  const { pid } = router.query;
+  const { pid } = router.query as { pid: string };
 
   const project = api.projects.getProjectById.useQuery(pid, {
     enabled: !!pid,
   });
   if (!project) return <div>Loading...</div>;
+  if (!pid) return <div>Invalid project id</div>;
   return (
     <>
       <Text size="lg">{project.data?.projectNumber}</Text>
       <Text size="lg">{project.data?.projectLead}</Text>
+      <ProjectTable pid={pid} />
     </>
   );
 };

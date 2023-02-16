@@ -67,10 +67,7 @@ const Projects: NextPageWithLayout = () => {
               <Accordion.Panel>
                 <Text>Lead: {project.projectLead ?? ""}</Text>
                 <Text>{project.description}</Text>
-                <Link
-                  href={"/dashboard/projects/" + project.projectNumber}
-                  prefetch
-                >
+                <Link href={"/dashboard/projects/" + project.projectNumber}>
                   <AppButton label="Detail View" />
                 </Link>
                 <AppButton
