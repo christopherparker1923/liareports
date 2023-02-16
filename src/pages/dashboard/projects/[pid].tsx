@@ -22,6 +22,7 @@ const ProjectDetailView: NextPageWithLayout = () => {
   if (!pid) return <div>Invalid project id</div>;
   return (
     <>
+      <Text size="lg">{project.data?.projectNumber}</Text>
       <Text size="lg">{project.data?.projectLead}</Text>
       <ProjectTable pid={pid} />
     </>
