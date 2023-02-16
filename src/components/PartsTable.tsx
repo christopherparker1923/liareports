@@ -105,12 +105,12 @@ export function PartsTable() {
       },
       {
         accessorFn: (part) => part.ULCert,
-        id: "CSACert",
+        id: "ULCert",
         header: () => <span>UL Cert</span>,
       },
       {
         accessorFn: (part) => part.description,
-        id: "NOMCert",
+        id: "Description",
         header: () => <span>Description</span>,
       },
       {

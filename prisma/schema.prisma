@@ -106,7 +106,7 @@ model Manufacturer {
 
 model Project {
   id            Int            @id @default(autoincrement())
-  projectNumber String
+  projectNumber String         @unique
   name          String
   description   String
   revision      String

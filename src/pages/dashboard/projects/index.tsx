@@ -2,6 +2,7 @@
 
 import { Text, Modal, Accordion, Dialog, Flex } from "@mantine/core";
 import type { GetServerSideProps } from "next";
+import Link from "next/link";
 import type { ReactElement } from "react";
 import { useState } from "react";
 import { AppButton } from "../../../components/AppButton";
@@ -66,7 +67,12 @@ const Projects: NextPageWithLayout = () => {
               <Accordion.Panel>
                 <Text>Lead: {project.projectLead ?? ""}</Text>
                 <Text>{project.description}</Text>
-                <AppButton label="Placeholder for Detail View" />
+                <Link
+                  href={"/dashboard/projects/" + project.projectNumber}
+                  prefetch
+                >
+                  <AppButton label="Detail View" />
+                </Link>
                 <AppButton
                   label="Delete"
                   onClick={() => {

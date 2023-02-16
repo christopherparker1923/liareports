@@ -1,8 +1,8 @@
 // Import the pdfmake library
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import type { TDocumentDefinitions } from "pdfmake/interfaces";
-import type { PackingSlipPart } from "../pages/dashboard/generate/packing-slip";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { PackingSlipPart } from "../pages/dashboard/generate/packing-slip";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 // Define the PDF document structure
@@ -37,17 +37,17 @@ export async function generatePackingSlip(
     "\n\n\n\n\n\n\n\n\n\n we're packing a slip here boys \n\n\n\n\n\n\n\n\n"
   );
 
-  const partsList = parts.map((part) => ({
+  const partsList = parts.map((part, index) => ({
     text: part.partNumber || "",
     description: part.description || "",
     orderQty: part.quantity || 0,
     shipQty: part.quantity || 0,
   }));
 
-  function countQuantities(parts: typeof partsList) {
+  function countQuantities(partsList: any) {
     let totalOrderQty = 0;
     let totalShipQty = 0;
-    for (const part of parts) {
+    for (const part of partsList) {
       totalOrderQty += part.orderQty;
       totalShipQty += part.shipQty;
     }

@@ -2,6 +2,7 @@
 
 import { Text, Modal, Accordion } from "@mantine/core";
 import type { GetServerSideProps } from "next";
+import Link from "next/link";
 import type { ReactElement } from "react";
 import { useState } from "react";
 import { AppButton } from "../../../components/AppButton";
@@ -15,7 +16,9 @@ import type { NextPageWithLayout } from "../../_app";
 const Parts: NextPageWithLayout = () => {
   return (
     <>
+      {/* <Link href="/dashboard/projects" prefetch> */}
       <AppButton label="Placeholder for Detail View" />
+      {/* </Link> */}
       <PartsTable />
     </>
   );

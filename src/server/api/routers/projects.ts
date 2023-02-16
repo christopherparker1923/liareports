@@ -34,4 +34,14 @@ export const projectsRouter = createTRPCRouter({
       orderBy: { projectNumber: "asc" },
     });
   }),
+
+  getProjectById: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      return await ctx.prisma.project.findUnique({
+        where: {
+          projectNumber: input,
+        },
+      });
+    }),
 });
