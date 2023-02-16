@@ -37,11 +37,11 @@ export const projectsRouter = createTRPCRouter({
   }),
 
   getProjectById: publicProcedure
-    .input(z.number())
+    .input(z.string())
     .query(async ({ input, ctx }) => {
       const projectChildren = await ctx.prisma.projectChild.findMany({
         where: {
-          projectId: input,
+          projectNumber: input,
         },
         include: {
           projectParts: {
@@ -63,7 +63,21 @@ export const projectsRouter = createTRPCRouter({
           });
         return tree;
       }
-      return buildTree(projectChildren);
+
+      const projectSpecificParts = await ctx.prisma.projectPart.findMany({
+        where: {
+          projectNumber: input,
+        },
+        include: {
+          manufacturerPart: true,
+        },
+      });
+
+      const partArray = buildTree(projectChildren);
+      const topPartArray = projectSpecificParts.filter((part) => part.parentId === null).map((part) => ({ name: part.manufacturerPart.description })) as ProjectChildWithChildren[];
+      const fullArray =
+        [...partArray, ...topPartArray];
+      return fullArray;
     })
 });
 

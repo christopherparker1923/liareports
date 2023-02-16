@@ -105,41 +105,41 @@ model Manufacturer {
 }
 
 model Project {
-  id            Int            @id @default(autoincrement())
-  projectNumber String         @unique
-  name          String
-  description   String
-  revision      String
-  status        String?
-  projectLead   String?
-  createdBy     User?          @relation(fields: [userId], references: [id])
-  parts  ProjectPart[]
+  id              Int            @id @default(autoincrement())
+  projectNumber   String         @unique
+  name            String
+  description     String
+  revision        String
+  status          String?
+  projectLead     String?
+  createdBy       User?          @relation(fields: [userId], references: [id])
+  parts           ProjectPart[]
   projectChildren ProjectChild[]
-  userId        String?
+  userId          String?
 }
 
 model ProjectChild {
-  id            Int            @id @default(autoincrement())
-  project       Project?        @relation(fields: [projectId], references: [id])
-  projectId     Int?
-  parent ProjectChild? @relation("ProjectChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentId      Int?
+  id              Int            @id @default(autoincrement())
+  project         Project?       @relation(fields: [projectNumber], references: [projectNumber])
+  projectNumber   String?
+  parent          ProjectChild?  @relation("ProjectChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId        Int?
   projectChildren ProjectChild[] @relation("ProjectChild")
-  name          String
-  revision      String
-  status        String
-  projectParts  ProjectPart[]
-  childType     ChildTypes
+  name            String
+  revision        String
+  status          String
+  projectParts    ProjectPart[]
+  childType       ChildTypes
 }
 
 model ProjectPart {
   id                 Int              @id @default(autoincrement())
   manufacturerPart   ManufacturerPart @relation(fields: [manufacturerPartId], references: [id])
   manufacturerPartId String
-  project            Project?          @relation(fields: [projectId], references: [id])
-  projectId          Int?
-  parent       ProjectChild?    @relation(fields: [parentId], references: [id])
-  parentId     Int?
+  project            Project?         @relation(fields: [projectNumber], references: [projectNumber])
+  projectNumber      String?
+  parent             ProjectChild?    @relation(fields: [parentId], references: [id])
+  parentId           Int?
 }
 
 enum PartTypes {
