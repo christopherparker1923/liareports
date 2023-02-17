@@ -15,122 +15,18 @@ import {
 } from "@tanstack/react-table";
 
 import { api } from "../utils/api";
+import { ManufacturerPart } from "@prisma/client";
+import { ProjectChildWithChildren } from "../server/api/routers/projects";
 
 export function ProjectTable({ pid }: { pid: string }) {
   const rerender = React.useReducer(() => ({}), {})[1];
 
-  // const columns = React.useMemo<ColumnDef<Person>[]>(
-  //   () => [
-  //     {
-  //       header: "Name",
-  //       footer: (props) => props.column.id,
-  //       columns: [
-  //         {
-  //           accessorKey: "firstName",
-  //           header: ({ table }) => (
-  //             <>
-  //               <IndeterminateCheckbox
-  //                 {...{
-  //                   checked: table.getIsAllRowsSelected(),
-  //                   indeterminate: table.getIsSomeRowsSelected(),
-  //                   onChange: table.getToggleAllRowsSelectedHandler(),
-  //                 }}
-  //               />{" "}
-  //               <button
-  //                 {...{
-  //                   onClick: table.getToggleAllRowsExpandedHandler(),
-  //                 }}
-  //               >
-  //                 {table.getIsAllRowsExpanded() ? "👇" : "👉"}
-  //               </button>{" "}
-  //               First Name
-  //             </>
-  //           ),
-  //           cell: ({ row, getValue }) => (
-  //             <div
-  //               style={{
-  //                 // Since rows are flattened by default,
-  //                 // we can use the row.depth property
-  //                 // and paddingLeft to visually indicate the depth
-  //                 // of the row
-  //                 paddingLeft: `${row.depth * 2}rem`,
-  //               }}
-  //             >
-  //               <>
-  //                 <IndeterminateCheckbox
-  //                   {...{
-  //                     checked: row.getIsSelected(),
-  //                     indeterminate: row.getIsSomeSelected(),
-  //                     onChange: row.getToggleSelectedHandler(),
-  //                   }}
-  //                 />{" "}
-  //                 {row.getCanExpand() ? (
-  //                   <button
-  //                     {...{
-  //                       onClick: row.getToggleExpandedHandler(),
-  //                       style: { cursor: "pointer" },
-  //                     }}
-  //                   >
-  //                     {row.getIsExpanded() ? "👇" : "👉"}
-  //                   </button>
-  //                 ) : (
-  //                   "🔵"
-  //                 )}{" "}
-  //                 {getValue()}
-  //               </>
-  //             </div>
-  //           ),
-  //           footer: (props) => props.column.id,
-  //         },
-  //         {
-  //           accessorFn: (row) => row.lastName,
-  //           id: "lastName",
-  //           cell: (info) => info.getValue(),
-  //           header: () => <span>Last Name</span>,
-  //           footer: (props) => props.column.id,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       header: "Info",
-  //       footer: (props) => props.column.id,
-  //       columns: [
-  //         {
-  //           accessorKey: "age",
-  //           header: () => "Age",
-  //           footer: (props) => props.column.id,
-  //         },
-  //         {
-  //           header: "More Info",
-  //           columns: [
-  //             {
-  //               accessorKey: "visits",
-  //               header: () => <span>Visits</span>,
-  //               footer: (props) => props.column.id,
-  //             },
-  //             {
-  //               accessorKey: "status",
-  //               header: "Status",
-  //               footer: (props) => props.column.id,
-  //             },
-  //             {
-  //               accessorKey: "progress",
-  //               header: "Profile Progress",
-  //               footer: (props) => props.column.id,
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     },
-  //   ],
-  //   []
-  // );
+  const project = api.projects.getProjectChildrenById.useQuery(pid);
 
-  const project = api.projects.getProjectById.useQuery(pid);
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
 
   const table = useReactTable({
-    data: project.data?.ProjectChilds || [],
+    data: project.data || [],
     columns: [
       {
         header: "Name",
@@ -187,8 +83,22 @@ export function ProjectTable({ pid }: { pid: string }) {
     },
     onExpandedChange: setExpanded,
     getSubRows: (row) => {
-      console.log(row);
-      return row.ProjectParts[0]?.manufacturerPartId;
+      if (row.children?.length) {
+        const parts = row?.projectParts?.map((p) => ({
+          name: p.manufacturerPart.partNumber,
+        })) as ProjectChildWithChildren[];
+        const newRow = [...row.children, ...parts];
+
+        return newRow;
+      } else if (row.projectParts?.length) {
+        const newRow = row.projectParts?.map(
+          (p) =>
+            ({
+              name: p.manufacturerPart.partNumber,
+            } as ProjectChildWithChildren)
+        );
+        return newRow;
+      }
     },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -311,9 +221,7 @@ export function ProjectTable({ pid }: { pid: string }) {
       <div>
         <button onClick={() => rerender()}>Force Rerender</button>
       </div>
-      <div>
-        <button onClick={() => refreshData()}>Refresh Data</button>
-      </div>
+
       <pre>{JSON.stringify(expanded, null, 2)}</pre>
     </div>
   );

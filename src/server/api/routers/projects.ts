@@ -1,3 +1,4 @@
+import { Prisma, ProjectChild, ProjectPart } from "@prisma/client";
 import { z } from "zod";
 import { projectSchema } from "../../../components/ProjectForm";
 
@@ -35,6 +36,49 @@ export const projectsRouter = createTRPCRouter({
     });
   }),
 
+  getProjectChildrenById: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const projectChildren = await ctx.prisma.projectChild.findMany({
+        where: {
+          projectNumber: input,
+        },
+        include: {
+          projectParts: {
+            include: {
+              manufacturerPart: true
+            },
+          },
+        },
+
+      });
+
+      function buildTree(projectChildren: ProjectChildWithChildren[], parentId: number | null = null) {
+        const tree: ProjectChildWithChildren[] = [];
+        projectChildren
+          .filter(child => child.parentId === parentId)
+          .forEach(child => {
+            child.children = buildTree(projectChildren, child.id);
+            tree.push(child);
+          });
+        return tree;
+      }
+
+      const projectSpecificParts = await ctx.prisma.projectPart.findMany({
+        where: {
+          projectNumber: input,
+        },
+        include: {
+          manufacturerPart: true,
+        },
+      });
+
+      const partArray = buildTree(projectChildren);
+      const topPartArray = projectSpecificParts.filter((part) => part.parentId === null).map((part) => ({ name: part.manufacturerPart.description })) as ProjectChildWithChildren[];
+      const fullArray =
+        [...partArray, ...topPartArray];
+      return fullArray;
+    }),
   getProjectById: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
@@ -42,15 +86,16 @@ export const projectsRouter = createTRPCRouter({
         where: {
           projectNumber: input,
         },
-        include: {
-          projectParts: true,
-          ProjectChilds: {
-            include: {
-              projectChilds: true,
-              ProjectParts: true,
-            }
-          },
-        }
       });
     }),
 });
+
+type ProjectPartWithManufacturer = Prisma.ProjectPartGetPayload<{
+  include: {
+    manufacturerPart: true;
+  };
+}>;
+export interface ProjectChildWithChildren extends ProjectChild {
+  children?: ProjectChildWithChildren[];
+  projectParts?: ProjectPartWithManufacturer[];
+}
