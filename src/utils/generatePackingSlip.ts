@@ -9,7 +9,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export async function generatePackingSlip(
   parts: PackingSlipPart[],
   customer = "",
-  billingAdress = "",
+  billingAdress = "Same as Shipping",
   shippingAdress = "",
   orderDate = "",
   orderNumber = "",
@@ -17,6 +17,9 @@ export async function generatePackingSlip(
   customerContact = "",
   postComment = "",
   watermark = "",
+  userName = "",
+  userPhone = "",
+  userEmail = "",
   watermarkColor = "shuttleGrey"
 ) {
   const getBase64FromUrl = async (url: string): Promise<string> => {
@@ -68,6 +71,8 @@ export async function generatePackingSlip(
     powderBlue: "#b2e6e8",
     osloGray: "#81868c",
     towerGray: "#a8c0c4",
+    red: "#ff0000",
+    green: "#00ff00",
   };
   const textBlue = colors.puertoRico;
   const backgroundBlue = colors.rhino;
@@ -346,6 +351,20 @@ export async function generatePackingSlip(
             ],
           ],
         },
+      },
+      {
+        text: "If you have any questions or concers, please contact\n",
+        alignment: "center",
+      },
+      {
+        text: "[" + userName + ", " + userPhone + ", " + userEmail + "]",
+        alignment: "center",
+      },
+      {
+        text: "Thank You For Your Business!",
+        alignment: "center",
+        italics: true,
+        bold: true,
       },
     ],
     styles: {
