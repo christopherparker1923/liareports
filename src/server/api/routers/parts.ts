@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const partsRouter = createTRPCRouter({
   hello: publicProcedure
@@ -43,7 +43,7 @@ export const partsRouter = createTRPCRouter({
       return { parts, pageMax };
     }),
 
-  getSecretMessage: protectedProcedure.query(() => {
+  getSecretMessage: publicProcedure.query(() => {
     return "you can now see this secret message!";
   }),
 });

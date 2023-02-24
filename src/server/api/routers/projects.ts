@@ -2,10 +2,10 @@ import { Prisma, ProjectChild, ProjectPart } from "@prisma/client";
 import { z } from "zod";
 import { projectSchema } from "../../../components/ProjectForm";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const projectsRouter = createTRPCRouter({
-  createProject: protectedProcedure
+  createProject: publicProcedure
     .input(projectSchema)
     .mutation(async ({ input, ctx }) => {
       return await ctx.prisma.project.create({
@@ -13,14 +13,14 @@ export const projectsRouter = createTRPCRouter({
           ...input,
           createdBy: {
             connect: {
-              id: ctx.session.user.id,
+              id: ctx.session?.user.id,
             },
           },
         },
       });
     }),
 
-  deleteProject: protectedProcedure
+  deleteProject: publicProcedure
     .input(z.number())
     .mutation(async ({ input, ctx }) => {
       return await ctx.prisma.project.delete({
@@ -30,7 +30,7 @@ export const projectsRouter = createTRPCRouter({
       });
     }),
 
-  getAllProjects: protectedProcedure.query(async ({ ctx }) => {
+  getAllProjects: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.project.findMany({
       orderBy: { projectNumber: "asc" },
     });
