@@ -68,7 +68,7 @@ function useSkipper() {
   return [shouldSkip, skip] as const;
 }
 
-export function ProjectTable({ pid }: { pid: string }) {
+export function TestProjectTable({ pid }: { pid: string }) {
   const rerender = React.useReducer(() => ({}), {})[1];
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
 
