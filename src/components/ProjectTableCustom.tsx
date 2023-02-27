@@ -29,7 +29,7 @@ function RecursiveAccordion({ data }: { data: ProjectChildWithChildren[] }) {
     <Accordion multiple>
       {data.map((item) => (
         <Accordion.Item key={item.id} value={item.name}>
-          {item.name}
+          <Accordion.Control>{item.name}</Accordion.Control>
           <Accordion.Panel>
             {item.projectParts && (
               <ul>
