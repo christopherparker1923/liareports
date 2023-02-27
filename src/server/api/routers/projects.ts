@@ -46,18 +46,20 @@ export const projectsRouter = createTRPCRouter({
         include: {
           projectParts: {
             include: {
-              manufacturerPart: true
+              manufacturerPart: true,
             },
           },
         },
-
       });
 
-      function buildTree(projectChildren: ProjectChildWithChildren[], parentId: number | null = null) {
+      function buildTree(
+        projectChildren: ProjectChildWithChildren[],
+        parentId: number | null = null
+      ) {
         const tree: ProjectChildWithChildren[] = [];
         projectChildren
-          .filter(child => child.parentId === parentId)
-          .forEach(child => {
+          .filter((child) => child.parentId === parentId)
+          .forEach((child) => {
             child.children = buildTree(projectChildren, child.id);
             tree.push(child);
           });
@@ -74,9 +76,12 @@ export const projectsRouter = createTRPCRouter({
       });
 
       const partArray = buildTree(projectChildren);
-      const topPartArray = projectSpecificParts.filter((part) => part.parentId === null).map((part) => ({ name: part.manufacturerPart.description })) as ProjectChildWithChildren[];
-      const fullArray =
-        [...partArray, ...topPartArray];
+      const topPartArray = projectSpecificParts
+        .filter((part) => part.parentId === null)
+        .map((part) => ({
+          name: part.manufacturerPart.description,
+        })) as ProjectChildWithChildren[];
+      const fullArray = [...partArray, ...topPartArray];
       return fullArray;
     }),
   getProjectById: publicProcedure

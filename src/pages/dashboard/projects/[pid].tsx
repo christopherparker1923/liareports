@@ -9,7 +9,7 @@ import type { NextPageWithLayout } from "../../_app";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
 import { z } from "zod";
-import { ProjectTable } from "../../../components/ProjectTable";
+import { ProjectTableCustom } from "../../../components/ProjectTableCustom";
 import { TestProjectTable } from "../../../components/testProjectTable";
 
 const ProjectDetailView: NextPageWithLayout = () => {
@@ -25,8 +25,8 @@ const ProjectDetailView: NextPageWithLayout = () => {
     <>
       <Text size="lg">{project.data?.projectNumber}</Text>
       <Text size="lg">{project.data?.projectLead}</Text>
-      <ProjectTable pid={pid} />
-      <TestProjectTable pid={pid} />
+      <ProjectTableCustom pid={pid} />
+      {/* <TestProjectTable pid={pid} /> */}
     </>
   );
 };

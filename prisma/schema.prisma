@@ -46,7 +46,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  phoneNumber  String
+  phoneNumber  String?
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
