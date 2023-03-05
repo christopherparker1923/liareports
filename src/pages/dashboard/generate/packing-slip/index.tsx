@@ -30,6 +30,7 @@ type PartLineProps = {
   part: PackingSlipPart;
   onPartChange: (index: number, part: PackingSlipPart) => void;
 };
+
 function PartFormLine({
   index,
   onPartChange,
@@ -120,9 +121,6 @@ const PackingSlip: NextPageWithLayout = () => {
   const [userPhone, setUserPhone] = useState<string>();
   const [userEmail, setUserEmail] = useState<string>();
   const [watermarkColor, setWatermarkColor] = useState<string>();
-
-  console.log("session");
-  console.log(sessionData);
 
   const onPartChange = useCallback(
     (index: number, part: PackingSlipPart) => {

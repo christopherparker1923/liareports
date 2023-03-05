@@ -11,6 +11,7 @@ import { api } from "../../../utils/api";
 import { z } from "zod";
 import { ProjectTableCustom } from "../../../components/ProjectTableCustom";
 import { TestProjectTable } from "../../../components/testProjectTable";
+import { JacobTestTable } from "../../../components/JacobTestTable";
 
 const ProjectDetailView: NextPageWithLayout = () => {
   const router = useRouter();
@@ -25,7 +26,8 @@ const ProjectDetailView: NextPageWithLayout = () => {
     <>
       <Text size="lg">{project.data?.projectNumber}</Text>
       <Text size="lg">{project.data?.projectLead}</Text>
-      <ProjectTableCustom pid={pid} />
+      {/* <ProjectTableCustom pid={pid} /> */}
+      <JacobTestTable pid={pid} />
       {/* <TestProjectTable pid={pid} /> */}
     </>
   );

@@ -36,7 +36,7 @@ function RecursiveAccordion({ data }: { data: ProjectChildWithChildren[] }) {
                 {item.projectParts.map((projectPart) => (
                   <li key={projectPart.id}>
                     {projectPart.manufacturerPart &&
-                      projectPart.manufacturerPart.partNumber}
+                      projectPart.manufacturerPart.partNumber}{" "}
                   </li>
                 ))}
               </ul>
