@@ -114,7 +114,7 @@ export function PartsTable() {
         header: () => <span>Description</span>,
       },
       {
-        accessorFn: (part) => part.partTags,
+        accessorFn: (part) => part.partTags.join(", "),
         id: "PartTags",
         header: () => <span>Part Tags</span>,
       },
