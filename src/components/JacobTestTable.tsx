@@ -25,7 +25,6 @@ function ProjectChildAutocomplete({
   projectId: string;
   style?: React.CSSProperties;
 }) {
-  console.log("🚀 ~ file: JacobTestTable.tsx:24 ~ part:", part);
   const [value, setValue] = React.useState<ChildTypes | string>(
     part?.name || ""
   );
@@ -39,6 +38,7 @@ function ProjectChildAutocomplete({
     },
   });
   const handleNewProjectChild = (value: string) => {
+    console.log("🚀 ~ file: JacobTestTable.tsx:28 ~ parentId:", parentId);
     if (!projectId) return;
     mutate({
       childType: value,
@@ -168,9 +168,10 @@ function RecursiveTable({
 }: {
   data: DataArrType;
   pid: string;
-  parentId?: string | null;
+  parentId?: number | null;
 }) {
   if (!data) return null;
+
   return (
     <>
       <div>
@@ -238,7 +239,7 @@ function RecursiveTable({
                     <RecursiveTable
                       data={item.children as DataArrType}
                       pid={pid}
-                      parentId={pid}
+                      parentId={item.id}
                     />
                   ) : null}
                 </div>
@@ -249,7 +250,7 @@ function RecursiveTable({
         <ProjectChildAutocomplete
           placeholder="Child #2"
           projectId={pid}
-          parentId={data[data.length - 1]?.parentId}
+          parentId={parentId}
         />
       </div>
     </>
