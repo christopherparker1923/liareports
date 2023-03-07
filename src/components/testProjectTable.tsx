@@ -185,15 +185,7 @@ export function TestProjectTable({ pid }: { pid: string }) {
     ],
     []
   );
-  const { data: ProjectData } = api.projects.getProjectChildrenById.useQuery(
-    pid,
-    {
-      initialData: [],
-      onSuccess: () => {
-        setData(ProjectData);
-      },
-    }
-  );
+
   const [data, setData] = React.useState(() => ProjectData);
   console.log(data);
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();

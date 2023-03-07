@@ -17,10 +17,12 @@ export const partsRouter = createTRPCRouter({
         description: true,
         manufacturerName: true,
         partNumber: true,
+        id: true,
       },
     });
     return parts;
   }),
+
 
   getAllPartsFull: publicProcedure
     .input(
