@@ -44,7 +44,7 @@ export function ProjectForm({
     api.projects.createProject.useMutation({
       onSuccess: () => {
         setOpened(false);
-        queryClient.projects.getAllProjects.refetch();
+        void queryClient.projects.getAllProjects.refetch();
       },
     });
 

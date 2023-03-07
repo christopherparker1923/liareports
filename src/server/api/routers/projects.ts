@@ -1,5 +1,6 @@
 import { ChildTypes, Prisma, ProjectChild, ProjectPart } from "@prisma/client";
 import { z } from "zod";
+import { DataArrType } from "../../../components/JacobTestTable";
 import { projectSchema } from "../../../components/ProjectForm";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -74,14 +75,13 @@ export const projectsRouter = createTRPCRouter({
           manufacturerPart: true,
         },
       });
-      console.log(projectSpecificParts);
 
       const partArray = buildTree(projectChildren);
       const topPartArray = projectSpecificParts
-        .filter((part) => part.parentId === null) as ProjectChildWithChildren[];
+        .filter((part) => part.parentId === null) as DataArrType;
 
       const fullArray = [...partArray, ...topPartArray].reverse();
-      return fullArray;
+      return fullArray as DataArrType;
     }),
   updateChildName: publicProcedure.input(
     z.object({
@@ -162,4 +162,4 @@ type ProjectPartWithManufacturer = Prisma.ProjectPartGetPayload<{
 export interface ProjectChildWithChildren extends ProjectChild {
   children?: ProjectChildWithChildren[];
   projectParts?: ProjectPartWithManufacturer[];
-};
+}
