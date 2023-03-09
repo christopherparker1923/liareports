@@ -12,13 +12,47 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import { api } from "../utils/api";
-import { ManufacturerPart } from "@prisma/client";
+import { ManufacturerPart, PartTags, PartTypes } from "@prisma/client";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { Modal, Group, Button, Textarea, TextInput } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { AppButton } from "./AppButton";
+import { useForm, zodResolver } from "@mantine/form";
+import { projectSchema } from "./ProjectForm";
+import { z } from "zod";
 
 type Test = { partNumber: string };
 
+export const partSchema = z.object({
+  partNumber: z.string({ required_error: "Required" }),
+  partType: z.nativeEnum(PartTypes, { required_error: "Required" }),
+  length: z.number().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  CSACert: z.boolean({ required_error: "Required" }),
+  ULCert: z.boolean({ required_error: "Required" }),
+  preference: z.number({ required_error: "Required" }).int().min(1).max(10),
+  desciption: z.string({ required_error: "Required" }),
+  partTags: z.nativeEnum(PartTags, { required_error: "Required" }).array(),
+  image: z.string({ required_error: "Required" }),
+  manufacturerName: z.string({ required_error: "Required" }),
+});
+
 export function PartsTable() {
   const rerender = React.useReducer(() => ({}), {})[1];
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const form = useForm({
+    validate: zodResolver(partSchema),
+    initialValues: {
+      projectNumber: "",
+      name: "",
+      description: "",
+      revision: "R0",
+      status: "",
+      projectLead: "",
+    },
+  });
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
@@ -97,12 +131,12 @@ export function PartsTable() {
       {
         accessorFn: (part) => part.length,
         id: "Length",
-        header: () => <span>Length</span>,
+        header: () => <span>Depth (Length)</span>,
       },
       {
         accessorFn: (part) => part.width,
         id: "Width",
-        header: () => <span>Width</span>,
+        header: () => <span>Width (Radius)</span>,
       },
       {
         accessorFn: (part) => part.height,
@@ -267,9 +301,27 @@ export function PartsTable() {
       </div>
       <div>{table.getRowModel().rows.length} Rows</div>
       <div>
-        <button onClick={() => rerender()}>Force Rerender</button>
+        <Modal opened={opened} onClose={close} title="Add New Part" centered>
+          <TextInput
+            withAsterisk
+            label="Project Name"
+            placeholder="22130 - BOM"
+            mt="sm"
+            {...form.getInputProps("name")}
+          />
+          <Textarea
+            withAsterisk
+            label="Project Description"
+            placeholder=""
+            mt="sm"
+            {...form.getInputProps("description")}
+          />
+        </Modal>
+
+        <Group className="my-3 justify-start " position="center">
+          <AppButton label="Add Part" onClick={open}></AppButton>
+        </Group>
       </div>
-      <pre>{JSON.stringify(pagination, null, 2)}</pre>
     </div>
   );
 }
