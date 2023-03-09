@@ -47,7 +47,12 @@ export async function generatePackingSlip(
     shipQty: part.quantity || 0,
   }));
 
-  function countQuantities(partsList: any) {
+  function countQuantities(partsList: {
+    text: string;
+    description: string;
+    orderQty: number;
+    shipQty: number;
+  }[]) {
     let totalOrderQty = 0;
     let totalShipQty = 0;
     for (const part of partsList) {

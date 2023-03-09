@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import ReactDOM from "react-dom/client";
 
 import {
@@ -42,9 +42,20 @@ export function PartsTable() {
     }),
     [pageIndex, pageSize]
   );
-  console.log(parts);
+  //TODO: do this on the server
+  const fixedParts = useMemo(() => {
+    if (parts.data) {
+      return parts.data.parts.map((part) => {
+        return {
+          ...part,
+          partTags: part.partTags.map((tag) => tag.name).join(", "),
+        };
+      });
+    }
+  }, [parts.data]);
+
   const table = useReactTable({
-    data: parts.data?.parts ?? [],
+    data: fixedParts ?? [],
     columns: [
       {
         accessorFn: (part) => part.partNumber,
@@ -114,7 +125,9 @@ export function PartsTable() {
         header: () => <span>Description</span>,
       },
       {
-        accessorFn: (part) => part.partTags,
+        accessorFn: (part) => {
+          return part.partTags;
+        },
         id: "PartTags",
         header: () => <span>Part Tags</span>,
       },

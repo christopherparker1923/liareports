@@ -38,9 +38,11 @@ export const partsRouter = createTRPCRouter({
         include: {
           Manufacturer: true, partTags: true, ProjectPart: true,
         },
-
         orderBy: { id: "asc" },
       });
+
+
+
       const pageMax = Math.ceil(await ctx.prisma.manufacturerPart.count() / input.pageSize);
       return { parts, pageMax };
     }),

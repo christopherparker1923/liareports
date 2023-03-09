@@ -8,9 +8,6 @@ import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProp
 import type { NextPageWithLayout } from "../../_app";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
-import { z } from "zod";
-import { ProjectTableCustom } from "../../../components/ProjectTableCustom";
-import { TestProjectTable } from "../../../components/testProjectTable";
 import { JacobTestTable } from "../../../components/JacobTestTable";
 
 const ProjectDetailView: NextPageWithLayout = () => {
