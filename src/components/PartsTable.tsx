@@ -32,9 +32,9 @@ export const partSchema = z.object({
   CSACert: z.boolean({ required_error: "Required" }),
   ULCert: z.boolean({ required_error: "Required" }),
   preference: z.number({ required_error: "Required" }).int().min(1).max(10),
-  desciption: z.string({ required_error: "Required" }),
+  desciption: z.string().optional(),
   partTags: z.nativeEnum(PartTags, { required_error: "Required" }).array(),
-  image: z.string({ required_error: "Required" }),
+  image: z.string().optional(),
   manufacturerName: z.string({ required_error: "Required" }),
 });
 
