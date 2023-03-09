@@ -2,7 +2,7 @@ import React, { HTMLAttributes, HTMLProps, useEffect, useMemo } from "react";
 
 import { api } from "../utils/api";
 
-import { Accordion, Autocomplete } from "@mantine/core";
+import { Accordion, Autocomplete, Text } from "@mantine/core";
 import { ProjectChildWithChildren } from "../server/api/routers/projects";
 import {
   ChildTypes,
@@ -128,24 +128,34 @@ function ProjectPartAutocomplete({
     setValue("");
   }
   return (
-    <Autocomplete
-      className="w-full"
-      maxDropdownHeight={300}
-      value={value}
-      onChange={(value) => handleNewProjectPart(value)}
-      placeholder={placeholder || "Part number"}
-      limit={50}
-      style={style}
-      data={
-        data?.map((part) => ({
-          value: part.partNumber || "No Description",
-          id: part.id,
-        })) || []
-      }
-      filter={(value, item) => {
-        return true;
-      }}
-    />
+    <>
+      <div className="my-1 flex w-full justify-between gap-x-1">
+        <div className="flex w-2/5 flex-row">
+          <Autocomplete
+            className="w-full"
+            maxDropdownHeight={300}
+            value={value}
+            onChange={(value) => handleNewProjectPart(value)}
+            placeholder={placeholder || "Part number"}
+            limit={50}
+            style={style}
+            data={
+              data?.map((part) => ({
+                value: part.partNumber || "No Description",
+                id: part.id,
+                description: part.description,
+              })) || []
+            }
+            filter={(value, item) => {
+              return true;
+            }}
+          />
+        </div>
+        <Text className="my-1 w-2/5" size="md">
+          {data?.description || "Description"}
+        </Text>
+      </div>
+    </>
   );
 }
 
