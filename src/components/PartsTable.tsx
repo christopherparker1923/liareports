@@ -12,7 +12,7 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import { api } from "../utils/api";
-import { ManufacturerPart, PartTags, PartTypes } from "@prisma/client";
+import { ManufacturerPart, PartTag, PartTags, PartTypes } from "@prisma/client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
   Modal,
@@ -75,10 +75,6 @@ export function PartsTable() {
       manufacturerName: "",
     },
   });
-
-  console.log(form.getInputProps("partTags").value);
-  console.log("All Manufacturers");
-  console.log(validManufacturerNames);
 
   const { mutate: createPart, data } = api.parts.createPart.useMutation({
     onError: () => {
@@ -340,8 +336,8 @@ export function PartsTable() {
       </div>
       <div>{table.getRowModel().rows.length} Rows</div>
       <div>
-        <form onSubmit={form.onSubmit((values) => createPart(values))}>
-          <Modal opened={opened} onClose={close} title="Add New Part" centered>
+        <Modal opened={opened} onClose={close} title="Add New Part" centered>
+          <form onSubmit={form.onSubmit((values) => createPart(values))}>
             <Autocomplete
               withAsterisk
               label="Manufacturer"
@@ -478,8 +474,8 @@ export function PartsTable() {
                 onClick={() => form.reset()}
               ></AppButton>
             </div>
-          </Modal>
-        </form>
+          </form>
+        </Modal>
 
         <Group className="my-3 justify-start " position="center">
           <AppButton label="Add Part" onClick={open}></AppButton>
