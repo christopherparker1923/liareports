@@ -150,9 +150,9 @@ function ProjectPartAutocomplete({
             }}
           />
         </div>
-        <Text className="my-1 w-2/5" size="md">
+        {/* <Text className="my-1 w-2/5" size="md">
           {data?.description || "Description"}
-        </Text>
+        </Text> */}
       </div>
     </>
   );
