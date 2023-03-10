@@ -22,6 +22,7 @@ export type PackingSlipPart = {
   description: string | undefined | null;
   manufacturerName: string;
   quantity?: number;
+  quantityShipped?: number;
 };
 
 type PartLineProps = {
@@ -94,7 +95,23 @@ function PartFormLine({
             defaultValue={1}
             placeholder="Qty"
             value={part.quantity}
-            onChange={handlePartChange("quantity")}
+            onChange={(value) => {
+              handlePartChange("quantity")(value);
+              const updatedPart = {
+                ...part,
+                quantity: value,
+                quantityShipped: value,
+              };
+              onPartChange(index, updatedPart);
+            }}
+          />
+          <NumberInput
+            min={0}
+            className="w-20"
+            defaultValue={1}
+            placeholder="Qty"
+            value={part.quantityShipped}
+            onChange={handlePartChange("quantityShipped")}
           />
         </>
       )}
@@ -236,8 +253,20 @@ const PackingSlip: NextPageWithLayout = () => {
         placeholder="Defaults to grey; 'red', 'green' are options" //Add autocomplete to pick from legal colours
         onChange={(event) => setWatermarkColor(event.currentTarget.value)}
       />
-
-      <Text size="sm">Parts</Text>
+      <div className="my-1 flex w-full justify-between gap-x-1">
+        <Text className="flex w-2/5 flex-row" size="sm">
+          Parts
+        </Text>
+        <Text className="flex w-2/5 flex-row" size="sm">
+          Description
+        </Text>
+        <Text className="w-20" size="sm">
+          Quantity Ordered
+        </Text>
+        <Text className="w-20" size="sm">
+          Quantity Shipped
+        </Text>
+      </div>
 
       <div className="h-full">
         {[

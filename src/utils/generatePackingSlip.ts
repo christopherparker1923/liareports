@@ -44,15 +44,17 @@ export async function generatePackingSlip(
     text: part.partNumber || "",
     description: part.description || "",
     orderQty: part.quantity || 0,
-    shipQty: part.quantity || 0,
+    shipQty: part.quantityShipped || 0,
   }));
 
-  function countQuantities(partsList: {
-    text: string;
-    description: string;
-    orderQty: number;
-    shipQty: number;
-  }[]) {
+  function countQuantities(
+    partsList: {
+      text: string;
+      description: string;
+      orderQty: number;
+      shipQty: number;
+    }[]
+  ) {
     let totalOrderQty = 0;
     let totalShipQty = 0;
     for (const part of partsList) {
