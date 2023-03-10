@@ -11,6 +11,8 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import {
   IconAlignBoxBottomCenter,
+  IconBuildingFactory2,
+  IconBuildingStore,
   IconChevronLeft,
   IconChevronRight,
   IconFileArrowRight,
@@ -47,27 +49,32 @@ export function MyNavbar({ opened }: NavBarProps) {
             label="Projects"
           />
         </Link>
-        <Link href="/dashboard/generate/packing-slip">
-          <MainLink
-            // onClick={() => generatePackingSlip()}
-            color="teal"
-            icon={<IconFileArrowRight />}
-            label="Generate Packing Slip"
-          />
-        </Link>
-        {/* <Link href="/dashboard/generate/purchase-order">
-          <MainLink
-            // onClick={() => generatePackingSlip()}
-            color="teal"
-            icon={<IconFileArrowRight />}
-            label="Generate Purchase Order"
-          />
-        </Link> */}
         <Link href="/dashboard/parts">
           <MainLink
             color="violet"
             icon={<IconTriangleSquareCircle />}
             label="Parts"
+          />
+        </Link>
+        <Link href="/dashboard/manufacturers">
+          <MainLink
+            color="teal"
+            icon={<IconBuildingFactory2 />}
+            label="Manufacturers"
+          />
+        </Link>
+        <Link href="/dashboard/vendors">
+          <MainLink
+            color="orange"
+            icon={<IconBuildingStore />}
+            label="Vendors"
+          />
+        </Link>
+        <Link href="/dashboard/generate/packing-slip">
+          <MainLink
+            color="red"
+            icon={<IconFileArrowRight />}
+            label="Packing Slip"
           />
         </Link>
       </Navbar.Section>

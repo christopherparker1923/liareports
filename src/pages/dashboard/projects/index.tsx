@@ -20,7 +20,6 @@ const Projects: NextPageWithLayout = () => {
     },
   });
 
-  console.log(allProjects);
   const [opened, setOpened] = useState(false);
   const [openedDialog, setOpenedDialog] = useState(false);
   const [projectForDelete, setProjectForDelete] = useState(0);

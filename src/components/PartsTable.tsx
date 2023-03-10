@@ -129,28 +129,6 @@ export function PartsTable() {
         id: "PartType",
         header: () => <span>Part Type</span>,
       },
-      // {
-      //   header: "Dimensions",
-
-      //   columns: [
-      //     {
-      //       accessorFn: (part) => part.length,
-      //       id: "Length",
-      //       header: () => <span>Length</span>,
-      //     },
-      //     {
-      //       accessorFn: (part) => part.width,
-      //       id: "Width",
-      //       header: () => <span>Width</span>,
-      //     },
-      //     {
-      //       accessorFn: (part) => part.height,
-      //       id: "Height",
-      //       header: () => <span>Height</span>,
-      //     },
-      //   ],
-      //   id: "Dimensions",
-      // },
       {
         accessorFn: (part) => part.length,
         id: "Length",
@@ -472,16 +450,3 @@ export function PartsTable() {
     </div>
   );
 }
-
-// partNumber: "",
-// partType: null,
-// length: null,
-// width: null,
-// height: null,
-// CSACert: false,
-// ULCert: false,
-// preference: 2,
-// description: "",
-// partTags: [],
-// image: "",
-// manufacturerName: "",
