@@ -66,11 +66,13 @@ export const partsRouter = createTRPCRouter({
             ULCert: input.ULCert,
             preference: input.preference,
             description: input.description,
-            partTags: {
-              connect: input.partTags.map((tag) => {
-                return { name: tag };
-              }),
-            },
+            partTags: {},
+            //!! this will break the record in the db, do not uncomment
+            // partTags: {
+            //   connectOrCreate: input.partTags.map((tag) => {
+            //     return { where: { name: tag }, create: { name: tag } };
+            //   }),
+            // },
             image: "",
             manufacturerName: input.manufacturerName,
           },
