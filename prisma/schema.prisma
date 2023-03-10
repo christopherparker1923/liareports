@@ -39,6 +39,7 @@ model Account {
   ext_expires_in    Int?
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -48,6 +49,8 @@ model Session {
   expires      DateTime
   phoneNumber  String?
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -87,8 +90,25 @@ model ManufacturerPart {
   Manufacturer     Manufacturer  @relation(fields: [manufacturerName], references: [name])
   manufacturerName String
   ProjectPart      ProjectPart[]
+  VendorPart       VendorPart[]
 
   @@unique([manufacturerName, partNumber])
+}
+
+model VendorPart {
+  id                     String           @id @default(cuid())
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  ManufacturerPart       ManufacturerPart @relation(fields: [manufacturerPartNumber], references: [id])
+  manufacturerPartNumber String
+  Vendor                 Vendor           @relation(fields: [vendorId], references: [id])
+  vendorId               String
+  price                  Float
+  stock                  Int
+  leadTime               Int //Days
+
+  @@index([manufacturerPartNumber])
+  @@index([vendorId])
 }
 
 model PartTag {
@@ -105,6 +125,14 @@ model Manufacturer {
   manufacturerParts ManufacturerPart[]
 }
 
+model Vendor {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String       @unique
+  VendorParts VendorPart[]
+}
+
 model Project {
   id              Int            @id @default(autoincrement())
   projectNumber   String         @unique
@@ -117,6 +145,8 @@ model Project {
   parts           ProjectPart[]
   projectChildren ProjectChild[]
   userId          String?
+
+  @@index([userId])
 }
 
 model ProjectChild {
@@ -131,6 +161,9 @@ model ProjectChild {
   status          String
   projectParts    ProjectPart[]
   childType       ChildTypes
+
+  @@index([projectNumber])
+  @@index([parentId])
 }
 
 model ProjectPart {
@@ -141,6 +174,10 @@ model ProjectPart {
   projectNumber      String?
   parent             ProjectChild?    @relation(fields: [parentId], references: [id])
   parentId           Int?
+
+  @@index([manufacturerPartId])
+  @@index([projectNumber])
+  @@index([parentId])
 }
 
 enum PartTypes {
