@@ -2,7 +2,6 @@ import { createTRPCRouter } from "./trpc";
 import { partsRouter } from "./routers/parts";
 import { projectsRouter } from "./routers/projects";
 import { manufacturerRouter } from "./routers/manufacturers";
-import { partTypesRouter } from "./routers/partTypes";
 
 /**
  * This is the primary router for your server.

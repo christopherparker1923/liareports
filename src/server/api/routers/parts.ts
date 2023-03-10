@@ -1,4 +1,4 @@
-import { PartTag } from "@prisma/client";
+import { PartTag, PartTags, PartTypes } from "@prisma/client";
 import { z } from "zod";
 import { partSchema } from "../../../components/PartsTable";
 
@@ -53,13 +53,12 @@ export const partsRouter = createTRPCRouter({
   createPart: publicProcedure
     .input(partSchema)
     .mutation(async ({ input, ctx }) => {
-      console.log("createPartCalled");
       return await ctx.prisma.manufacturerPart
         .create({
           data: {
             ...input,
             partNumber: input.partNumber,
-            partType: input.partType,
+            partType: input.partType as PartTypes,
             length: input.length,
             width: input.width,
             height: input.height,
@@ -73,7 +72,7 @@ export const partsRouter = createTRPCRouter({
               }),
             },
             image: "",
-            manufacturerName: input.partType,
+            manufacturerName: input.manufacturerName,
           },
         })
         .catch((e) => console.log(e));

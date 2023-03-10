@@ -39,7 +39,7 @@ type Test = { partNumber: string };
 
 export const partSchema = z.object({
   partNumber: z.string({ required_error: "Required" }),
-  partType: z.nativeEnum(PartTypes, { required_error: "Required" }),
+  partType: z.string({ required_error: "Required" }),
   length: z.number().optional(),
   width: z.number().optional(),
   height: z.number().optional(),
@@ -56,21 +56,21 @@ export function PartsTable() {
   const rerender = React.useReducer(() => ({}), {})[1];
   const [opened, { open, close }] = useDisclosure(false);
   const { data: validManufacturerNames } =
-    api.manufacturers.getAllManufacturerNames.useQuery();
+    api.manufacturers?.getAllManufacturerNames.useQuery();
 
   const form = useForm({
     validate: zodResolver(partSchema),
     initialValues: {
       partNumber: "",
       partType: "",
-      length: null,
-      width: null,
-      height: null,
+      length: undefined,
+      width: undefined,
+      height: undefined,
       CSACert: false,
       ULCert: false,
-      preference: null,
+      preference: 1,
       description: "",
-      partTags: [],
+      partTags: [] as PartTags[],
       image: "",
       manufacturerName: "",
     },
@@ -214,7 +214,7 @@ export function PartsTable() {
   if (!parts.data) {
     return <div>Loading...</div>;
   }
-
+  console.log(form.values);
   return (
     <div className="p-2">
       <div className="h-2" />
