@@ -1,4 +1,6 @@
+import { PartTag } from "@prisma/client";
 import { z } from "zod";
+import { partSchema } from "../../../components/PartsTable";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -23,7 +25,6 @@ export const partsRouter = createTRPCRouter({
     return parts;
   }),
 
-
   getAllPartsFull: publicProcedure
     .input(
       z.object({
@@ -36,15 +37,47 @@ export const partsRouter = createTRPCRouter({
         skip: input.pageSize * input.pageIndex,
         take: input.pageSize,
         include: {
-          Manufacturer: true, partTags: true, ProjectPart: true,
+          Manufacturer: true,
+          partTags: true,
+          ProjectPart: true,
         },
         orderBy: { id: "asc" },
       });
 
-
-
-      const pageMax = Math.ceil(await ctx.prisma.manufacturerPart.count() / input.pageSize);
+      const pageMax = Math.ceil(
+        (await ctx.prisma.manufacturerPart.count()) / input.pageSize
+      );
       return { parts, pageMax };
+    }),
+
+  createPart: publicProcedure
+    .input(partSchema)
+    .mutation(async ({ input, ctx }) => {
+      console.log("createPartCalled");
+      return await ctx.prisma.manufacturerPart
+        .create({
+          data: {
+            ...input,
+            partNumber: input.partNumber,
+            partType: input.partType,
+            length: input.length,
+            width: input.width,
+            height: input.height,
+            CSACert: input.CSACert,
+            ULCert: input.ULCert,
+            preference: input.preference,
+            description: input.description,
+            partTags: {
+              connectOrCreate: input.partTags.map((tag) => ({
+                where: { name: tag },
+                create: tag,
+              })),
+            },
+            image: "",
+            manufacturerName: input.partType,
+          },
+        })
+        .catch((e) => console.log(e));
     }),
 
   getSecretMessage: publicProcedure.query(() => {
