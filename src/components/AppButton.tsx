@@ -1,10 +1,5 @@
-import {
-  Group,
-  ThemeIcon,
-  UnstyledButton,
-  Text,
-  UnstyledButtonProps,
-} from "@mantine/core";
+import { UnstyledButton, Text } from "@mantine/core";
+import type { UnstyledButtonProps } from "@mantine/core";
 import { forwardRef } from "react";
 
 interface AppButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -39,3 +34,5 @@ export const AppButton = forwardRef(
     );
   }
 );
+
+AppButton.displayName = "AppButton";

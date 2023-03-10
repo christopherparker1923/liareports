@@ -1,16 +1,11 @@
 // pages/index.tsx
 
-import { Text, Modal, Accordion } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import Link from "next/link";
 import type { ReactElement } from "react";
-import { useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { PartsTable } from "../../../components/PartsTable";
-import { ProjectForm } from "../../../components/ProjectForm";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
-import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
 
 const Parts: NextPageWithLayout = () => {

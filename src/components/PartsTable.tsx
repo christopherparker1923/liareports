@@ -1,29 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import React, { useEffect, useMemo } from "react";
-import ReactDOM from "react-dom/client";
+import React, { useMemo } from "react";
 
 import {
-  PaginationState,
   useReactTable,
   getCoreRowModel,
-  ColumnDef,
   flexRender,
-  createColumnHelper,
 } from "@tanstack/react-table";
+import type { PaginationState } from "@tanstack/react-table";
 import { api } from "../utils/api";
-import { ManufacturerPart, PartTag, PartTags, PartTypes } from "@prisma/client";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { PartTags, PartTypes } from "@prisma/client";
 import {
   Modal,
   Group,
   Text,
-  Button,
   Textarea,
   TextInput,
   Autocomplete,
   NumberInput,
-  Tooltip,
   HoverCard,
   Checkbox,
   MultiSelect,
@@ -31,11 +25,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { AppButton } from "./AppButton";
 import { useForm, zodResolver } from "@mantine/form";
-import { projectSchema } from "./ProjectForm";
 import { z } from "zod";
-import { prisma } from "../server/db";
-
-type Test = { partNumber: string };
 
 export const partSchema = z.object({
   partNumber: z.string({ required_error: "Required" }),
@@ -53,7 +43,7 @@ export const partSchema = z.object({
 });
 
 export function PartsTable() {
-  const rerender = React.useReducer(() => ({}), {})[1];
+  //const rerender = React.useReducer(() => ({}), {})[1];
   const [opened, { open, close }] = useDisclosure(false);
   const { data: validManufacturerNames } =
     api.manufacturers?.getAllManufacturerNames.useQuery();
@@ -76,7 +66,7 @@ export function PartsTable() {
     },
   });
 
-  const { mutate: createPart, data } = api.parts.createPart.useMutation({
+  const { mutate: createPart } = api.parts.createPart.useMutation({
     onError: () => {
       console.log("error");
     },
@@ -86,8 +76,6 @@ export function PartsTable() {
       // void queryClient.parts.getAllPartsFull.refetch();
     },
   });
-
-  const [partTypeValue, setPartTypeValue] = React.useState("");
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({

@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { useForm, zodResolver } from "@mantine/form";
-import { NumberInput, TextInput, Box, Group, Textarea } from "@mantine/core";
+import { TextInput, Box, Group, Textarea } from "@mantine/core";
 import { AppButton } from "./AppButton";
 import { api } from "../utils/api";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const projectSchema = z.object({
   projectNumber: z

@@ -1,4 +1,4 @@
-import { PartTag, PartTags, PartTypes } from "@prisma/client";
+import type { PartTypes } from "@prisma/client";
 import { z } from "zod";
 import { partSchema } from "../../../components/PartsTable";
 

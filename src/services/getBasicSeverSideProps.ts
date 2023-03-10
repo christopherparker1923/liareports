@@ -1,8 +1,9 @@
-import { ColorScheme } from "@mantine/core";
+import type { ColorScheme } from "@mantine/core";
 import { getCookie } from "cookies-next";
-import { GetServerSidePropsContext, PreviewData } from "next";
-import { getServerSession, Session } from "next-auth";
-import { ParsedUrlQuery } from "querystring";
+import type { GetServerSidePropsContext, PreviewData } from "next";
+import { getServerSession } from "next-auth";
+import type { Session } from "next-auth";
+import type { ParsedUrlQuery } from "querystring";
 import { authOptions } from "../server/auth";
 
 type BasicServerSideProps = {

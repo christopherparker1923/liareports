@@ -1,6 +1,6 @@
-import { ChildTypes, Prisma, ProjectChild, ProjectPart } from "@prisma/client";
+import type { ChildTypes, Prisma, ProjectChild } from "@prisma/client";
 import { z } from "zod";
-import { DataArrType } from "../../../components/JacobTestTable";
+import type { DataArrType } from "../../../components/JacobTestTable";
 import { projectSchema } from "../../../components/ProjectForm";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -77,49 +77,58 @@ export const projectsRouter = createTRPCRouter({
       });
 
       const partArray = buildTree(projectChildren);
-      const topPartArray = projectSpecificParts
-        .filter((part) => part.parentId === null) as DataArrType;
+      const topPartArray = projectSpecificParts.filter(
+        (part) => part.parentId === null
+      ) as DataArrType;
 
       const fullArray = [...partArray, ...topPartArray].reverse();
       return fullArray as DataArrType;
     }),
-  updateChildName: publicProcedure.input(
-    z.object({
-      id: z.number(),
-      name: z.string(),
-    })
-  ).mutation(async ({ input, ctx }) => {
-    return await ctx.prisma.projectChild.update({
-      where: {
-        id: input.id,
-      },
-      data: {
-        name: input.name,
-      },
-    });
-  }),
+  updateChildName: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.prisma.projectChild.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+    }),
 
-  addPartToProject: publicProcedure.input(
-    z.object({
-      projectId: z.string(),
-      partId: z.string(),
-      parentId: z.number().optional(),
-    })).mutation(async ({ input, ctx }) => {
+  addPartToProject: publicProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        partId: z.string(),
+        parentId: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       const projectPart = await ctx.prisma.projectPart.create({
         data: {
           projectNumber: input.projectId,
           parentId: input.parentId,
           manufacturerPartId: input.partId,
-        }
+        },
       });
       return projectPart;
     }),
-  addProjectChild: publicProcedure.input(
-    z.object({
-      projectId: z.string(),
-      childType: z.string(),
-      parentId: z.number().optional(),
-    })).mutation(async ({ input, ctx }) => {
+  addProjectChild: publicProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        childType: z.string(),
+        parentId: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       const childType: ChildTypes = input.childType as ChildTypes;
       const projectPart = await ctx.prisma.projectChild.create({
         data: {
@@ -129,7 +138,7 @@ export const projectsRouter = createTRPCRouter({
           status: "y",
           projectNumber: input.projectId,
           parentId: input.parentId,
-        }
+        },
       });
       return projectPart;
     }),

@@ -5,7 +5,6 @@ import type { GetServerSideProps } from "next";
 import type { ReactElement } from "react";
 import { Layout } from "../../components/Layout";
 import { getBasicServerSideProps } from "../../services/getBasicSeverSideProps";
-import { api } from "../../utils/api";
 
 const Dashboard = () => {
   const { toggleColorScheme } = useMantineColorScheme();

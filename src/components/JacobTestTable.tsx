@@ -1,11 +1,11 @@
-import React, { HTMLAttributes, HTMLProps, useEffect, useMemo } from "react";
+import React from "react";
 
 import { api } from "../utils/api";
 
-import { Accordion, Autocomplete, Text } from "@mantine/core";
-import { ProjectChildWithChildren } from "../server/api/routers/projects";
-import {
-  ChildTypes,
+import { Autocomplete } from "@mantine/core";
+import type { ProjectChildWithChildren } from "../server/api/routers/projects";
+import { ChildTypes } from "@prisma/client";
+import type {
   ManufacturerPart,
   ProjectChild,
   ProjectPart,
@@ -83,7 +83,7 @@ function ProjectChildAutocomplete({
             value: type,
           })) || []
         }
-        filter={(value, item) => {
+        filter={() => {
           return true;
         }}
       />
@@ -145,7 +145,7 @@ function ProjectPartAutocomplete({
                 description: part.description,
               })) || []
             }
-            filter={(value, item) => {
+            filter={() => {
               return true;
             }}
           />
