@@ -68,10 +68,9 @@ export const partsRouter = createTRPCRouter({
             preference: input.preference,
             description: input.description,
             partTags: {
-              connectOrCreate: input.partTags.map((tag) => ({
-                where: { name: tag },
-                create: tag,
-              })),
+              connect: input.partTags.map((tag) => {
+                return { name: tag };
+              }),
             },
             image: "",
             manufacturerName: input.partType,
