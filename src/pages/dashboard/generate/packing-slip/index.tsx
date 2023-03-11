@@ -66,7 +66,20 @@ function PartFormLine({
         />
         {part.partNumber && (
           <Button
-            className="border border-gray-500 bg-transparent hover:bg-transparent"
+            sx={(theme) => ({
+              color:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[0]
+                  : theme.black,
+
+              "&:hover": {
+                backgroundColor:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[8]
+                    : theme.colors.gray[2],
+              },
+            })}
+            className="border border-gray-500"
             onClick={() =>
               onPartChange(index, {
                 partNumber: "",

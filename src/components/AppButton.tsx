@@ -17,6 +17,9 @@ export const AppButton = (props: AppButtonProps & UnstyledButtonProps) => {
         display: "block",
         padding: theme.spacing.xs,
         borderRadius: theme.radius.sm,
+        // borderWidth: 2,
+        // borderColor: "black",
+        backgroundColor: "red", // add this line to set the background color
         color:
           theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
 
@@ -27,6 +30,7 @@ export const AppButton = (props: AppButtonProps & UnstyledButtonProps) => {
               : theme.colors.gray[2],
         },
       })}
+      className="border border-gray-500"
     >
       <Text size="sm">{props.label}</Text>
     </UnstyledButton>
