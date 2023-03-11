@@ -130,7 +130,7 @@ model Vendor {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   name        String       @unique
-  VendorParts VendorPart[]
+  vendorParts VendorPart[]
 }
 
 model Project {

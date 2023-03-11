@@ -29,39 +29,34 @@ const Vendors: NextPageWithLayout = () => {
     },
     onSuccess: async () => {
       console.log("success");
-      await allManufacturers.refetch();
+      await allVendors.refetch();
       close();
       // void queryClient.parts.getAllPartsFull.refetch();
     },
   });
 
-  const deleteManufacturer = api.manufacturers.deleteManufacturer.useMutation({
+  const deleteVendor = api.vendors.deleteVendor.useMutation({
     onSuccess: async () => {
-      await allManufacturers.refetch();
+      await allVendors.refetch();
     },
   });
 
   const form = useForm({
-    validate: zodResolver(manufacturerSchema),
+    validate: zodResolver(vendorSchema),
     initialValues: {
       name: "",
     },
   });
 
-  console.log(allManufacturers);
+  console.log(allVendors);
   return (
     <>
-      <AppButton label="New Manufacturer" onClick={open} />
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Add New Manufacturer"
-        centered
-      >
-        <form onSubmit={form.onSubmit((values) => createManufacturer(values))}>
+      <AppButton label="New Vendor" onClick={open} />
+      <Modal opened={opened} onClose={close} title="Add New Vendor" centered>
+        <form onSubmit={form.onSubmit((values) => createVendor(values))}>
           <TextInput
             withAsterisk
-            label="Manufacturer Name"
+            label="Vendor Name"
             mt="sm"
             {...form.getInputProps("name")}
           />
@@ -73,13 +68,13 @@ const Vendors: NextPageWithLayout = () => {
       </Modal>
       <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>
         <Text>
-          Confirm manufacturer deletion?
+          Confirm vendor deletion?
           <Flex>
             <AppButton
               label="Delete"
               onClick={() => {
                 setOpenedDialog(false);
-                deleteManufacturer.mutate(manufacturerForDelete);
+                deleteVendor.mutate(vendorForDelete);
               }}
             />
             <AppButton
@@ -92,28 +87,29 @@ const Vendors: NextPageWithLayout = () => {
         </Text>
       </Dialog>
       <Accordion defaultValue="customization">
-        {allManufacturers.data?.map((manufacturer) => {
+        {allVendors.data?.map((vendor) => {
           return (
-            <Accordion.Item
-              value={manufacturer.name.toString()}
-              key={manufacturer.name}
-            >
-              <Accordion.Control>{manufacturer.name}</Accordion.Control>
+            <Accordion.Item value={vendor.name.toString()} key={vendor.name}>
+              <Accordion.Control>{vendor.name}</Accordion.Control>
               <Accordion.Panel>
-                {manufacturer.manufacturerParts?.map((part) => {
+                {vendor.vendorParts?.map((part) => {
                   return (
                     <div key={part.id} className="flex items-center gap-2">
-                      <Text className="w-1/5">{part.partNumber ?? ""}</Text>
-                      <Text className="w-auto">{part.description ?? ""}</Text>
+                      <Text className="w-1/5">
+                        {part.manufacturerPartNumber ?? ""}
+                      </Text>
+                      <Text className="w-1/12">{part.price ?? ""}</Text>
+                      <Text className="w-1/12">{part.stock ?? ""}</Text>
+                      <Text className="w-1/12">{part.leadTime ?? ""}</Text>
                     </div>
                   );
                 })}
                 <AppButton
                   label="Delete"
-                  hidden={manufacturer.manufacturerParts.length != 0}
+                  hidden={vendor.vendorParts.length != 0}
                   onClick={() => {
                     setOpenedDialog(true);
-                    setManufacturerForDelete(manufacturer.name);
+                    setVendorForDelete(vendor.name);
                   }}
                 />
               </Accordion.Panel>
@@ -125,11 +121,11 @@ const Vendors: NextPageWithLayout = () => {
   );
 };
 
-Manufacturers.getLayout = function getLayout(page: ReactElement) {
+Vendors.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default Manufacturers;
+export default Vendors;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const basicProps = await getBasicServerSideProps(context);
   if (!basicProps.session) {

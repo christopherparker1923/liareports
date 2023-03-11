@@ -16,6 +16,7 @@ export const vendorRouter = createTRPCRouter({
     const vendors = await ctx.prisma.vendor.findMany({
       select: {
         name: true,
+        vendorParts: true,
       },
     });
     return vendors;
@@ -29,7 +30,7 @@ export const vendorRouter = createTRPCRouter({
           name: input,
         },
         include: {
-          VendorParts: true,
+          vendorParts: true,
         },
       });
 
@@ -56,7 +57,7 @@ export const vendorRouter = createTRPCRouter({
       });
     }),
 
-  createVendpr: publicProcedure
+  createVendor: publicProcedure
     .input(vendorSchema)
     .mutation(async ({ input, ctx }) => {
       return await ctx.prisma.vendor.create({
