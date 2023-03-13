@@ -111,6 +111,18 @@ model VendorPart {
   @@index([vendorId])
 }
 
+// model VendorPartPriceHistory{
+//   // id
+//   // start
+//   // end
+//   // price
+//   // leadTime
+//   // modifiedBy
+//   // modifedDate
+//   // Vendor
+
+// }
+
 model PartTag {
   id                Int                @id @default(autoincrement())
   name              PartTags           @unique

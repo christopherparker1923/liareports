@@ -26,6 +26,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { AppButton } from "./AppButton";
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
+import Link from "next/link";
 
 export const partSchema = z.object({
   partNumber: z.string({ required_error: "Required" }),
@@ -217,7 +218,17 @@ export function PartsTable() {
                   key={row.id}
                   className="  bg-white hover:bg-gray-50   dark:bg-zinc-800 dark:hover:bg-gray-600"
                 >
-                  {row.getVisibleCells().map((cell) => {
+                  {row.getVisibleCells().map((cell, i) => {
+                    if (i === 0) {
+                      return (
+                        <Link href={`/parts/${cell.getValue()}`}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </Link>
+                      );
+                    }
                     return (
                       <td
                         key={cell.id}
