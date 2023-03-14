@@ -54,14 +54,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?   @db.VarChar(10000)
-  accounts      Account[]
-  sessions      Session[]
-  Project       Project[]
+  id                         String                       @id @default(cuid())
+  name                       String?
+  email                      String?                      @unique
+  emailVerified              DateTime?
+  image                      String?                      @db.VarChar(10000)
+  accounts                   Account[]
+  sessions                   Session[]
+  Project                    Project[]
+  VendorPartPriceLeadHistory VendorPartPriceLeadHistory[]
 }
 
 model VerificationToken {
@@ -96,32 +97,37 @@ model ManufacturerPart {
 }
 
 model VendorPart {
-  id                     String           @id @default(cuid())
-  createdAt              DateTime         @default(now())
-  updatedAt              DateTime         @updatedAt
-  ManufacturerPart       ManufacturerPart @relation(fields: [manufacturerPartNumber], references: [id])
-  manufacturerPartNumber String
-  Vendor                 Vendor           @relation(fields: [vendorId], references: [id])
-  vendorId               String
-  price                  Float
-  stock                  Int
-  leadTime               Int //Days
+  id                         String                       @id @default(cuid())
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  ManufacturerPart           ManufacturerPart             @relation(fields: [manufacturerPartNumber], references: [id])
+  manufacturerPartNumber     String
+  Vendor                     Vendor                       @relation(fields: [vendorId], references: [id])
+  vendorId                   String
+  price                      Float
+  stock                      Int
+  leadTime                   Int //Days
+  VendorPartPriceLeadHistory VendorPartPriceLeadHistory[]
 
   @@index([manufacturerPartNumber])
   @@index([vendorId])
 }
 
-// model VendorPartPriceHistory{
-//   // id
-//   // start
-//   // end
-//   // price
-//   // leadTime
-//   // modifiedBy
-//   // modifedDate
-//   // Vendor
+model VendorPartPriceLeadHistory {
+  id         String     @id @default(cuid())
+  startDate  DateTime   @default(now())
+  //endDate    DateTime?
+  price      Float
+  leadTime   Int //days
+  modifiedBy User       @relation(fields: [userId], references: [id])
+  vendorPart VendorPart @relation(fields: [vendorPartId], references: [id])
 
-// }
+  userId       String
+  vendorPartId String
+
+  @@index([vendorPartId])
+  @@index([userId])
+}
 
 model PartTag {
   id                Int                @id @default(autoincrement())

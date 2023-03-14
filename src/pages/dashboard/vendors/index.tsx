@@ -48,7 +48,6 @@ const Vendors: NextPageWithLayout = () => {
     },
   });
 
-  console.log("allVendors:");
   console.log(allVendors);
   return (
     <>

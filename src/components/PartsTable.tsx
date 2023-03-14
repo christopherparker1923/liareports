@@ -221,12 +221,17 @@ export function PartsTable() {
                   {row.getVisibleCells().map((cell, i) => {
                     if (i === 0) {
                       return (
-                        <Link href={`/parts/${cell.getValue()}`}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </Link>
+                        <td
+                          key={cell.id}
+                          className="border-b  border-zinc-500 px-4 py-2"
+                        >
+                          <Link href={`parts/${cell.getValue()}`}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </Link>
+                        </td>
                       );
                     }
                     return (
