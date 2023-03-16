@@ -48,9 +48,11 @@ const PartDetailView: NextPageWithLayout = () => {
     api.vendorPartPriceLeadHistory.getVendorPartHistory.useQuery(pnum, {
       onSuccess: () => {
         form.setValues({
-          price: vendorPartHistory.data?.[0]?.price,
-          leadTime: vendorPartHistory.data?.[0]?.leadTime,
+          price: vendorPartHistory.data?.[0]?.price ?? 0,
+          leadTime: vendorPartHistory.data?.[0]?.leadTime ?? 0,
         });
+        if (dollarRef.current)
+          dollarRef.current.value = vendorPartHistory.data?.[0]?.price;
       },
     });
 
@@ -67,6 +69,8 @@ const PartDetailView: NextPageWithLayout = () => {
         },
       }
     );
+
+  console.log(form.values);
 
   if (!vendorPartHistory) return <div>Loading...</div>;
   if (!pnum) return <div>Invalid part id</div>;
@@ -88,12 +92,14 @@ const PartDetailView: NextPageWithLayout = () => {
           centered
         >
           <form
-            onSubmit={form.onSubmit((values) =>
-              createVendorPartPriceLeadHistory({
+            onSubmit={form.onSubmit((values) => {
+              console.log("submitted");
+              return createVendorPartPriceLeadHistory({
                 ...values,
                 price: parseFloat(dollarRef.current?.value ?? "") ?? 0,
-              })
-            )}
+                
+              });
+            })}
           >
             <DatePickerInput
               withAsterisk
@@ -105,7 +111,7 @@ const PartDetailView: NextPageWithLayout = () => {
               dropdownType="modal"
               {...form.getInputProps("startDate")}
             />
-            <div className="flex items-end justify-between gap-2">
+            <div className="flex justify-between gap-2">
               <NumberInput
                 className="w-2/5"
                 withAsterisk
