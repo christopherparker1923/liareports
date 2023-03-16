@@ -1,13 +1,7 @@
 import { z } from "zod";
+import { vendorPartPriceLeadHistorySchema } from "../../../pages/dashboard/parts/[pnum]";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
-export const vendorPartPriceLeadHistorySchema = z.object({
-  startDate: z.date({ required_error: "Required" }),
-  endDate: z.date().optional(),
-  price: z.number({ required_error: "Required" }).min(0),
-  leadTime: z.number({ required_error: "Required" }).min(0),
-  vendorPartId: z.string({ required_error: "Required" }),
-});
 
 export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
   getVendorPartHistory: publicProcedure

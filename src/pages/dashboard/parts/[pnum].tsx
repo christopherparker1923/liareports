@@ -2,19 +2,24 @@
 
 import { Modal, Text, TextInput } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../_app";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
-import { JacobTestTable } from "../../../components/JacobTestTable";
 import { AppButton } from "../../../components/AppButton";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm, zodResolver } from "@mantine/form";
-import { vendorSchema } from "../vendors";
-import { vendorPartPriceLeadHistorySchema } from "../../../server/api/routers/vendorPartPriceLeadHistory";
-import { date } from "zod";
+import { z } from "zod";
+
+export const vendorPartPriceLeadHistorySchema = z.object({
+  startDate: z.date({ required_error: "Required" }),
+  endDate: z.date().optional(),
+  price: z.number({ required_error: "Required" }).min(0),
+  leadTime: z.number({ required_error: "Required" }).min(0),
+  vendorPartId: z.string({ required_error: "Required" }),
+});
 
 const PartDetailView: NextPageWithLayout = () => {
   const router = useRouter();
@@ -25,8 +30,24 @@ const PartDetailView: NextPageWithLayout = () => {
   const [openedDialog, setOpenedDialog] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
 
+  const form = useForm({
+    validate: zodResolver(vendorPartPriceLeadHistorySchema),
+    initialValues: {
+      startDate: new Date(),
+      price: 0,
+      leadTime: 0,
+    },
+  });
+
   const vendorPartHistory =
-    api.vendorPartPriceLeadHistory.getVendorPartHistory.useQuery(pnum);
+    api.vendorPartPriceLeadHistory.getVendorPartHistory.useQuery(pnum, {
+      onSuccess: () => {
+        form.setValues({
+          price: vendorPartHistory.data?.[0]?.price,
+          leadTime: vendorPartHistory.data?.[0]?.leadTime,
+        });
+      },
+    });
 
   const { mutate: createVendorPartPriceLeadHistory } =
     api.vendorPartPriceLeadHistory.createVendorPartPriceLeadHistory.useMutation(
@@ -41,23 +62,6 @@ const PartDetailView: NextPageWithLayout = () => {
         },
       }
     );
-
-  if (vendorPartHistory.isLoading || vendorPartHistory.isError) {
-    return <div>Loading</div>;
-  }
-
-  const form = useForm({
-    validate: zodResolver(vendorPartPriceLeadHistorySchema),
-    initialValues: {
-      startDate: new Date(),
-      price:
-        vendorPartHistory?.data[vendorPartHistory?.data?.length - 1]?.price ??
-        0,
-      leadTime:
-        vendorPartHistory?.data[vendorPartHistory?.data?.length - 1]
-          ?.leadTime ?? 0,
-    },
-  });
 
   //   const part = api.projects.getProjectById.useQuery(pid, {
   //     enabled: !!pid,
