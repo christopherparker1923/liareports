@@ -104,9 +104,9 @@ model VendorPart {
   manufacturerPartNumber     String
   Vendor                     Vendor                       @relation(fields: [vendorId], references: [id])
   vendorId                   String
-  price                      Float
+  //price                      Float
   stock                      Int
-  leadTime                   Int //Days
+  //leadTime                   Int //Days
   VendorPartPriceLeadHistory VendorPartPriceLeadHistory[]
 
   @@index([manufacturerPartNumber])

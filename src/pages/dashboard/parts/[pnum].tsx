@@ -1,6 +1,6 @@
 // pages/index.tsx
 
-import { Modal, Text, TextInput } from "@mantine/core";
+import { Modal, NumberInput, Text, TextInput } from "@mantine/core";
 import type { GetServerSideProps } from "next";
 import { ReactElement, useEffect, useState } from "react";
 import { Layout } from "../../../components/Layout";
@@ -12,10 +12,11 @@ import { AppButton } from "../../../components/AppButton";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
+import { IconCurrencyCent, IconCurrencyDollar } from "@tabler/icons-react";
+import { DatePickerInput } from "@mantine/dates";
 
 export const vendorPartPriceLeadHistorySchema = z.object({
   startDate: z.date({ required_error: "Required" }),
-  endDate: z.date().optional(),
   price: z.number({ required_error: "Required" }).min(0),
   leadTime: z.number({ required_error: "Required" }).min(0),
   vendorPartId: z.string({ required_error: "Required" }),
@@ -24,6 +25,8 @@ export const vendorPartPriceLeadHistorySchema = z.object({
 const PartDetailView: NextPageWithLayout = () => {
   const router = useRouter();
   const { pnum } = router.query as { pnum: string };
+  const [priceDollar, setPriceDollar] = useState<number | "">(0);
+  const [priceCent, setPriceCent] = useState<number | "">(0);
 
   //   const allVendors = api.vendors.getAllVendors.useQuery();
   //const [vendorForDelete, setVendorForDelete] = useState("");
@@ -63,33 +66,83 @@ const PartDetailView: NextPageWithLayout = () => {
       }
     );
 
-  //   const part = api.projects.getProjectById.useQuery(pid, {
-  //     enabled: !!pid,
-  //  });
-  //if (!part) return <div>Loading...</div>;
+  if (!vendorPartHistory) return <div>Loading...</div>;
   if (!pnum) return <div>Invalid part id</div>;
   return (
     <>
-      <Text size="lg">{pnum}</Text>
-      <AppButton label="New Vendor" onClick={open} />
-      <Modal opened={opened} onClose={close} title="Add New Vendor" centered>
-        <form
-        // onSubmit={form.onSubmit((values) =>
-        //   createVendorPartPriceLeadHistory(values)
-        // )}
+      <div className="flex justify-between">
+        <div className="flex">
+          <Text className="mr-4" size="sm">
+            Placehodler <br />
+            for Image
+          </Text>
+          <Text size="xl">{pnum}</Text>
+        </div>
+        <AppButton label="Add Part History" onClick={open} />
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Add Part History"
+          centered
         >
-          <TextInput
-            withAsterisk
-            label="Vendor Name"
-            mt="sm"
-            {...form.getInputProps("name")}
-          />
-          <div className="mt-2 flex items-center justify-around">
-            <AppButton label={"Submit"} type="submit" />
-            <AppButton label={"Clear"} onClick={() => form.reset()}></AppButton>
-          </div>
-        </form>
-      </Modal>
+          <form
+          // onSubmit={form.onSubmit((values) =>
+          //   createVendorPartPriceLeadHistory(values)
+          // )}
+          >
+            <DatePickerInput
+              withAsterisk
+              placeholder="Pick date"
+              label="Date"
+              mt="sm"
+              mx="auto"
+              maw={400}
+              dropdownType="modal"
+              {...form.getInputProps("startDate")}
+            />
+            <div className="flex items-end justify-between gap-2">
+              <NumberInput
+                className="w-2/5"
+                withAsterisk
+                label="Price (CAD)"
+                mt="sm"
+                value={priceDollar}
+                onChange={(priceDollar) => setPriceDollar(priceDollar)}
+                //{...form.getInputProps("price")}
+                hideControls={true}
+                icon={<IconCurrencyDollar size="1rem" />}
+              />
+              <NumberInput
+                className="w-1/5"
+                withAsterisk
+                label=""
+                mt="sm"
+                value={priceCent}
+                onChange={(priceCent) => setPriceCent(priceCent)}
+                //{...form.getInputProps("price")}
+                hideControls={true}
+                icon={<IconCurrencyCent size="1rem" />}
+              />
+              <NumberInput
+                className="w-2/5"
+                withAsterisk
+                label="Lead Time (days)"
+                mt="sm"
+                hideControls={true}
+                min={0}
+                {...form.getInputProps("leadTime")}
+              />
+            </div>
+            <div className="mt-2 flex items-center justify-around">
+              <AppButton label={"Submit"} type="submit" />
+              <AppButton
+                label={"Clear"}
+                onClick={() => form.reset()}
+              ></AppButton>
+            </div>
+          </form>
+        </Modal>
+      </div>
     </>
   );
 };

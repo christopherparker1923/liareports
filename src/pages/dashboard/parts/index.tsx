@@ -11,9 +11,6 @@ import type { NextPageWithLayout } from "../../_app";
 const Parts: NextPageWithLayout = () => {
   return (
     <>
-      {/* <Link href="/dashboard/projects" prefetch> */}
-      <AppButton label="Placeholder for Detail View" />
-      {/* </Link> */}
       <PartsTable />
     </>
   );

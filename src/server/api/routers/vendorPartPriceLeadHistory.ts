@@ -2,7 +2,6 @@ import { z } from "zod";
 import { vendorPartPriceLeadHistorySchema } from "../../../pages/dashboard/parts/[pnum]";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
-
 export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
   getVendorPartHistory: publicProcedure
     .input(z.string())
@@ -13,7 +12,7 @@ export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
             vendorPartId: input,
           },
           orderBy: {
-            startDate: "asc",
+            startDate: "desc",
           },
         });
       return vendorPartPriceLeadHistory;
