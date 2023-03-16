@@ -2,7 +2,7 @@
 
 import { Modal, NumberInput, Text, TextInput } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../_app";
@@ -24,9 +24,10 @@ export const vendorPartPriceLeadHistorySchema = z.object({
 
 const PartDetailView: NextPageWithLayout = () => {
   const router = useRouter();
+  const dollarRef = useRef<HTMLInputElement>(null);
   const { pnum } = router.query as { pnum: string };
-  const [priceDollar, setPriceDollar] = useState<number | "">(0);
-  const [priceCent, setPriceCent] = useState<number | "">(0);
+  const [priceDollar, setPriceDollar] = useState<number>(0);
+  const [priceCent, setPriceCent] = useState<number>(0);
 
   //   const allVendors = api.vendors.getAllVendors.useQuery();
   //const [vendorForDelete, setVendorForDelete] = useState("");
@@ -39,6 +40,7 @@ const PartDetailView: NextPageWithLayout = () => {
       startDate: new Date(),
       price: 0,
       leadTime: 0,
+      vendorPartId: pnum,
     },
   });
 
@@ -86,9 +88,12 @@ const PartDetailView: NextPageWithLayout = () => {
           centered
         >
           <form
-          // onSubmit={form.onSubmit((values) =>
-          //   createVendorPartPriceLeadHistory(values)
-          // )}
+            onSubmit={form.onSubmit((values) =>
+              createVendorPartPriceLeadHistory({
+                ...values,
+                price: parseFloat(dollarRef.current?.value ?? "") ?? 0,
+              })
+            )}
           >
             <DatePickerInput
               withAsterisk
@@ -106,23 +111,13 @@ const PartDetailView: NextPageWithLayout = () => {
                 withAsterisk
                 label="Price (CAD)"
                 mt="sm"
-                value={priceDollar}
-                onChange={(priceDollar) => setPriceDollar(priceDollar)}
-                //{...form.getInputProps("price")}
+                step={0.01}
+                precision={2}
+                ref={dollarRef}
                 hideControls={true}
                 icon={<IconCurrencyDollar size="1rem" />}
               />
-              <NumberInput
-                className="w-1/5"
-                withAsterisk
-                label=""
-                mt="sm"
-                value={priceCent}
-                onChange={(priceCent) => setPriceCent(priceCent)}
-                //{...form.getInputProps("price")}
-                hideControls={true}
-                icon={<IconCurrencyCent size="1rem" />}
-              />
+
               <NumberInput
                 className="w-2/5"
                 withAsterisk
