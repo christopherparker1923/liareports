@@ -105,7 +105,7 @@ model VendorPart {
   Vendor                     Vendor                       @relation(fields: [vendorId], references: [id])
   vendorId                   String
   //price                      Float
-  stock                      Int
+  //stock                      Int
   //leadTime                   Int //Days
   VendorPartPriceLeadHistory VendorPartPriceLeadHistory[]
 
@@ -119,6 +119,7 @@ model VendorPartPriceLeadHistory {
   //endDate    DateTime?
   price      Float
   leadTime   Int //days
+  stock      Int
   modifiedBy User       @relation(fields: [userId], references: [id])
   vendorPart VendorPart @relation(fields: [vendorPartId], references: [id])
 
