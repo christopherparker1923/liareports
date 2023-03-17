@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { vendorSchema } from "../../../pages/dashboard/vendors";
+import { vendorSchema } from "../../../components/ZodSchemas";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 

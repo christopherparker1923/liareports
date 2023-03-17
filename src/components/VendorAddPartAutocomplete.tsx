@@ -1,14 +1,36 @@
 import { Autocomplete, Button } from "@mantine/core";
 import { VendorPart } from "@prisma/client";
 import { useMemo, useState } from "react";
+import { z } from "zod";
 import { api } from "../utils/api";
+
+export const vendorPartSchema = z.object({
+  manufacturerPartNumber: z.string({ required_error: "Required" }),
+  vendorId: z.string({ required_error: "Required" }),
+});
+
+function findPartIdByPartNumber(
+  partNumber: string,
+  allManuParts: {
+    id: string;
+    partNumber: string;
+    description: string | null;
+    manufacturerName: string;
+  }[]
+): string | null {
+  const matchingPart = allManuParts.find(
+    (part) => part.partNumber === partNumber
+  );
+  return matchingPart ? matchingPart.id : null;
+}
 
 export function VendorAddPartAutoComplete(vendor: {
   id: string;
   name: string;
   vendorParts: VendorPart[];
 }) {
-  const [addPart, setaddPart] = useState("");
+  const [addPart, setAddPart] = useState("");
+  const [addPartId, setAddPartId] = useState("");
   const { data: allManuParts } = api.parts.getAllParts.useQuery();
 
   const availableParts = useMemo(
@@ -24,6 +46,7 @@ export function VendorAddPartAutoComplete(vendor: {
         .map((part, index) => ({
           value: part.partNumber,
           group: part.manufacturerName,
+          id: part.id,
           index,
         })) || [],
     [vendor, allManuParts]
@@ -35,20 +58,23 @@ export function VendorAddPartAutoComplete(vendor: {
     },
     onSuccess: async () => {
       console.log("success");
-      setaddPart("");
-      //await allManufacturers.refetch();
-      // void queryClient.parts.getAllPartsFull.refetch();
+      setAddPart("");
     },
   });
 
   if (!allManuParts) return <div>Loading</div>;
 
+  console.log(addPart);
+  console.log(addPartId);
+
   return (
     <div className="mt-2 flex w-2/5 flex-row">
       <Autocomplete
+        //itemComponent={({ value, id }) => <div>{value}</div>}
         className="w-2/5"
+        id={addPartId}
         value={addPart}
-        onChange={setaddPart}
+        onChange={setAddPart}
         maxDropdownHeight={300}
         limit={50}
         placeholder="Add part to Vendor"
@@ -68,12 +94,15 @@ export function VendorAddPartAutoComplete(vendor: {
             },
           })}
           className="border border-gray-500"
-          onClick={() =>
+          onClick={() => {
+            setAddPartId(findPartIdByPartNumber(addPart, allManuParts) ?? "");
+            console.log(addPart);
+            console.log(addPartId);
             addVendorPart({
               vendorId: vendor.id,
-              manufacturerPartNumber: addPart,
-            })
-          }
+              manufacturerPartNumber: addPartId,
+            });
+          }}
         >
           Submit
         </Button>

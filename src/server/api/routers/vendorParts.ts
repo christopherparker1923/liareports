@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { vendorPartSchema } from "../../../pages/dashboard/vendors";
+import { vendorPartSchema } from "../../../components/VendorAddPartAutocomplete";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const vendorPartsRouter = createTRPCRouter({
   addVendorPart: publicProcedure
     .input(vendorPartSchema)
     .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.vendorPartPriceLeadHistory.deleteMany();
       return await ctx.prisma.vendorPart.create({
         data: {
           ...input,

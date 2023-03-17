@@ -1,41 +1,20 @@
 // pages/index.tsx
 
-import { Accordion, Dialog, Flex, Modal, Text, TextInput } from "@mantine/core";
+import { Accordion, Dialog, Flex, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { GetServerSideProps } from "next";
-import Link from "next/link";
 import { ReactElement, useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
-import { useForm, zodResolver } from "@mantine/form";
-import { z } from "zod";
-
-export const manufacturerSchema = z.object({
-  name: z.string({ required_error: "Required" }),
-});
 
 const Manufacturers: NextPageWithLayout = () => {
   const allManufacturers =
     api.manufacturers.getAllManufacturerNamesParts.useQuery();
   const [manufacturerForDelete, setManufacturerForDelete] = useState("");
   const [openedDialog, setOpenedDialog] = useState(false);
-  const [opened, { open, close }] = useDisclosure(false);
-
-  const { mutate: createManufacturer } =
-    api.manufacturers.createManufacturer.useMutation({
-      onError: () => {
-        console.log("error");
-      },
-      onSuccess: async () => {
-        console.log("success");
-        await allManufacturers.refetch();
-        close();
-        // void queryClient.parts.getAllPartsFull.refetch();
-      },
-    });
 
   const deleteManufacturer = api.manufacturers.deleteManufacturer.useMutation({
     onSuccess: async () => {
@@ -43,36 +22,9 @@ const Manufacturers: NextPageWithLayout = () => {
     },
   });
 
-  const form = useForm({
-    validate: zodResolver(manufacturerSchema),
-    initialValues: {
-      name: "",
-    },
-  });
-
   console.log(allManufacturers);
   return (
     <>
-      <AppButton label="New Manufacturer" onClick={open} />
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Add New Manufacturer"
-        centered
-      >
-        <form onSubmit={form.onSubmit((values) => createManufacturer(values))}>
-          <TextInput
-            withAsterisk
-            label="Manufacturer Name"
-            mt="sm"
-            {...form.getInputProps("name")}
-          />
-          <div className="mt-2 flex items-center justify-around">
-            <AppButton label={"Submit"} type="submit" />
-            <AppButton label={"Clear"} onClick={() => form.reset()}></AppButton>
-          </div>
-        </form>
-      </Modal>
       <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>
         <Text>
           Confirm manufacturer deletion?

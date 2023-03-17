@@ -1,56 +1,24 @@
 // pages/index.tsx
 
-import {
-  Accordion,
-  Autocomplete,
-  Button,
-  Dialog,
-  Flex,
-  Modal,
-  NumberInput,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { Accordion, Dialog, Flex, Modal, Text, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { GetServerSideProps } from "next";
-import { ReactElement, useCallback, useMemo, useState } from "react";
+import { ReactElement, useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
 import { useForm, zodResolver } from "@mantine/form";
-import { z } from "zod";
-import { PackingSlipPart } from "../generate/packing-slip";
 import { VendorAddPartAutoComplete } from "../../../components/VendorAddPartAutocomplete";
-
-export const vendorSchema = z.object({
-  name: z.string({ required_error: "Required" }),
-});
-
-export const vendorPartSchema = z.object({
-  manufacturerPartNumber: z.string({ required_error: "Required" }),
-  vendorId: z.string({ required_error: "Required" }),
-});
+import { vendorSchema } from "../../../components/ZodSchemas";
+import { AddVendorModal } from "../../../components/AddVendorModal";
 
 const Vendors: NextPageWithLayout = () => {
   const allVendors = api.vendors.getAllVendors.useQuery();
   const [vendorForDelete, setVendorForDelete] = useState("");
 
   const [openedDialog, setOpenedDialog] = useState(false);
-  const [opened, { open, close }] = useDisclosure(false);
-
-  const { mutate: createVendor } = api.vendors.createVendor.useMutation({
-    onError: () => {
-      console.log("error");
-    },
-    onSuccess: async () => {
-      console.log("success");
-      await allVendors.refetch();
-      close();
-      // void queryClient.parts.getAllPartsFull.refetch();
-    },
-  });
 
   const deleteVendor = api.vendors.deleteVendor.useMutation({
     onSuccess: async () => {
@@ -58,31 +26,10 @@ const Vendors: NextPageWithLayout = () => {
     },
   });
 
-  const form = useForm({
-    validate: zodResolver(vendorSchema),
-    initialValues: {
-      name: "",
-    },
-  });
-
   console.log(allVendors);
   return (
     <>
-      <AppButton label="New Vendor" onClick={open} />
-      <Modal opened={opened} onClose={close} title="Add New Vendor" centered>
-        <form onSubmit={form.onSubmit((values) => createVendor(values))}>
-          <TextInput
-            withAsterisk
-            label="Vendor Name"
-            mt="sm"
-            {...form.getInputProps("name")}
-          />
-          <div className="mt-2 flex items-center justify-around">
-            <AppButton label={"Submit"} type="submit" />
-            <AppButton label={"Clear"} onClick={() => form.reset()}></AppButton>
-          </div>
-        </form>
-      </Modal>
+      <AddVendorModal />
       <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>
         <Text>
           Confirm vendor deletion?

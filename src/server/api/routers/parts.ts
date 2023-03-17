@@ -1,6 +1,6 @@
 import type { PartTypes } from "@prisma/client";
 import { z } from "zod";
-import { partSchema } from "../../../components/PartsTable";
+import { partSchema } from "../../../components/ZodSchemas";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
