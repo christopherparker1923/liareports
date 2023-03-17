@@ -1,36 +1,21 @@
-import { Autocomplete, Button } from "@mantine/core";
+import { Autocomplete, AutocompleteItem, Button } from "@mantine/core";
 import { VendorPart } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 import { api } from "../utils/api";
 
 export const vendorPartSchema = z.object({
-  manufacturerPartNumber: z.string({ required_error: "Required" }),
-  vendorId: z.string({ required_error: "Required" }),
+  manufacturerPartId: z.string({ required_error: "Required" }),
+  vendorName: z.string({ required_error: "Required" }),
 });
-
-function findPartIdByPartNumber(
-  partNumber: string,
-  allManuParts: {
-    id: string;
-    partNumber: string;
-    description: string | null;
-    manufacturerName: string;
-  }[]
-): string | null {
-  const matchingPart = allManuParts.find(
-    (part) => part.partNumber === partNumber
-  );
-  return matchingPart ? matchingPart.id : null;
-}
 
 export function VendorAddPartAutoComplete(vendor: {
   id: string;
   name: string;
   vendorParts: VendorPart[];
 }) {
-  const [addPart, setAddPart] = useState("");
-  const [addPartId, setAddPartId] = useState("");
+  const [selectedPart, setSelectedPart] = useState<string>("");
   const { data: allManuParts } = api.parts.getAllParts.useQuery();
 
   const availableParts = useMemo(
@@ -51,36 +36,42 @@ export function VendorAddPartAutoComplete(vendor: {
         })) || [],
     [vendor, allManuParts]
   );
-
+  const context = api.useContext();
   const { mutate: addVendorPart } = api.vendorParts.addVendorPart.useMutation({
-    onError: () => {
-      console.log("error");
-    },
     onSuccess: async () => {
-      console.log("success");
-      setAddPart("");
+      await context.vendors.invalidate();
+      setSelectedPart("");
     },
   });
 
-  if (!allManuParts) return <div>Loading</div>;
+  function handleAddPartToVendor(part: {
+    value: string;
+    group: string;
+    id: string;
+    index: number;
+  }) {
+    addVendorPart({
+      vendorName: vendor.name,
+      manufacturerPartId: part.id,
+    });
+  }
 
-  console.log(addPart);
-  console.log(addPartId);
+  if (!allManuParts) return <div>Loading</div>;
 
   return (
     <div className="mt-2 flex w-2/5 flex-row">
       <Autocomplete
         //itemComponent={({ value, id }) => <div>{value}</div>}
         className="w-2/5"
-        id={addPartId}
-        value={addPart}
-        onChange={setAddPart}
+        onChange={setSelectedPart}
+        onItemSubmit={handleAddPartToVendor}
+        value={selectedPart}
         maxDropdownHeight={300}
         limit={50}
         placeholder="Add part to Vendor"
         data={availableParts}
       />
-      {addPart && (
+      {/* {addPart && (
         <Button
           sx={(theme) => ({
             color:
@@ -96,17 +87,17 @@ export function VendorAddPartAutoComplete(vendor: {
           className="border border-gray-500"
           onClick={() => {
             setAddPartId(findPartIdByPartNumber(addPart, allManuParts) ?? "");
-            console.log(addPart);
-            console.log(addPartId);
-            addVendorPart({
-              vendorId: vendor.id,
-              manufacturerPartNumber: addPartId,
-            });
+            // console.log(addPart);
+            // console.log(addPartId);
+            // addVendorPart({
+            //   vendorId: vendor.id,
+            //   manufacturerPartNumber: addPartId,
+            // });
           }}
         >
           Submit
         </Button>
-      )}
+      )} */}
     </div>
   );
 }

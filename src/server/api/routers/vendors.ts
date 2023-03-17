@@ -16,7 +16,11 @@ export const vendorRouter = createTRPCRouter({
     const vendors = await ctx.prisma.vendor.findMany({
       select: {
         name: true,
-        vendorParts: true,
+        vendorParts: {
+          include: {
+            ManufacturerPart: true,
+          }
+        },
         id: true,
       },
     });

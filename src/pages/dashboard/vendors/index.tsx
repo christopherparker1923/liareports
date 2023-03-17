@@ -66,7 +66,7 @@ const Vendors: NextPageWithLayout = () => {
                   return (
                     <div key={part.id} className="flex items-center gap-2">
                       <Text className="w-1/5">
-                        {part.manufacturerPartNumber ?? ""}
+                        {part.ManufacturerPart.partNumber ?? ""}
                       </Text>
                       {/* <Text className="w-1/12">{part.price ?? ""}</Text>
                       <Text className="w-1/12">{part.stock ?? ""}</Text>

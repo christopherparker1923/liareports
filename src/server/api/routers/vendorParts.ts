@@ -6,10 +6,23 @@ export const vendorPartsRouter = createTRPCRouter({
   addVendorPart: publicProcedure
     .input(vendorPartSchema)
     .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.vendorPartPriceLeadHistory.deleteMany();
-      return await ctx.prisma.vendorPart.create({
+      await ctx.prisma.vendorPart.create({
         data: {
-          ...input,
+          Vendor: {
+            connectOrCreate: {
+              where: {
+                name: input.vendorName,
+              },
+              create: {
+                name: input.vendorName,
+              },
+            }
+          },
+          ManufacturerPart: {
+            connect: {
+              id: input.manufacturerPartId,
+            }
+          }
         },
       });
     }),
