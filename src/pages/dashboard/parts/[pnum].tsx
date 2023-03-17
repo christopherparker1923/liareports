@@ -19,6 +19,7 @@ export const vendorPartPriceLeadHistorySchema = z.object({
   startDate: z.date({ required_error: "Required" }),
   price: z.number({ required_error: "Required" }).min(0),
   leadTime: z.number({ required_error: "Required" }).min(0),
+  stock: z.number({ required_error: "Required" }).min(0),
   vendorPartId: z.string({ required_error: "Required" }),
 });
 
@@ -40,6 +41,7 @@ const PartDetailView: NextPageWithLayout = () => {
       startDate: new Date(),
       price: 0,
       leadTime: 0,
+      stock: 0,
       vendorPartId: pnum,
     },
   });
@@ -50,9 +52,12 @@ const PartDetailView: NextPageWithLayout = () => {
         form.setValues({
           price: vendorPartHistory.data?.[0]?.price ?? 0,
           leadTime: vendorPartHistory.data?.[0]?.leadTime ?? 0,
+          stock: vendorPartHistory.data?.[0]?.stock ?? 0,
         });
         if (dollarRef.current)
-          dollarRef.current.value = vendorPartHistory.data?.[0]?.price;
+          dollarRef.current.value = (
+            vendorPartHistory.data?.[0]?.price ?? 0
+          ).toString();
       },
     });
 
@@ -97,7 +102,6 @@ const PartDetailView: NextPageWithLayout = () => {
               return createVendorPartPriceLeadHistory({
                 ...values,
                 price: parseFloat(dollarRef.current?.value ?? "") ?? 0,
-                
               });
             })}
           >
@@ -132,6 +136,15 @@ const PartDetailView: NextPageWithLayout = () => {
                 hideControls={true}
                 min={0}
                 {...form.getInputProps("leadTime")}
+              />
+              <NumberInput
+                className="w-2/5"
+                withAsterisk
+                label="Stock"
+                mt="sm"
+                hideControls={true}
+                min={0}
+                {...form.getInputProps("stock")}
               />
             </div>
             <div className="mt-2 flex items-center justify-around">
