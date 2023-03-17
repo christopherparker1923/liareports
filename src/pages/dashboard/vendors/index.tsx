@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { GetServerSideProps } from "next";
-import { ReactElement, useState } from "react";
+import { ReactElement, useCallback, useMemo, useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
@@ -21,94 +21,22 @@ import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
+import { PackingSlipPart } from "../generate/packing-slip";
+import { VendorAddPartAutoComplete } from "../../../components/VendorAddPartAutocomplete";
 
 export const vendorSchema = z.object({
   name: z.string({ required_error: "Required" }),
 });
 
-type VendorPart = {
-  partNumber: string;
-  description: string | undefined | null;
-  manufacturerName: string;
-  quantity?: number;
-  quantityShipped?: number;
-};
-
-type PartLineProps = {
-  index: number;
-  availableParts: VendorPart[];
-  part: VendorPart;
-  onPartChange: (index: number, part: VendorPart) => void;
-};
-
-function VendorAddPartAutoComplete({
-  index,
-  onPartChange,
-  availableParts,
-  part,
-}: PartLineProps): JSX.Element {
-  const handlePartChange =
-    <T extends keyof VendorPart>(property: T) =>
-    (value: VendorPart[T]) => {
-      // Find the part with the same part number, if it exists
-      const updatedPart = availableParts.find(
-        (part) => part.partNumber === value
-      ) || { ...part, [property]: value };
-      // Call the onPartChange function with the updated part and the index
-      onPartChange(index, updatedPart);
-    };
-  return (
-    <div key={index} className="my-1 flex w-full justify-between gap-x-1">
-      <div className="flex w-2/5 flex-row">
-        <Autocomplete
-          className="w-full"
-          value={part.partNumber}
-          maxDropdownHeight={300}
-          limit={50}
-          placeholder="Part number"
-          onChange={handlePartChange("partNumber")}
-          data={availableParts.map((part, index) => ({
-            value: part.partNumber,
-            group: part.manufacturerName,
-            index,
-          }))}
-        />
-        {part.partNumber && (
-          <Button
-            sx={(theme) => ({
-              color:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[0]
-                  : theme.black,
-
-              "&:hover": {
-                backgroundColor:
-                  theme.colorScheme === "dark"
-                    ? theme.colors.dark[8]
-                    : theme.colors.gray[2],
-              },
-            })}
-            className="border border-gray-500"
-            onClick={() =>
-              onPartChange(index, {
-                partNumber: "",
-                description: "",
-                manufacturerName: "",
-                quantity: 1,
-              })
-            }
-          >
-            Remove
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-}
+export const vendorPartSchema = z.object({
+  manufacturerPartNumber: z.string({ required_error: "Required" }),
+  vendorId: z.string({ required_error: "Required" }),
+});
 
 const Vendors: NextPageWithLayout = () => {
   const allVendors = api.vendors.getAllVendors.useQuery();
   const [vendorForDelete, setVendorForDelete] = useState("");
+
   const [openedDialog, setOpenedDialog] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -177,6 +105,12 @@ const Vendors: NextPageWithLayout = () => {
       </Dialog>
       <Accordion defaultValue="customization">
         {allVendors.data?.map((vendor) => {
+          // function addVendorPart(
+          //   id: any
+          // ): import("react").MouseEventHandler<HTMLButtonElement> | undefined {
+          //   throw new Error("Function not implemented.");
+          // }
+
           return (
             <Accordion.Item value={vendor.name.toString()} key={vendor.name}>
               <Accordion.Control>{vendor.name}</Accordion.Control>
@@ -193,14 +127,7 @@ const Vendors: NextPageWithLayout = () => {
                     </div>
                   );
                 })}
-                {/* <VendorAddPartAutoComplete
-                  part={part}
-                  key={index}
-                  availableParts={availableParts}
-                  index={index}
-                  onPartChange={onPartChange}
-                /> */}
-
+                <VendorAddPartAutoComplete {...vendor} />
                 <AppButton
                   label="Delete"
                   hidden={vendor.vendorParts.length != 0}

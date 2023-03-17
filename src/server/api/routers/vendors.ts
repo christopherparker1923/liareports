@@ -17,6 +17,7 @@ export const vendorRouter = createTRPCRouter({
       select: {
         name: true,
         vendorParts: true,
+        id: true,
       },
     });
     return vendors;

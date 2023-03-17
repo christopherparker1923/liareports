@@ -4,6 +4,7 @@ import { projectsRouter } from "./routers/projects";
 import { manufacturerRouter } from "./routers/manufacturers";
 import { vendorRouter } from "./routers/vendors";
 import { vendorPartPriceLeadHistoryRouter } from "./routers/vendorPartPriceLeadHistory";
+import { vendorPartsRouter } from "./routers/vendorParts";
 
 /**
  * This is the primary router for your server.
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   projects: projectsRouter,
   manufacturers: manufacturerRouter,
   vendors: vendorRouter,
+  vendorParts: vendorPartsRouter,
   vendorPartPriceLeadHistory: vendorPartPriceLeadHistoryRouter,
 });
 
