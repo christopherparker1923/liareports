@@ -25,6 +25,8 @@ const Vendors: NextPageWithLayout = () => {
       await allVendors.refetch();
     },
   });
+
+  console.log(allVendors);
   return (
     <>
       <AddVendorModal />

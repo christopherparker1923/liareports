@@ -7,6 +7,8 @@ import type { NextPageWithLayout } from "../../../_app";
 import { useRouter } from "next/router";
 import { AddPartHistoryModal } from "../../../../components/AddPartHistoryModal";
 import { PlotPartHistory } from "../../../../components/PlotPartHistory";
+import { useDisclosure } from "@mantine/hooks";
+import { AppButton } from "../../../../components/AppButton";
 
 const PartDetailView: NextPageWithLayout = () => {
   const router = useRouter();

@@ -18,10 +18,11 @@ export const partSchema = z.object({
 
 export const vendorPartPriceLeadHistorySchema = z.object({
   startDate: z.date({ required_error: "Required" }),
-  price: z.number({ required_error: "Required" }).min(0),
+  price: z.coerce.number({ required_error: "Required" }).min(0),
   leadTime: z.number({ required_error: "Required" }).min(0),
   stock: z.number({ required_error: "Required" }).min(0),
   vendorPartId: z.string({ required_error: "Required" }),
+  // vendorName: z.string({ required_error: "Required" }),
 });
 
 export const manufacturerSchema = z.object({
