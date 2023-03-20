@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { vendorPartPriceLeadHistorySchema } from "../../../pages/dashboard/parts/[pnum]";
+import { vendorPartPriceLeadHistorySchema } from "../../../components/ZodSchemas";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
@@ -21,7 +21,7 @@ export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
   createVendorPartPriceLeadHistory: publicProcedure
     .input(vendorPartPriceLeadHistorySchema)
     .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.vendorPartPriceLeadHistory.deleteMany(); //dont forget
+      //await ctx.prisma.vendorPartPriceLeadHistory.deleteMany(); //dont forget
       const userId = ctx.session?.user.id;
       if (!userId) {
         return {

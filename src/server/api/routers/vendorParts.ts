@@ -16,13 +16,13 @@ export const vendorPartsRouter = createTRPCRouter({
               create: {
                 name: input.vendorName,
               },
-            }
+            },
           },
           ManufacturerPart: {
             connect: {
               id: input.manufacturerPartId,
-            }
-          }
+            },
+          },
         },
       });
     }),
@@ -31,6 +31,35 @@ export const vendorPartsRouter = createTRPCRouter({
     const vendorParts = await ctx.prisma.vendor.findMany({});
     return vendorParts;
   }),
+
+  getVendorIdByVendorNameAndPartNumber: publicProcedure
+    .input(
+      z.object({
+        vendorName: z.string(),
+        partNumber: z.string(),
+        manuName: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const vendor = await ctx.prisma.vendorPart.findFirst({
+        where: {
+          Vendor: {
+            name: input.vendorName,
+          },
+          AND: {
+            ManufacturerPart: {
+              manufacturerName: input.manuName,
+              partNumber: input.partNumber,
+            },
+          },
+        },
+        select: {
+          id: true,
+          VendorPartPriceLeadHistory: true,
+        },
+      });
+      return vendor;
+    }),
 
   getVendorPartsByVendor: publicProcedure
     .input(z.string())
@@ -41,5 +70,27 @@ export const vendorPartsRouter = createTRPCRouter({
         },
       });
       return vendorPartsByVendor;
+    }),
+
+  getVendorsWhoSellPart: publicProcedure
+    .input(
+      z.object({
+        partNumber: z.string(),
+        manuName: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const vendors = await ctx.prisma.vendorPart.findMany({
+        where: {
+          ManufacturerPart: {
+            manufacturerName: input.manuName,
+            partNumber: input.partNumber,
+          },
+        },
+        include: {
+          Vendor: true,
+        },
+      });
+      return vendors;
     }),
 });

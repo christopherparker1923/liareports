@@ -109,6 +109,8 @@ model VendorPart {
   //leadTime                   Int //Days
   VendorPartPriceLeadHistory VendorPartPriceLeadHistory[]
 
+
+  //@@unique([ManufacturerPart, vendorId])
   @@index([manufacturerPartNumber])
   @@index([vendorId])
 }

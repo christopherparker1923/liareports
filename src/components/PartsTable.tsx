@@ -156,7 +156,9 @@ export function PartsTable() {
                           key={cell.id}
                           className="border-b  border-zinc-500 px-4 py-2"
                         >
-                          <Link href={`parts/${cell.getValue()}`}>
+                          <Link
+                            href={`parts/${row.original.manufacturerName}/${row.original.partNumber}`}
+                          >
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()

@@ -18,14 +18,17 @@ export function VendorAddPartAutoComplete(vendor: {
   const [selectedPart, setSelectedPart] = useState<string>("");
   const { data: allManuParts } = api.parts.getAllParts.useQuery();
 
+  console.log("vendor", vendor);
+  console.log("vendor parts", vendor.vendorParts);
+  console.log("manu parts", allManuParts);
+
   const availableParts = useMemo(
     () =>
       allManuParts
         ?.filter(
           (part) =>
             vendor.vendorParts.findIndex(
-              (vendorPart) =>
-                vendorPart.manufacturerPartNumber === part.partNumber
+              (vendorPart) => vendorPart.manufacturerPartNumber === part.id
             ) === -1
         )
         .map((part, index) => ({

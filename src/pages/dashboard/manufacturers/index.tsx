@@ -3,6 +3,7 @@
 import { Accordion, Dialog, Flex, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { GetServerSideProps } from "next";
+import Link from "next/link";
 import { ReactElement, useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
@@ -57,7 +58,13 @@ const Manufacturers: NextPageWithLayout = () => {
                 {manufacturer.manufacturerParts?.map((part) => {
                   return (
                     <div key={part.id} className="flex items-center gap-2">
-                      <Text className="w-1/5">{part.partNumber ?? ""}</Text>
+                      <Link
+                        className="w-1/5"
+                        href={`parts/${manufacturer.name}/${part.partNumber}`}
+                      >
+                        <Text>{part.partNumber ?? ""}</Text>
+                      </Link>
+
                       <Text className="w-auto">{part.description ?? ""}</Text>
                     </div>
                   );
