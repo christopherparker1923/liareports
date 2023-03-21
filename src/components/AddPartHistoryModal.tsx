@@ -2,6 +2,7 @@ import { Autocomplete, Modal, NumberInput, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { VendorPartPriceLeadHistory } from "@prisma/client";
 import { IconCurrencyDollar } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 import { api } from "../utils/api";
@@ -17,6 +18,23 @@ export function AddPartHistoryModal({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const [vendorName, setVendorName] = useState("");
+  const [sortedVendorPartHistory, setSortedVendorPartHistory] = useState<
+    VendorPartPriceLeadHistory[]
+  >([]);
+
+  function sortVendorPartPriceLeadHistoryByStartDate(
+    leadHistoryList: VendorPartPriceLeadHistory[]
+  ) {
+    return leadHistoryList.sort((a, b) => {
+      if (a.startDate > b.startDate) {
+        return -1;
+      } else if (a.startDate > b.startDate) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
 
   // const [invalidVendorOpened, setInvalidVendorOpened] = useState(false);
   const { data: vendors } = api.vendorParts.getVendorsWhoSellPart.useQuery({
@@ -45,6 +63,11 @@ export function AddPartHistoryModal({
       },
       {
         onSuccess: (val) => {
+          setSortedVendorPartHistory(
+            sortVendorPartPriceLeadHistoryByStartDate(
+              val?.VendorPartPriceLeadHistory || []
+            )
+          );
           form.setValues({
             price: val?.VendorPartPriceLeadHistory[0]?.price.toString() ?? "",
             leadTime: val?.VendorPartPriceLeadHistory[0]?.leadTime ?? 0,

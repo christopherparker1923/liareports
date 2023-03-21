@@ -80,7 +80,27 @@ export const partsRouter = createTRPCRouter({
         .catch((e) => console.log(e));
     }),
 
-  getSecretMessage: publicProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
+  getManuPartFromNumberAndManu: publicProcedure
+    .input(
+      z.object({
+        partNumber: z.string(),
+        manuName: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const part = await ctx.prisma.manufacturerPart.findFirst({
+        where: {
+          manufacturerName: input.manuName,
+          partNumber: input.partNumber,
+        },
+        include: {
+          ProjectPart: {
+            include: {
+              project: true,
+            },
+          },
+        },
+      });
+      return part;
+    }),
 });

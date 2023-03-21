@@ -14,7 +14,7 @@ export const projectsRouter = createTRPCRouter({
           ...input,
           createdBy: {
             connect: {
-              id: "cleixyvxr0000ub9chmyznxro",
+              id: ctx.session?.user.id,
             },
           },
         },

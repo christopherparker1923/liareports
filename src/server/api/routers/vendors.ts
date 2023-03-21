@@ -4,14 +4,6 @@ import { vendorSchema } from "../../../components/ZodSchemas";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const vendorRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
   getAllVendors: publicProcedure.query(async ({ ctx }) => {
     const vendors = await ctx.prisma.vendor.findMany({
       select: {
@@ -19,7 +11,7 @@ export const vendorRouter = createTRPCRouter({
         vendorParts: {
           include: {
             ManufacturerPart: true,
-          }
+          },
         },
         id: true,
       },
@@ -71,8 +63,4 @@ export const vendorRouter = createTRPCRouter({
         },
       });
     }),
-
-  getSecretMessage: publicProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
 });

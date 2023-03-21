@@ -1,6 +1,6 @@
-import { Text } from "@mantine/core";
+import { Card, Divider, Text } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../../_app";
@@ -9,23 +9,49 @@ import { AddPartHistoryModal } from "../../../../components/AddPartHistoryModal"
 import { PlotPartHistory } from "../../../../components/PlotPartHistory";
 import { useDisclosure } from "@mantine/hooks";
 import { AppButton } from "../../../../components/AppButton";
+import { api } from "../../../../utils/api";
+import { VendorPart, VendorPartPriceLeadHistory } from "@prisma/client";
 
 const PartDetailView: NextPageWithLayout = () => {
   const router = useRouter();
   const { pnum, pmanu } = router.query as { pmanu: string; pnum: string };
-  const props = [
-    { date: "march 3", price: 500, leadTime: 10, stock: 2 },
-    { date: "march 10", price: 700, leadTime: 11, stock: 9 },
-  ];
+  const [sortedVendorPartHistory, setSortedVendorPartHistory] = useState<
+    VendorPartPriceLeadHistory[]
+  >([]);
+  const { data: manufacturerPart } =
+    api.parts.getManuPartFromNumberAndManu.useQuery({
+      partNumber: pnum,
+      manuName: pmanu,
+    });
+  const allVendorsHistory = api.vendorParts.getVendorPartsOfManuPart.useQuery({
+    partNumber: pnum,
+    manuName: pmanu,
+  });
+
+  console.log("allvendorhist", allVendorsHistory);
+
+  function sortVendorPartPriceLeadHistoryByStartDate(
+    leadHistoryList: VendorPartPriceLeadHistory[]
+  ) {
+    return leadHistoryList.sort((a, b) => {
+      if (a.startDate < b.startDate) {
+        return -1;
+      } else if (a.startDate > b.startDate) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
 
   if (!pnum) return <div>Invalid part id</div>;
   return (
     <>
-      <div className="flex justify-between">
-        <div className="flex">
-          <Text className="mr-4" size="sm">
-            Placehodler <br />
-            for Image
+      <div className="flex content-center justify-between">
+        <div className="flex content-center items-center justify-start">
+          <Text className="" size="sm">
+            {/* Placeholder <br />
+            for Image */}
           </Text>
           <Text className="mr-2" size="xl">
             {pmanu}
@@ -34,8 +60,60 @@ const PartDetailView: NextPageWithLayout = () => {
         </div>
         <AddPartHistoryModal pnum={pnum} pmanu={pmanu} />
       </div>
-      <div className="p-3">
-        <PlotPartHistory plotProps={props} />
+      <Text className="mb-2" size="md">
+        {manufacturerPart?.description}
+      </Text>
+      <div>
+        <div className="flex flex-wrap gap-2">
+          {allVendorsHistory.data?.map((vendorInstance) => {
+            const sortedVendorPartHistory =
+              sortVendorPartPriceLeadHistoryByStartDate(
+                vendorInstance.VendorPartPriceLeadHistory
+              );
+            const plotProps = sortedVendorPartHistory.map((history) => ({
+              date: history.startDate,
+              price: history.price,
+              leadTime: history.leadTime,
+              stock: history.stock,
+            }));
+            return (
+              <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Card.Section>
+                  <Text className="p-2" size="xl" color="dimmed">
+                    {vendorInstance.Vendor.name}
+                  </Text>
+                </Card.Section>
+                <Divider variant="solid" />
+                <Card.Section className="pt-2">
+                  <PlotPartHistory plotProps={plotProps} />
+                </Card.Section>
+              </Card>
+            );
+          })}
+        </div>
+        <Card className="mt-2" shadow="sm" padding="lg" radius="md" withBorder>
+          <Card.Section>
+            <Text className="p-2" size="xl">
+              Projects
+            </Text>
+          </Card.Section>
+          <Divider variant="solid" />
+          <Card.Section className="pt-2">
+            {manufacturerPart?.ProjectPart.map((projectPart) => {
+              return (
+                <div className="flex">
+                  <Text className="w-1/5 p-2">{projectPart.projectNumber}</Text>
+
+                  <Text className="w-1/5 p-2">
+                    Lead: {projectPart.project?.projectLead}
+                  </Text>
+                </div>
+              );
+            })}
+          </Card.Section>
+        </Card>
+
+        {/* //<PlotPartHistory plotProps={props} /> */}
       </div>
     </>
   );

@@ -93,4 +93,27 @@ export const vendorPartsRouter = createTRPCRouter({
       });
       return vendors;
     }),
+
+  getVendorPartsOfManuPart: publicProcedure
+    .input(
+      z.object({
+        partNumber: z.string(),
+        manuName: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const vendorParts = await ctx.prisma.vendorPart.findMany({
+        where: {
+          ManufacturerPart: {
+            manufacturerName: input.manuName,
+            partNumber: input.partNumber,
+          },
+        },
+        include: {
+          Vendor: true,
+          VendorPartPriceLeadHistory: true,
+        },
+      });
+      return vendorParts;
+    }),
 });
