@@ -1,4 +1,4 @@
-import type { PartTypes } from "@prisma/client";
+import type { PartTypes, Project, ProjectPart } from "@prisma/client";
 import { z } from "zod";
 import { partSchema } from "../../../components/ZodSchemas";
 
@@ -101,6 +101,55 @@ export const partsRouter = createTRPCRouter({
           },
         },
       });
+
+      const resultOne: ProjectPartByProject = {};
+      for (const item of part?.ProjectPart ?? []) {
+        const key = item.project?.projectNumber;
+        if (!key) continue;
+        if (!resultOne[key]) {
+          resultOne[key] = [] as typeof item[];
+        }
+        resultOne[key]?.push(item);
+      }
+      console.log("🚀 ~ file: parts.ts:106 ~ .query ~ resultOne:", resultOne);
+      //returns this for the test part
+      // {
+      //   '22199': [
+      //     {
+      //       id: 1,
+      //       manufacturerPartId: 'clfd1cdt901c6to3gaz0r8i9o',
+      //       projectNumber: '22199',
+      //       parentId: null,
+      //       project: [Object]
+      //     },
+      //     {
+      //       id: 2,
+      //       manufacturerPartId: 'clfd1cdt901c6to3gaz0r8i9o',
+      //       projectNumber: '22199',
+      //       parentId: null,
+      //       project: [Object]
+      //     }
+      //   ];
+      // }
+      const resultTwo: ProjectPartByProjectCount = {};
+      for (const item of part?.ProjectPart ?? []) {
+        const key = item.project?.projectNumber;
+        if (!key) continue;
+        if (!resultTwo[key]) {
+          resultTwo[key] = 0;
+        }
+        resultTwo[key]++;
+      }
+      //returns this for the test part
+      // { '22199': 2 }
+      console.log("🚀 ~ file: parts.ts:134 ~ .query ~ resultTwo:", resultTwo);
       return part;
-    }),
+    })
 });
+type ProjectPartByProjectCount = {
+  [key: string]: number;
+};
+
+type ProjectPartByProject = {
+  [key: string]: (ProjectPart & { project: Project | null; })[];
+};
