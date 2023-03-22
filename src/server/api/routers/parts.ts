@@ -102,16 +102,16 @@ export const partsRouter = createTRPCRouter({
         },
       });
 
-      const resultOne: ProjectPartByProject = {};
-      for (const item of part?.ProjectPart ?? []) {
-        const key = item.project?.projectNumber;
-        if (!key) continue;
-        if (!resultOne[key]) {
-          resultOne[key] = [] as typeof item[];
-        }
-        resultOne[key]?.push(item);
-      }
-      console.log("🚀 ~ file: parts.ts:106 ~ .query ~ resultOne:", resultOne);
+      // const resultOne: ProjectPartByProject = {};
+      // for (const item of part?.ProjectPart ?? []) {
+      //   const key = item.project?.projectNumber;
+      //   if (!key) continue;
+      //   if (!resultOne[key]) {
+      //     resultOne[key] = [] as (typeof item)[];
+      //   }
+      //   resultOne[key]?.push(item);
+      // }
+      // console.log("🚀 ~ file: parts.ts:106 ~ .query ~ resultOne:", resultOne);
       //returns this for the test part
       // {
       //   '22199': [
@@ -136,20 +136,26 @@ export const partsRouter = createTRPCRouter({
         const key = item.project?.projectNumber;
         if (!key) continue;
         if (!resultTwo[key]) {
-          resultTwo[key] = 0;
+          resultTwo[key] = {
+            count: 0,
+            lead: item.project?.projectLead || "",
+          };
         }
-        resultTwo[key]++;
+        resultTwo[key]!.count++;
       }
       //returns this for the test part
       // { '22199': 2 }
       console.log("🚀 ~ file: parts.ts:134 ~ .query ~ resultTwo:", resultTwo);
-      return part;
-    })
+      return {
+        projectPartCounts: resultTwo,
+        partDescription: part?.description,
+      };
+    }),
 });
 type ProjectPartByProjectCount = {
-  [key: string]: number;
+  [key: string]: { count: number; lead: string };
 };
 
 type ProjectPartByProject = {
-  [key: string]: (ProjectPart & { project: Project | null; })[];
+  [key: string]: (ProjectPart & { project: Project | null })[];
 };

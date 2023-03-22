@@ -45,6 +45,8 @@ const PartDetailView: NextPageWithLayout = () => {
   }
 
   if (!pnum) return <div>Invalid part id</div>;
+  if (manufacturerPart === undefined || manufacturerPart === null)
+    return <div>Loading manufacturer part</div>;
   return (
     <>
       <div className="flex content-center justify-between">
@@ -61,7 +63,7 @@ const PartDetailView: NextPageWithLayout = () => {
         <AddPartHistoryModal pnum={pnum} pmanu={pmanu} />
       </div>
       <Text className="mb-2" size="md">
-        {manufacturerPart?.description}
+        {manufacturerPart?.partDescription}
       </Text>
       <div>
         <div className="flex flex-wrap gap-2">
@@ -99,17 +101,15 @@ const PartDetailView: NextPageWithLayout = () => {
           </Card.Section>
           <Divider variant="solid" />
           <Card.Section className="pt-2">
-            {manufacturerPart?.ProjectPart.map((projectPart) => {
-              return (
+            {Object.entries(manufacturerPart.projectPartCounts).map(
+              ([key, value]) => (
                 <div className="flex">
-                  <Text className="w-1/5 p-2">{projectPart.projectNumber}</Text>
-
-                  <Text className="w-1/5 p-2">
-                    Lead: {projectPart.project?.projectLead}
-                  </Text>
+                  <Text className="w-1/5 p-2">{key}</Text>
+                  <Text className="w-1/5 p-2">Lead: {value.lead}</Text>
+                  <Text className="w-1/5 p-2">Quantity: {value.count}</Text>
                 </div>
-              );
-            })}
+              )
+            )}
           </Card.Section>
         </Card>
 

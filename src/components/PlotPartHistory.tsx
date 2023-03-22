@@ -32,8 +32,8 @@ export function PlotPartHistory(plotProps: {
   if (latestDate && dateOneYearAgo) {
     dateOneYearAgo.setFullYear(latestDate.getFullYear() - 1);
   }
-  const xMin = dateOneYearAgo?.getTime();
-  const xMax = latestDate?.getTime();
+  const xMin = dateOneYearAgo?.getTime() || 0;
+  const xMax = latestDate?.getTime() || 0;
 
   console.log("latestDate", latestDate);
   console.log("yearago", dateOneYearAgo);

@@ -109,11 +109,11 @@ function PartFormLine({
             placeholder="Qty"
             value={part.quantity}
             onChange={(value) => {
-              handlePartChange("quantity")(value);
+              handlePartChange("quantity")(value || undefined);
               const updatedPart = {
                 ...part,
-                quantity: value,
-                quantityShipped: value,
+                quantity: value || undefined,
+                quantityShipped: value || undefined,
               };
               onPartChange(index, updatedPart);
             }}
@@ -124,7 +124,7 @@ function PartFormLine({
             defaultValue={1}
             placeholder="Qty"
             value={part.quantityShipped}
-            onChange={handlePartChange("quantityShipped")}
+            onChange={(e) => handlePartChange("quantityShipped")(e || 0)}
           />
         </>
       )}
@@ -183,89 +183,91 @@ const PackingSlip: NextPageWithLayout = () => {
   return (
     //Put in a flex box with 2 inputs per row
     <>
-      <TextInput
-        value={customer}
-        label="Customer ID"
-        placeholder="e.g. TMMC"
-        onChange={(event) => setCustomer(event.currentTarget.value)}
-      />
-      <TextInput
-        value={customerContact}
-        label="Customer Contact"
-        placeholder="Purchasing Dept."
-        onChange={(event) => setCustomerContact(event.currentTarget.value)}
-      />
-      <TextInput
-        value={billingAddress}
-        label="Billing Address"
-        placeholder="e.g Same as Shipping"
-        defaultValue={"Same as Shipping"}
-        onChange={(event) => setBillingAddress(event.currentTarget.value)}
-      />
-      <TextInput
-        value={shippingAddress}
-        label="Shipping Address"
-        placeholder="e.g. TMMC 1055 Fountain St, Cambridge ON"
-        onChange={(event) => setShippingAddress(event.currentTarget.value)}
-      />
-      <TextInput
-        value={orderDate}
-        label="Order Date"
-        placeholder=""
-        defaultValue={formattedDate}
-        onChange={(event) => setOrderDate(event.currentTarget.value)}
-      />
-      <TextInput
-        value={orderNumber}
-        label="Order Number"
-        placeholder="[123456]"
-        onChange={(event) => setOrderNumber(event.currentTarget.value)}
-      />
-      <TextInput
-        value={purchaseOrder}
-        label="Purchase Order"
-        placeholder="[123456]"
-        onChange={(event) => setPurchaseOrder(event.currentTarget.value)}
-      />
+      <div className="flex flex-wrap gap-5">
+        <TextInput
+          value={customer}
+          label="Customer ID"
+          placeholder="e.g. TMMC"
+          onChange={(event) => setCustomer(event.currentTarget.value)}
+        />
+        <TextInput
+          value={customerContact}
+          label="Customer Contact"
+          placeholder="Purchasing Dept."
+          onChange={(event) => setCustomerContact(event.currentTarget.value)}
+        />
+        <TextInput
+          value={billingAddress}
+          label="Billing Address"
+          placeholder="e.g Same as Shipping"
+          defaultValue={"Same as Shipping"}
+          onChange={(event) => setBillingAddress(event.currentTarget.value)}
+        />
+        <TextInput
+          value={shippingAddress}
+          label="Shipping Address"
+          placeholder="e.g. TMMC 1055 Fountain St, Cambridge ON"
+          onChange={(event) => setShippingAddress(event.currentTarget.value)}
+        />
+        <TextInput
+          value={orderDate}
+          label="Order Date"
+          placeholder=""
+          defaultValue={formattedDate}
+          onChange={(event) => setOrderDate(event.currentTarget.value)}
+        />
+        <TextInput
+          value={orderNumber}
+          label="Order Number"
+          placeholder="[123456]"
+          onChange={(event) => setOrderNumber(event.currentTarget.value)}
+        />
+        <TextInput
+          value={purchaseOrder}
+          label="Purchase Order"
+          placeholder="[123456]"
+          onChange={(event) => setPurchaseOrder(event.currentTarget.value)}
+        />
 
-      <TextInput
-        value={userName}
-        label="LIA Contact Name"
-        placeholder="Your Name"
-        defaultValue={sessionData?.user.name ?? ""}
-        onChange={(event) => setUserName(event.currentTarget.value)}
-      />
-      <TextInput
-        value={userPhone}
-        label="LIA Contact Number"
-        placeholder="Your Phone Number" //Add sessionData.user.phoneNumber
-        onChange={(event) => setUserPhone(event.currentTarget.value)}
-      />
-      <TextInput
-        value={userEmail}
-        label="LIA Contact Email"
-        placeholder="Your Email"
-        defaultValue={sessionData?.user.email ?? ""}
-        onChange={(event) => setUserEmail(event.currentTarget.value)}
-      />
-      <TextInput
-        value={postComment}
-        label="Comment"
-        placeholder="Appears in large 'Comments' box"
-        onChange={(event) => setPostComment(event.currentTarget.value)}
-      />
-      <TextInput
-        value={watermark}
-        label="Watermark"
-        placeholder="Appears translucent & angled across parts"
-        onChange={(event) => setWatermark(event.currentTarget.value)}
-      />
-      <TextInput
-        value={watermarkColor}
-        label="Watermark Color"
-        placeholder="Defaults to grey; 'red', 'green' are options" //Add autocomplete to pick from legal colours
-        onChange={(event) => setWatermarkColor(event.currentTarget.value)}
-      />
+        <TextInput
+          value={userName}
+          label="LIA Contact Name"
+          placeholder="Your Name"
+          defaultValue={sessionData?.user.name ?? ""}
+          onChange={(event) => setUserName(event.currentTarget.value)}
+        />
+        <TextInput
+          value={userPhone}
+          label="LIA Contact Number"
+          placeholder="Your Phone Number" //Add sessionData.user.phoneNumber
+          onChange={(event) => setUserPhone(event.currentTarget.value)}
+        />
+        <TextInput
+          value={userEmail}
+          label="LIA Contact Email"
+          placeholder="Your Email"
+          defaultValue={sessionData?.user.email ?? ""}
+          onChange={(event) => setUserEmail(event.currentTarget.value)}
+        />
+        <TextInput
+          value={postComment}
+          label="Comment"
+          placeholder="Appears in large 'Comments' box"
+          onChange={(event) => setPostComment(event.currentTarget.value)}
+        />
+        <TextInput
+          value={watermark}
+          label="Watermark"
+          placeholder="Appears translucent & angled across parts"
+          onChange={(event) => setWatermark(event.currentTarget.value)}
+        />
+        <TextInput
+          value={watermarkColor}
+          label="Watermark Color"
+          placeholder="Defaults to grey; 'red', 'green' are options" //Add autocomplete to pick from legal colours
+          onChange={(event) => setWatermarkColor(event.currentTarget.value)}
+        />
+      </div>
       <div className="my-1 flex w-full justify-between gap-x-1">
         <Text className="flex w-2/5 flex-row" size="sm">
           Parts
