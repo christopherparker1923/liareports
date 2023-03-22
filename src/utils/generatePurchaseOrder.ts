@@ -36,6 +36,10 @@ export async function generatePurchaseOrder(
     });
   };
 
+  console.log(
+    "\n\n\n\n\n\n\n\n\n\n we're packing a slip here boys \n\n\n\n\n\n\n\n\n"
+  );
+
   const partsList = parts.map((part) => ({
     text: part.partNumber || "",
     description: part.description || "",
@@ -80,7 +84,6 @@ export async function generatePurchaseOrder(
   const textBlue = colors.puertoRico;
   const backgroundBlue = colors.rhino;
   const backgroundGrey = colors.osloGray;
-
   const body = [
     [
       {
@@ -167,7 +170,7 @@ export async function generatePurchaseOrder(
                 style: "header",
               },
               {
-                text: "PACKING SLIP",
+                text: "PURCHASE ORDER",
                 style: "coloredText",
                 margin: [0, 100, 0, 0],
               },
@@ -175,7 +178,187 @@ export async function generatePurchaseOrder(
           },
         ],
       },
+      {
+        canvas: [
+          {
+            type: "line",
+            x1: 0,
+            y1: 5,
+            x2: 595 - 2 * 40,
+            y2: 5,
+            lineWidth: 2,
+          },
+        ],
+      },
+      {
+        margin: [-5, 10, -5, 0],
+        style: "infoText",
+        table: {
+          widths: ["auto", "*", "auto", "auto"],
+          body: [
+            [
+              { text: "60 Ottawa St S", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "Date:", border: [false, false, false, false] },
+              { text: formattedDate, border: [true, true, true, true] },
+            ],
+            [
+              {
+                text: "Kitchener, ON, N2G 3R5",
+                border: [false, false, false, false],
+              },
+              { text: "", border: [false, false, false, false] },
+              { text: "LIA Job #:", border: [false, false, false, false] },
+              { text: customer, border: [true, true, true, true] }, //replace customer
+            ],
+            [
+              {
+                text: "Phone: 519-590-7769 519-504-7906",
+                border: [false, false, false, false],
+              },
+              { text: "", border: [false, false, false, false] },
+              { text: "P.O. NO.", border: [false, false, false, false] },
+              { text: "", border: [true, true, true, true] }, //Replace empty string with PO#
+            ],
+            [
+              {
+                text: "Website: www.linesideautomation.com",
+                border: [false, false, false, false],
+              },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+          ],
+        },
+      },
+      //   Header End
+      {
+        margin: [-5, 10, -5, 0],
+        table: {
+          heights: ["auto", 80, "auto", "auto", "auto", "auto", "auto"],
+          headerRows: 1,
+          widths: ["auto", "*", "auto", "*"],
+          body: [
+            [
+              {
+                text: "BILL TO:",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              { text: "", border: [false, false, false, false] },
+              {
+                text: "SHIP TO:",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              { text: billingAdress, border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: shippingAdress, border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              {
+                text: "ORDER DATE",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              {
+                text: "ORDER #",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              {
+                text: "PO #",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+              {
+                text: "CUSTOMER CONTACT",
+                fillColor: backgroundBlue,
+                color: "white",
+                border: [false, false, false, false],
+              },
+            ],
+            [
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+            [
+              { text: orderDate, border: [false, false, false, false] },
+              { text: orderNumber, border: [false, false, false, false] },
+              { text: purchaseOrder, border: [false, false, false, false] },
+              { text: customerContact, border: [false, false, false, false] },
+            ],
+            [
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+              { text: "", border: [false, false, false, false] },
+            ],
+          ],
+        },
+      },
+      {
+        margin: [-5, 10, -5, 10],
+        table: {
+          headerRows: 1,
+          widths: ["auto", "*", "auto", "auto"],
+          body,
+        },
+      },
 
+      {
+        margin: [-5, 0, -5, 0],
+        table: {
+          widths: ["*"],
+          heights: ["auto", 60, "auto", 60],
+          body: [
+            [
+              {
+                text: "COMMENTS:",
+                fillColor: backgroundGrey,
+                border: [true, true, true, false],
+              },
+            ],
+            [
+              {
+                text: postComment,
+                border: [true, false, true, true],
+              },
+            ],
+            [
+              {
+                text: "CUSTOMER SIGNATURE:",
+                fillColor: backgroundGrey,
+                border: [true, true, true, false],
+              },
+            ],
+            [
+              {
+                text: "",
+                border: [true, false, true, true],
+              },
+            ],
+          ],
+        },
+      },
       {
         text: "If you have any questions or concers, please contact\n",
         alignment: "center",
