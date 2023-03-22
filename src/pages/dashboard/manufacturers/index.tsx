@@ -1,7 +1,6 @@
 // pages/index.tsx
 
 import { Accordion, Dialog, Flex, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import type { GetServerSideProps } from "next";
 import Link from "next/link";
 import { ReactElement, useState } from "react";

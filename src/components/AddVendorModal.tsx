@@ -19,7 +19,7 @@ export function AddVendorModal() {
     onError: () => {
       console.log("error");
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       console.log("success");
       close();
     },

@@ -1,6 +1,5 @@
-import { Autocomplete, AutocompleteItem, Button } from "@mantine/core";
+import { Autocomplete } from "@mantine/core";
 import { VendorPart } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 import { api } from "../utils/api";

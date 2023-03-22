@@ -3,7 +3,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { api } from "../utils/api";
 import { AppButton } from "./AppButton";
-import { manufacturerSchema, vendorSchema } from "./ZodSchemas";
+import { manufacturerSchema } from "./ZodSchemas";
 
 export function AddVendorModal() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -20,7 +20,7 @@ export function AddVendorModal() {
       onError: () => {
         console.log("error");
       },
-      onSuccess: async () => {
+      onSuccess: () => {
         console.log("success");
         close();
         // void queryClient.parts.getAllPartsFull.refetch();

@@ -2,7 +2,6 @@
 
 import type { GetServerSideProps } from "next";
 import type { ReactElement } from "react";
-import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { PartsTable } from "../../../components/PartsTable";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";

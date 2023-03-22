@@ -79,7 +79,13 @@ const PartDetailView: NextPageWithLayout = () => {
               stock: history.stock,
             }));
             return (
-              <Card shadow="sm" padding="lg" radius="md" withBorder>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                withBorder
+                key={vendorInstance.vendorId}
+              >
                 <Card.Section>
                   <Text className="p-2" size="xl" color="dimmed">
                     {vendorInstance.Vendor.name}
@@ -103,7 +109,7 @@ const PartDetailView: NextPageWithLayout = () => {
           <Card.Section className="pt-2">
             {Object.entries(manufacturerPart.projectPartCounts).map(
               ([key, value]) => (
-                <div className="flex">
+                <div className="flex" key={key}>
                   <Text className="w-1/5 p-2">{key}</Text>
                   <Text className="w-1/5 p-2">Lead: {value.lead}</Text>
                   <Text className="w-1/5 p-2">Quantity: {value.count}</Text>
