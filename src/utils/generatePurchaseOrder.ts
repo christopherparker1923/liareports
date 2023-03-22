@@ -1,4 +1,5 @@
 // Import the pdfmake library
+import { Vendor } from "@prisma/client";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
@@ -8,6 +9,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 // Define the PDF document structure
 export async function generatePurchaseOrder(
   parts: PackingSlipPart[],
+  //   vendor: Vendor,
   customer = "",
   billingAdress = "Same as Shipping",
   shippingAdress = "",
@@ -35,11 +37,6 @@ export async function generatePurchaseOrder(
       6;
     });
   };
-
-  console.log(
-    "\n\n\n\n\n\n\n\n\n\n we're packing a slip here boys \n\n\n\n\n\n\n\n\n"
-  );
-
   const partsList = parts.map((part) => ({
     text: part.partNumber || "",
     description: part.description || "",
@@ -84,32 +81,37 @@ export async function generatePurchaseOrder(
   const textBlue = colors.puertoRico;
   const backgroundBlue = colors.rhino;
   const backgroundGrey = colors.osloGray;
+  const falseBorder = [false, false, false, false];
+  const trueBorder = [true, true, true, true];
+  const emptyCol = { text: "", border: falseBorder };
+  const emptyRow = [emptyCol, emptyCol, emptyCol, emptyCol];
+
   const body = [
     [
       {
         text: "ITEM #",
         fillColor: backgroundBlue,
         color: "white",
-        border: [false, false, false, false],
+        border: falseBorder,
       },
       {
         text: "DESCRIPTION",
         fillColor: backgroundBlue,
         alignment: "center",
         color: "white",
-        border: [false, false, false, false],
+        border: falseBorder,
       },
       {
         text: "ORDER QTY",
         fillColor: backgroundBlue,
         color: "white",
-        border: [false, false, false, false],
+        border: falseBorder,
       },
       {
         text: "SHIP QTY",
         fillColor: backgroundBlue,
         color: "white",
-        border: [false, false, false, false],
+        border: falseBorder,
       },
     ],
     ...partsList.map((part) => [
@@ -130,15 +132,15 @@ export async function generatePurchaseOrder(
     [
       {
         text: "",
-        border: [false, false, false, false],
+        border: falseBorder,
       },
       {
         text: "Total:",
         alignment: "right",
-        border: [false, false, false, false],
+        border: falseBorder,
       },
-      { text: totalOrderQty, border: [false, false, false, false] },
-      { text: totalShipQty, border: [false, false, false, false] },
+      { text: totalOrderQty, border: falseBorder },
+      { text: totalShipQty, border: falseBorder },
     ],
   ];
 
@@ -197,121 +199,177 @@ export async function generatePurchaseOrder(
           widths: ["auto", "*", "auto", "auto"],
           body: [
             [
-              { text: "60 Ottawa St S", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "Date:", border: [false, false, false, false] },
-              { text: formattedDate, border: [true, true, true, true] },
+              { text: "60 Ottawa St S", border: falseBorder },
+              emptyCol,
+              { text: "Date:", border: falseBorder },
+              { text: formattedDate, border: trueBorder },
             ],
             [
               {
                 text: "Kitchener, ON, N2G 3R5",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
-              { text: "", border: [false, false, false, false] },
-              { text: "LIA Job #:", border: [false, false, false, false] },
-              { text: customer, border: [true, true, true, true] }, //replace customer
+              { text: "", border: falseBorder },
+              { text: "LIA Job #:", border: falseBorder },
+              { text: customer, border: trueBorder }, //replace customer
             ],
             [
               {
                 text: "Phone: 519-590-7769 519-504-7906",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
-              { text: "", border: [false, false, false, false] },
-              { text: "P.O. NO.", border: [false, false, false, false] },
-              { text: "", border: [true, true, true, true] }, //Replace empty string with PO#
+              emptyCol,
+              {
+                text: "P.O. NO.",
+                bold: true,
+                border: falseBorder,
+              },
+              { text: "", bold: true, border: trueBorder }, //Replace empty string with PO#
             ],
             [
               {
                 text: "Website: www.linesideautomation.com",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
+              emptyCol,
+              emptyCol,
+              emptyCol,
             ],
           ],
         },
       },
       //   Header End
       {
-        margin: [-5, 10, -5, 0],
+        margin: [-5, 10, -5, 10],
         table: {
-          heights: ["auto", 80, "auto", "auto", "auto", "auto", "auto"],
           headerRows: 1,
           widths: ["auto", "*", "auto", "*"],
           body: [
             [
               {
-                text: "BILL TO:",
+                text: "VENDOR:",
                 fillColor: backgroundBlue,
                 color: "white",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
-              { text: "", border: [false, false, false, false] },
+              emptyCol,
               {
                 text: "SHIP TO:",
                 fillColor: backgroundBlue,
                 color: "white",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
-              { text: "", border: [false, false, false, false] },
+              emptyCol,
             ],
             [
-              { text: billingAdress, border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: shippingAdress, border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
+              {
+                text: "Aztec Electrical Supply", //Replace
+                border: falseBorder,
+              },
+              emptyCol,
+              {
+                text: shippingAdress, //Change to shippinInstructions
+                border: falseBorder,
+              },
+              emptyCol,
             ],
             [
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
+              {
+                text: "75 Saltsman", //Replace
+                border: falseBorder,
+              },
+              emptyCol,
+              emptyCol,
+              emptyCol,
             ],
+            [
+              {
+                text: "Cambridge ON, N3H 4R7", //Replace
+                border: falseBorder,
+              },
+              emptyCol,
+              emptyCol,
+              emptyCol,
+            ],
+            [
+              {
+                text: "(519)...", //Replace
+                border: falseBorder,
+              },
+              emptyCol,
+              emptyCol,
+              emptyCol,
+            ],
+            [
+              {
+                text: "(519)...", //Replace
+                border: falseBorder,
+              },
+              emptyCol,
+              emptyCol,
+              emptyCol,
+            ],
+            [
+              {
+                text: "jschnarr@", //Replace
+                border: falseBorder,
+              },
+              emptyCol,
+              emptyCol,
+              emptyCol,
+            ],
+
+            // [
+            //   { text: billingAdress, border: falseBorder },
+            //   emptyCol,
+            //   { text: shippingAdress, border: falseBorder },
+            //   emptyCol,
+            // ],
+          ],
+        },
+      },
+
+      //////////Left off here
+      {
+        margin: [-5, 0, -5, 0],
+        table: {
+          headerRows: 1,
+          widths: ["auto", "*", "auto", "*"],
+          body: [
             [
               {
                 text: "ORDER DATE",
                 fillColor: backgroundBlue,
                 color: "white",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
               {
                 text: "ORDER #",
                 fillColor: backgroundBlue,
                 color: "white",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
               {
                 text: "PO #",
                 fillColor: backgroundBlue,
                 color: "white",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
               {
                 text: "CUSTOMER CONTACT",
                 fillColor: backgroundBlue,
                 color: "white",
-                border: [false, false, false, false],
+                border: falseBorder,
               },
             ],
+            emptyRow,
             [
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
+              { text: orderDate, border: falseBorder },
+              { text: orderNumber, border: falseBorder },
+              { text: purchaseOrder, border: falseBorder },
+              { text: customerContact, border: falseBorder },
             ],
-            [
-              { text: orderDate, border: [false, false, false, false] },
-              { text: orderNumber, border: [false, false, false, false] },
-              { text: purchaseOrder, border: [false, false, false, false] },
-              { text: customerContact, border: [false, false, false, false] },
-            ],
-            [
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-              { text: "", border: [false, false, false, false] },
-            ],
+            emptyRow,
           ],
         },
       },
