@@ -75,7 +75,13 @@ export function MyNavbar({ opened }: NavBarProps) {
             label="Vendors"
           />
         </Link>
-        <Accordion>
+        <Accordion
+          styles={() => ({
+            content: {
+              padding: 0,
+            },
+          })}
+        >
           <Accordion.Item value="packingSlip">
             <Accordion.Control style={{ padding: "10px" }}>
               <Group>
@@ -85,7 +91,7 @@ export function MyNavbar({ opened }: NavBarProps) {
                 <Text size="sm">Generate</Text>
               </Group>
             </Accordion.Control>
-            <Accordion.Panel>
+            <Accordion.Panel className="ml-4">
               <Link href="/dashboard/generate/packing-slip">
                 <MainLink
                   color="red"
@@ -94,8 +100,8 @@ export function MyNavbar({ opened }: NavBarProps) {
                 />
               </Link>
             </Accordion.Panel>
-            <Accordion.Panel>
-              <Link href="/dashboard/generate/purchase-order">
+            <Accordion.Panel className="ml-4">
+              <Link href="/dashboard/generate/purchase-order" className="p-0">
                 <MainLink
                   color="red"
                   icon={<IconFileDollar />}
