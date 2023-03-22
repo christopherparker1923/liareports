@@ -8,7 +8,7 @@ import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProp
 import type { NextPageWithLayout } from "../../_app";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
-import { JacobTestTable } from "../../../components/JacobTestTable";
+import { ProjectDetailTable } from "../../../components/ProjectDetailTable";
 
 const ProjectDetailView: NextPageWithLayout = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const ProjectDetailView: NextPageWithLayout = () => {
       <Text size="lg">{project.data?.projectNumber}</Text>
       <Text size="lg">{project.data?.projectLead}</Text>
       {/* <ProjectTableCustom pid={pid} /> */}
-      <JacobTestTable pid={pid} />
+      <ProjectDetailTable pid={pid} />
       {/* <TestProjectTable pid={pid} /> */}
     </>
   );

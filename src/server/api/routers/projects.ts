@@ -1,6 +1,6 @@
 import type { ChildTypes, Prisma, ProjectChild } from "@prisma/client";
 import { z } from "zod";
-import type { DataArrType } from "../../../components/JacobTestTable";
+import type { DataArrType } from "../../../components/ProjectDetailTable";
 import { projectSchema } from "../../../components/ProjectForm";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";

@@ -7,6 +7,8 @@ import {
   Avatar,
   Box,
   useMantineTheme,
+  Accordion,
+  rem,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
@@ -16,6 +18,9 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconFileArrowRight,
+  IconFileDollar,
+  IconFileDots,
+  IconFileSettings,
   IconTriangleSquareCircle,
 } from "@tabler/icons-react";
 import type { Session } from "next-auth";
@@ -70,13 +75,36 @@ export function MyNavbar({ opened }: NavBarProps) {
             label="Vendors"
           />
         </Link>
-        <Link href="/dashboard/generate/packing-slip">
-          <MainLink
-            color="red"
-            icon={<IconFileArrowRight />}
-            label="Packing Slip"
-          />
-        </Link>
+        <Accordion>
+          <Accordion.Item value="packingSlip">
+            <Accordion.Control style={{ padding: "10px" }}>
+              <Group>
+                <ThemeIcon color="red" variant="light">
+                  <IconFileSettings />
+                </ThemeIcon>
+                <Text size="sm">Generate</Text>
+              </Group>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Link href="/dashboard/generate/packing-slip">
+                <MainLink
+                  color="red"
+                  icon={<IconFileArrowRight />}
+                  label="Packing Slip"
+                />
+              </Link>
+            </Accordion.Panel>
+            <Accordion.Panel>
+              <Link href="/dashboard/generate/purchase-order">
+                <MainLink
+                  color="red"
+                  icon={<IconFileDollar />}
+                  label="Purchase Order"
+                />
+              </Link>
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
       </Navbar.Section>
       <Navbar.Section>
         {sessionData && <User session={sessionData} />}

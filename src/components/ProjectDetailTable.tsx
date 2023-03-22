@@ -158,7 +158,7 @@ function ProjectPartAutocomplete({
   );
 }
 
-export function JacobTestTable({ pid }: { pid: string }) {
+export function ProjectDetailTable({ pid }: { pid: string }) {
   const { data } = api.projects.getProjectChildrenById.useQuery(pid);
 
   return (
