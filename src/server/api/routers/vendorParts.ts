@@ -68,6 +68,10 @@ export const vendorPartsRouter = createTRPCRouter({
         where: {
           vendorId: input,
         },
+        include: {
+          ManufacturerPart: true,
+          VendorPartPriceLeadHistory: true,
+        },
       });
       return vendorPartsByVendor;
     }),

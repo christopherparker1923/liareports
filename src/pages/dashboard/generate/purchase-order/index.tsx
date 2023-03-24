@@ -28,6 +28,13 @@ type VendorPartWithHistory = Prisma.VendorGetPayload<{
             price: true;
           };
         };
+        ManufacturerPart: {
+          select: {
+            manufacturerName: true;
+            partNumber: true;
+            description: true;
+          };
+        };
       };
     };
   };
@@ -36,11 +43,12 @@ type VendorPartWithHistory = Prisma.VendorGetPayload<{
 export type VendorAutocompleteItem = AutocompleteItem & VendorPartWithHistory;
 
 export type PurchaseOrderPart = {
+  quantity: number;
+  unit: string;
   partNumber: string;
   description: string | undefined | null;
   manufacturerName: string;
-  quantity?: number;
-  quantityShipped?: number;
+  unitPrice: number;
 };
 
 type PartLineProps = {
@@ -68,7 +76,7 @@ function PartFormLine({
     };
   return (
     <div key={index} className="my-1 flex w-full justify-between gap-x-1">
-      <div className="flex w-2/5 flex-row">
+      <div className="flex w-1/5 flex-row">
         <Autocomplete
           className="w-full"
           value={part.partNumber}
@@ -100,10 +108,12 @@ function PartFormLine({
             className="border border-gray-500"
             onClick={() =>
               onPartChange(index, {
+                quantity: 1,
+                unit: "",
                 partNumber: "",
                 description: "",
                 manufacturerName: "",
-                quantity: 1,
+                unitPrice: 0,
               })
             }
           >
@@ -114,11 +124,20 @@ function PartFormLine({
       {part.partNumber && (
         <>
           <TextInput
-            className="w-2/5"
+            className="w-2/5 grow"
             variant="filled"
             placeholder="Description"
             value={part.description || ""}
             onChange={(e) => handlePartChange("description")(e.target.value)}
+          />
+          <TextInput
+            className="w-1/10"
+            variant="filled"
+            placeholder="Manufacturer"
+            value={part.manufacturerName || ""}
+            onChange={(e) =>
+              handlePartChange("manufacturerName")(e.target.value)
+            }
           />
           <NumberInput
             min={0}
@@ -126,23 +145,22 @@ function PartFormLine({
             defaultValue={1}
             placeholder="Qty"
             value={part.quantity}
-            onChange={(value) => {
-              handlePartChange("quantity")(value || undefined);
-              const updatedPart = {
-                ...part,
-                quantity: value || undefined,
-                quantityShipped: value || undefined,
-              };
-              onPartChange(index, updatedPart);
-            }}
+            onChange={(e) => handlePartChange("quantity")(e || 0)}
+          />
+          <TextInput
+            className="w-20"
+            variant="filled"
+            placeholder="Unit Size"
+            value={part.unit || ""}
+            onChange={(e) => handlePartChange("unit")(e.target.value)}
           />
           <NumberInput
             min={0}
             className="w-20"
             defaultValue={1}
-            placeholder="Qty"
-            value={part.quantityShipped}
-            onChange={(e) => handlePartChange("quantityShipped")(e || 0)}
+            placeholder="Price"
+            value={part.unitPrice}
+            onChange={(e) => handlePartChange("unitPrice")(e || 0)}
           />
         </>
       )}
@@ -194,19 +212,30 @@ const PackingSlip: NextPageWithLayout = () => {
     },
     [setSelectedParts]
   );
-  const { data } = api.parts.getAllParts.useQuery();
+
   const availableParts = useMemo(
     () =>
-      data
+      selectedVendor?.vendorParts
         ?.filter(
           (part) =>
             selectedParts.findIndex(
-              (selectedPart) => selectedPart.partNumber === part.partNumber
+              (selectedPart) =>
+                selectedPart.partNumber === part.ManufacturerPart.partNumber
             ) === -1
         )
-        .map((part) => ({ ...part, quantity: 1 })) || [],
-    [selectedParts, data]
+        .map((part) => ({
+          quantity: 1,
+          unit: "EA",
+          partNumber: part.ManufacturerPart.partNumber,
+          description: part.ManufacturerPart.description,
+          manufacturerName: part.ManufacturerPart.manufacturerName,
+          unitPrice: part.VendorPartPriceLeadHistory[0]?.price || 0,
+        })) || [],
+    [selectedParts, selectedVendor]
   );
+
+  console.log("selectedVendor", selectedVendor);
+  console.log("selectedParts", selectedParts);
 
   return (
     //Put in a flex box with 2 inputs per row
@@ -305,17 +334,23 @@ const PackingSlip: NextPageWithLayout = () => {
         />
       </div>
       <div className="my-1 flex w-full justify-between gap-x-1">
-        <Text className="flex w-2/5 flex-row" size="sm">
+        <Text className="flex w-1/5 flex-row" size="sm">
           Parts
         </Text>
-        <Text className="flex w-2/5 flex-row" size="sm">
+        <Text className="flex w-2/5 grow flex-row" size="sm">
           Description
         </Text>
-        <Text className="w-20" size="sm">
-          Quantity Ordered
+        <Text className="w-1/10 flex flex-row" size="sm">
+          Manufacturer
+        </Text>
+        <Text className="flex w-20 flex-row" size="sm">
+          Quantity
         </Text>
         <Text className="w-20" size="sm">
-          Quantity Shipped
+          Unit
+        </Text>
+        <Text className="w-20" size="sm">
+          Price
         </Text>
       </div>
 
@@ -327,6 +362,8 @@ const PackingSlip: NextPageWithLayout = () => {
             description: "",
             manufacturerName: "",
             quantity: 1,
+            unit: "",
+            unitPrice: 0,
           },
         ].map((part, index) => (
           <PartFormLine
@@ -344,16 +381,15 @@ const PackingSlip: NextPageWithLayout = () => {
               await import("../../../../utils/generatePurchaseOrder")
             ).generatePurchaseOrder({
               parts: selectedParts,
-              vendor: selectedVendor,
+              vendor: selectedVendor?.vendor,
               orderDate: formattedDate,
               purchaseOrder: "",
               postComment: "",
+              shipTo: "",
               shippingMethod: "",
               shippingTerms: "",
               deliveryDate: "",
-              total: 0,
-              hst: 0,
-              subTotal: 0,
+              jobNumber: "",
               authorizedBy: "",
               watermark: "",
               watermarkColor: watermarkColor || "shuttleGrey",

@@ -104,6 +104,7 @@ model VendorPart {
   manufacturerPartNumber     String
   Vendor                     Vendor                       @relation(fields: [vendorId], references: [id])
   vendorId                   String
+  unitSpecifier              String? //{EA, /ft, /10, etc}
   //price                      Float
   //stock                      Int
   //leadTime                   Int //Days

@@ -178,7 +178,7 @@ export async function generatePackingSlip(
             ),
             width: 60,
             fit: [60, 60],
-            margin: [0, 0, 100, 0],
+            margin: [0, -10, 100, 0],
           },
           {
             width: "*",
@@ -232,7 +232,7 @@ export async function generatePackingSlip(
             ],
             [
               {
-                text: "Phone: 519-590-7769 519-504-7906",
+                text: "Phone: (519) 590-7769, (519) 504-7906",
                 border: [false, false, false, false],
               },
               { text: "", border: [false, false, false, false] },

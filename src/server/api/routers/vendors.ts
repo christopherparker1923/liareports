@@ -1,3 +1,4 @@
+import { Sorting } from "@tanstack/react-table";
 import { z } from "zod";
 import { vendorSchema } from "../../../components/ZodSchemas";
 
@@ -24,7 +25,17 @@ export const vendorRouter = createTRPCRouter({
       include: {
         vendorParts: {
           include: {
-            VendorPartPriceLeadHistory: { select: { price: true } },
+            VendorPartPriceLeadHistory: {
+              select: { price: true },
+              orderBy: { startDate: "desc" },
+            },
+            ManufacturerPart: {
+              select: {
+                partNumber: true,
+                manufacturerName: true,
+                description: true,
+              },
+            },
           },
         },
       },

@@ -3,7 +3,8 @@ import { Vendor } from "@prisma/client";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
-import type { PackingSlipPart as PurchaseOrderPart } from "../pages/dashboard/generate/packing-slip";
+import { StringValidation } from "zod";
+import type { PurchaseOrderPart } from "../pages/dashboard/generate/purchase-order";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 pdfMake.fonts = {
   MrsSaintDelafield: {
@@ -26,12 +27,14 @@ type purchaseOrderInputs = {
   orderDate: string;
   purchaseOrder: string;
   postComment: string;
+  shipTo: string;
   shippingMethod: string;
   shippingTerms: string;
   deliveryDate: string;
-  total: number;
-  hst: number;
-  subTotal: number;
+  jobNumber: string;
+  // total: number;
+  // hst: number;
+  // subTotal: number;
   authorizedBy: string;
   watermark: string;
   watermarkColor: string;
@@ -52,31 +55,38 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
       6;
     });
   };
-  const partsList = parts.map((part) => ({
-    text: part.partNumber || "",
+  const partsList = inputs.parts.map((part) => ({
+    quantity: part.quantity || 0,
+    unit: part.unit || "",
+    partNumber: part.partNumber || "",
     description: part.description || "",
-    orderQty: part.quantity || 0,
-    shipQty: part.quantityShipped || 0,
+    manufacturerName: part.manufacturerName || "",
+    unitPrice: part.unitPrice || 0,
+    lineTotal: part.quantity * part.unitPrice || 0,
   }));
 
-  function countQuantities(
-    partsList: {
-      text: string;
-      description: string;
-      orderQty: number;
-      shipQty: number;
-    }[]
-  ) {
-    let totalOrderQty = 0;
-    let totalShipQty = 0;
-    for (const part of partsList) {
-      totalOrderQty += part.orderQty;
-      totalShipQty += part.shipQty;
-    }
-    return { totalOrderQty, totalShipQty };
-  }
+  const subtotal = partsList.reduce((acc, part) => acc + part.lineTotal, 0);
+  const HST = subtotal * 0.13;
+  const total = subtotal + HST;
 
-  const { totalOrderQty, totalShipQty } = countQuantities(partsList);
+  // function countQuantities(
+  //   partsList: {
+  //     text: string;
+  //     description: string;
+  //     orderQty: number;
+  //     shipQty: number;
+  //   }[]
+  // ) {
+  //   let totalOrderQty = 0;
+  //   let totalShipQty = 0;
+  //   for (const part of partsList) {
+  //     totalOrderQty += part.orderQty;
+  //     totalShipQty += part.shipQty;
+  //   }
+  //   return { totalOrderQty, totalShipQty };
+  // }
+
+  //const { totalOrderQty, totalShipQty } = countQuantities(partsList);
 
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString();
@@ -150,26 +160,32 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
     ],
     ...partsList.map((part) => [
       {
-        text: part.text, //UPDATE THIS WHOLE SECTION
+        text: part.quantity, //UPDATE THIS WHOLE SECTION
+        alignment: "center",
       },
       {
-        text: part.text,
+        text: part.unit,
+        alignment: "center",
       },
       {
-        text: part.text,
-      },
-      {
-        text: part.text,
+        text: part.partNumber,
+        alignment: "center",
       },
       {
         text: part.description,
         alignment: "center",
       },
       {
-        text: part.orderQty,
+        text: part.manufacturerName,
+        alignment: "center",
       },
       {
-        text: part.shipQty,
+        text: part.unitPrice,
+        alignment: "center",
+      },
+      {
+        text: part.lineTotal,
+        alignment: "center",
       },
     ]),
     [
@@ -183,7 +199,7 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
         alignment: "right",
         border: falseBorder,
       },
-      { text: "$" + "test", border: falseBorder },
+      { text: subtotal, border: falseBorder },
     ],
     [
       emptyCol,
@@ -196,7 +212,7 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
         alignment: "right",
         border: falseBorder,
       },
-      { text: "$" + "test", border: falseBorder },
+      { text: HST, border: falseBorder },
     ],
     [
       emptyCol,
@@ -209,16 +225,16 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
         alignment: "right",
         border: falseBorder,
       },
-      { text: "$" + "test", border: falseBorder },
+      { text: total, border: falseBorder },
     ],
   ];
 
   const docDef: TDocumentDefinitions = {
     watermark: {
-      text: watermark,
+      text: inputs.watermark,
       fontSize: 40,
       angle: -45,
-      color: watermarkColor,
+      color: inputs.watermarkColor,
       opacity: 0.2,
     },
     content: [
@@ -280,11 +296,11 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
               },
               { text: "", border: falseBorder },
               { text: "LIA Job #:", border: falseBorder },
-              { text: customer, border: trueBorder }, //replace customer
+              { text: inputs.jobNumber, border: trueBorder }, //replace customer
             ],
             [
               {
-                text: "Phone: 519-590-7769 519-504-7906",
+                text: "Phone: (519) 590-7769, (519) 504-7906",
                 border: falseBorder,
               },
               emptyCol,
@@ -332,28 +348,19 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
             ],
             [
               {
-                text: "Aztec Electrical Supply", //Replace
+                text: inputs.vendor.name,
                 border: falseBorder,
               },
               emptyCol,
               {
-                text: shippingAdress, //Change to shippinInstructions
+                text: inputs.shipTo,
                 border: falseBorder,
               },
               emptyCol,
             ],
             [
               {
-                text: "75 Saltsman", //Replace
-                border: falseBorder,
-              },
-              emptyCol,
-              emptyCol,
-              emptyCol,
-            ],
-            [
-              {
-                text: "Cambridge ON, N3H 4R7", //Replace
+                text: inputs.vendor.addressNo + " " + inputs.vendor.streetName,
                 border: falseBorder,
               },
               emptyCol,
@@ -362,7 +369,12 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
             ],
             [
               {
-                text: "(519)...", //Replace
+                text:
+                  inputs.vendor.city +
+                  " " +
+                  inputs.vendor.province +
+                  ", " +
+                  inputs.vendor.postalCode,
                 border: falseBorder,
               },
               emptyCol,
@@ -371,7 +383,7 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
             ],
             [
               {
-                text: "(519)...", //Replace
+                text: inputs.vendor.phoneContact,
                 border: falseBorder,
               },
               emptyCol,
@@ -380,25 +392,25 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
             ],
             [
               {
-                text: "jschnarr@", //Replace
+                text: inputs.vendor.faxContact,
                 border: falseBorder,
               },
               emptyCol,
               emptyCol,
               emptyCol,
             ],
-
-            // [
-            //   { text: billingAdress, border: falseBorder },
-            //   emptyCol,
-            //   { text: shippingAdress, border: falseBorder },
-            //   emptyCol,
-            // ],
+            [
+              {
+                text: inputs.vendor.emailContact,
+                border: falseBorder,
+              },
+              emptyCol,
+              emptyCol,
+              emptyCol,
+            ],
           ],
         },
       },
-
-      //////////Left off here
       {
         margin: [-5, 0, -5, 0],
         table: {
@@ -411,25 +423,40 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
                 fillColor: backgroundBlue,
                 color: "white",
                 border: falseBorder,
+                alignment: "center",
               },
               {
                 text: "SHIPPING TERMS",
                 fillColor: backgroundBlue,
                 color: "white",
                 border: falseBorder,
+                alignment: "center",
               },
               {
                 text: "DELIVERY DATE",
                 fillColor: backgroundBlue,
                 color: "white",
                 border: falseBorder,
+                alignment: "center",
               },
             ],
 
             [
-              { text: orderDate, border: falseBorder }, //UPDATE
-              { text: orderNumber, border: falseBorder }, //UPDATE
-              { text: purchaseOrder, border: falseBorder }, //UPDATE
+              {
+                text: inputs.shippingMethod,
+                alignment: "center",
+                border: falseBorder,
+              },
+              {
+                text: inputs.shippingTerms,
+                alignment: "center",
+                border: falseBorder,
+              },
+              {
+                text: inputs.deliveryDate,
+                alignment: "center",
+                border: falseBorder,
+              },
             ],
           ],
         },
@@ -460,11 +487,11 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
             ],
             [
               {
-                text: postComment,
+                text: inputs.postComment,
                 border: [true, false, true, true],
               },
               {
-                text: "Mike Badus",
+                text: inputs.authorizedBy,
                 margin: [5, 52, 0, 0],
                 font: "MrsSaintDelafield",
                 border: [false, false, false, true],
