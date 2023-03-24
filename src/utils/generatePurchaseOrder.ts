@@ -3,38 +3,42 @@ import { Vendor } from "@prisma/client";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
-import type { PackingSlipPart } from "../pages/dashboard/generate/packing-slip";
+import type { PackingSlipPart as PurchaseOrderPart } from "../pages/dashboard/generate/packing-slip";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 pdfMake.fonts = {
   MrsSaintDelafield: {
     normal: `${window.location.origin}/fonts/MrsSaintDelafield-Regular.ttf`,
   },
   Roboto: {
-    normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-    bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-    italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-    bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+    normal:
+      "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
+    bold: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf",
+    italics:
+      "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
+    bolditalics:
+      "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
   },
 };
+
+type purchaseOrderInputs = {
+  parts: PurchaseOrderPart[];
+  vendor: Vendor;
+  orderDate: string;
+  purchaseOrder: string;
+  postComment: string;
+  shippingMethod: string;
+  shippingTerms: string;
+  deliveryDate: string;
+  total: number;
+  hst: number;
+  subTotal: number;
+  authorizedBy: string;
+  watermark: string;
+  watermarkColor: string;
+};
+
 // Define the PDF document structure
-export async function generatePurchaseOrder({
-  //vendorName: ,
-  parts: PackingSlipPart[],
-  //   vendor: Vendor,
-  customer = "",
-  billingAdress = "Same as Shipping",
-  shippingAdress = "",
-  orderDate = "",
-  orderNumber = "",
-  purchaseOrder = "",
-  customerContact = "",
-  postComment = "",
-  watermark = "",
-  userName = "",
-  userPhone = "",
-  userEmail = "",
-  watermarkColor = "shuttleGrey"
-}) {
+export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
   const getBase64FromUrl = async (url: string): Promise<string> => {
     const data = await fetch(url);
     const blob = await data.blob();

@@ -18,7 +18,7 @@ import { api } from "../../../../utils/api";
 import type { NextPageWithLayout } from "../../../_app";
 import { useSession } from "next-auth/react";
 
-export type PackingSlipPart = {
+export type PurchaseOrderPart = {
   partNumber: string;
   description: string | undefined | null;
   manufacturerName: string;
@@ -28,9 +28,9 @@ export type PackingSlipPart = {
 
 type PartLineProps = {
   index: number;
-  availableParts: PackingSlipPart[];
-  part: PackingSlipPart;
-  onPartChange: (index: number, part: PackingSlipPart) => void;
+  availableParts: PurchaseOrderPart[];
+  part: PurchaseOrderPart;
+  onPartChange: (index: number, part: PurchaseOrderPart) => void;
 };
 
 function PartFormLine({
@@ -40,8 +40,8 @@ function PartFormLine({
   part,
 }: PartLineProps): JSX.Element {
   const handlePartChange =
-    <T extends keyof PackingSlipPart>(property: T) =>
-    (value: PackingSlipPart[T]) => {
+    <T extends keyof PurchaseOrderPart>(property: T) =>
+    (value: PurchaseOrderPart[T]) => {
       // Find the part with the same part number, if it exists
       const updatedPart = availableParts.find(
         (part) => part.partNumber === value
@@ -140,7 +140,7 @@ const PackingSlip: NextPageWithLayout = () => {
   >(undefined);
   const formattedDate = currentDate.toLocaleDateString();
   const { data: sessionData } = useSession();
-  const [selectedParts, setSelectedParts] = useState<PackingSlipPart[]>([]);
+  const [selectedParts, setSelectedParts] = useState<PurchaseOrderPart[]>([]);
   const [customer, setCustomer] = useState<string>();
   const [billingAddress, setBillingAddress] = useState<string>();
   const [shippingAddress, setShippingAddress] = useState<string>();
@@ -164,7 +164,7 @@ const PackingSlip: NextPageWithLayout = () => {
   }));
 
   const onPartChange = useCallback(
-    (index: number, part: PackingSlipPart) => {
+    (index: number, part: PurchaseOrderPart) => {
       setSelectedParts((parts) => {
         if (index === parts.length) {
           return [...parts, part];
@@ -328,21 +328,20 @@ const PackingSlip: NextPageWithLayout = () => {
             return void (await (
               await import("../../../../utils/generatePurchaseOrder")
             ).generatePurchaseOrder({
-              //vendorName: selectedVendor?.name || "",
-              selectedParts,
-              customer,
-              billingAddress,
-              shippingAddress,
-              orderDate,
-              orderNumber,
-              purchaseOrder,
-              customerContact,
-              postComment,
-              watermark,
-              userName,
-              userPhone,
-              userEmail,
-              watermarkColor,
+              parts: selectedParts,
+              vendor: selectedVendor,
+              orderDate: formattedDate,
+              purchaseOrder: "",
+              postComment: "",
+              shippingMethod: "",
+              shippingTerms: "",
+              deliveryDate: "",
+              total: 0,
+              hst: 0,
+              subTotal: 0,
+              authorizedBy: "",
+              watermark: "",
+              watermarkColor: watermarkColor || "shuttleGrey",
             }));
           }}
         />
