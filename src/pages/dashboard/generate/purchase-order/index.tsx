@@ -6,6 +6,7 @@ import {
   NumberInput,
   TextInput,
   Text,
+  AutocompleteItem,
 } from "@mantine/core"; //hmmm
 import type { GetServerSideProps } from "next";
 import type { ReactElement } from "react";
@@ -132,29 +133,11 @@ function PartFormLine({
   );
 }
 
-// type vendorOption=  {
-//     id: string;
-//     createdAt: Date;
-//     updatedAt: Date;
-//     name: string;
-//     addressNo: number;
-//     streetName: string;
-//     city: string;
-//     province: string;
-//     country: string;
-//     postalCode: string;
-//     phoneContact: string;
-//     faxContact: string | null;
-//     emailContact: string;
-//     vendorParts: (VendorPart & {
-//         ...;
-//     })[];
-//     value: string;
-// }
-
 const PackingSlip: NextPageWithLayout = () => {
   const currentDate = new Date();
-  const [selectedVendor, setSelectedVendor] = useState();
+  const [selectedVendor, setSelectedVendor] = useState<
+    AutocompleteItem | undefined
+  >(undefined);
   const formattedDate = currentDate.toLocaleDateString();
   const { data: sessionData } = useSession();
   const [selectedParts, setSelectedParts] = useState<PackingSlipPart[]>([]);
