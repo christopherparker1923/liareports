@@ -17,6 +17,23 @@ import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideP
 import { api } from "../../../../utils/api";
 import type { NextPageWithLayout } from "../../../_app";
 import { useSession } from "next-auth/react";
+import { Prisma } from "@prisma/client";
+
+type VendorPartWithHistory = Prisma.VendorGetPayload<{
+  include: {
+    vendorParts: {
+      include: {
+        VendorPartPriceLeadHistory: {
+          select: {
+            price: true;
+          };
+        };
+      };
+    };
+  };
+}>;
+
+export type VendorAutocompleteItem = AutocompleteItem & VendorPartWithHistory;
 
 export type PackingSlipPart = {
   partNumber: string;
@@ -136,7 +153,7 @@ function PartFormLine({
 const PackingSlip: NextPageWithLayout = () => {
   const currentDate = new Date();
   const [selectedVendor, setSelectedVendor] = useState<
-    AutocompleteItem | undefined
+    VendorAutocompleteItem | undefined
   >(undefined);
   const formattedDate = currentDate.toLocaleDateString();
   const { data: sessionData } = useSession();
@@ -157,11 +174,11 @@ const PackingSlip: NextPageWithLayout = () => {
   const [watermarkColor, setWatermarkColor] = useState<string>();
 
   const { data: allVendors } = api.vendors.getAllVendorInfo.useQuery();
-
   const vendorOptions = allVendors?.map((vendor) => ({
     value: vendor.name,
     ...vendor,
   }));
+  // type Test = (typeof vendorOptions)?.[number];
 
   const onPartChange = useCallback(
     (index: number, part: PackingSlipPart) => {
@@ -191,10 +208,6 @@ const PackingSlip: NextPageWithLayout = () => {
     [selectedParts, data]
   );
 
-  function handleVendorChange() {}
-
-  console.log(vendorOptions);
-
   return (
     //Put in a flex box with 2 inputs per row
     <>
@@ -203,7 +216,9 @@ const PackingSlip: NextPageWithLayout = () => {
           label="Select a vendor"
           placeholder="Aztec"
           data={vendorOptions || []}
-          onItemSubmit={(selectedVendor) => setSelectedVendor(selectedVendor)}
+          onItemSubmit={(selectedVendor: VendorAutocompleteItem) =>
+            setSelectedVendor(selectedVendor)
+          }
         />
         <TextInput
           value={customer}
