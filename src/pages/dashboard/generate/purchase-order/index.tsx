@@ -175,6 +175,9 @@ const PackingSlip: NextPageWithLayout = () => {
   const [selectedVendor, setSelectedVendor] = useState<
     VendorAutocompleteItem | undefined
   >(undefined);
+  const [selectedProject, setSelectedProject] = useState<
+    AutocompleteItem | undefined
+  >(undefined);
   const formattedDate = currentDate.toLocaleDateString();
   const { data: sessionData } = useSession();
   const [selectedParts, setSelectedParts] = useState<PurchaseOrderPart[]>([]);
@@ -194,6 +197,7 @@ const PackingSlip: NextPageWithLayout = () => {
   const [watermarkColor, setWatermarkColor] = useState<string>();
 
   const { data: allVendors } = api.vendors.getAllVendorInfo.useQuery();
+  const { data: allProjects } = api.projects.getAllProjects.useQuery();
   const vendorOptions = allVendors?.map((vendor) => ({
     value: vendor.name,
     ...vendor,
@@ -236,6 +240,10 @@ const PackingSlip: NextPageWithLayout = () => {
     [selectedParts, selectedVendor]
   );
 
+  const availableProjects = allProjects?.map((project) => ({
+    value: project.projectNumber,
+  }));
+
   console.log("selectedVendor", selectedVendor);
   console.log("selectedParts", selectedParts);
 
@@ -251,30 +259,19 @@ const PackingSlip: NextPageWithLayout = () => {
             setSelectedVendor(selectedVendor)
           }
         />
-        <TextInput
-          value={customer}
-          label="Customer ID"
-          placeholder="e.g. TMMC"
-          onChange={(event) => setCustomer(event.currentTarget.value)}
+        <Autocomplete
+          label="Select a project"
+          placeholder=""
+          data={availableProjects || []}
+          onItemSubmit={(selectedProject: AutocompleteItem) =>
+            setSelectedProject(selectedProject)
+          }
         />
         <TextInput
-          value={customerContact}
-          label="Customer Contact"
-          placeholder="Purchasing Dept."
-          onChange={(event) => setCustomerContact(event.currentTarget.value)}
-        />
-        <TextInput
-          value={billingAddress}
-          label="Billing Address"
-          placeholder="e.g Same as Shipping"
-          defaultValue={"Same as Shipping"}
-          onChange={(event) => setBillingAddress(event.currentTarget.value)}
-        />
-        <TextInput
-          value={shippingAddress}
-          label="Shipping Address"
-          placeholder="e.g. TMMC 1055 Fountain St, Cambridge ON"
-          onChange={(event) => setShippingAddress(event.currentTarget.value)}
+          value={purchaseOrder}
+          label="Purchase Order"
+          placeholder="[123456]"
+          onChange={(event) => setPurchaseOrder(event.currentTarget.value)}
         />
         <TextInput
           value={orderDate}
@@ -289,13 +286,6 @@ const PackingSlip: NextPageWithLayout = () => {
           placeholder="[123456]"
           onChange={(event) => setOrderNumber(event.currentTarget.value)}
         />
-        <TextInput
-          value={purchaseOrder}
-          label="Purchase Order"
-          placeholder="[123456]"
-          onChange={(event) => setPurchaseOrder(event.currentTarget.value)}
-        />
-
         <TextInput
           value={userName}
           label="LIA Contact Name"
@@ -386,7 +376,7 @@ const PackingSlip: NextPageWithLayout = () => {
               parts: selectedParts,
               vendor: selectedVendor,
               orderDate: formattedDate,
-              purchaseOrder: "",
+              purchaseOrder: purchaseOrder,
               postComment: "",
               shipTo: "",
               shippingMethod: "",
