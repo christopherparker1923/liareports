@@ -134,6 +134,7 @@ function PartFormLine({
 
 const PackingSlip: NextPageWithLayout = () => {
   const currentDate = new Date();
+  const [selectedVendor, setSelectedVendor] = useState<string>();
   const formattedDate = currentDate.toLocaleDateString();
   const { data: sessionData } = useSession();
   const [selectedParts, setSelectedParts] = useState<PackingSlipPart[]>([]);
@@ -151,6 +152,12 @@ const PackingSlip: NextPageWithLayout = () => {
   const [userPhone, setUserPhone] = useState<string>();
   const [userEmail, setUserEmail] = useState<string>();
   const [watermarkColor, setWatermarkColor] = useState<string>();
+
+  const { data: allVendors } = api.vendors.getAllVendorInfo.useQuery();
+
+  const vendorOptions = allVendors?.map((vendor) => ({
+    value: vendor.id,
+  }));
 
   const onPartChange = useCallback(
     (index: number, part: PackingSlipPart) => {
@@ -180,10 +187,21 @@ const PackingSlip: NextPageWithLayout = () => {
     [selectedParts, data]
   );
 
+  function handleVendorChange() {}
+
+  console.log(vendorOptions);
+
   return (
     //Put in a flex box with 2 inputs per row
     <>
       <div className="flex flex-wrap gap-5">
+        <Autocomplete
+          label="Select a vendor"
+          placeholder="Start typing to search"
+          data={vendorOptions || []}
+          value={selectedVendor || ""}
+          onChange={setSelectedVendor}
+        />
         <TextInput
           value={customer}
           label="Customer ID"

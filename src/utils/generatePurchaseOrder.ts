@@ -84,10 +84,23 @@ export async function generatePurchaseOrder(
   const falseBorder = [false, false, false, false];
   const trueBorder = [true, true, true, true];
   const emptyCol = { text: "", border: falseBorder };
-  const emptyRow = [emptyCol, emptyCol, emptyCol, emptyCol];
+  const emptyRowOfFour = [emptyCol, emptyCol, emptyCol, emptyCol];
+  const emptyRowOfThree = [emptyCol, emptyCol, emptyCol];
 
   const body = [
     [
+      {
+        text: "QTY",
+        fillColor: backgroundBlue,
+        color: "white",
+        border: falseBorder,
+      },
+      {
+        text: "UNIT",
+        fillColor: backgroundBlue,
+        color: "white",
+        border: falseBorder,
+      },
       {
         text: "ITEM #",
         fillColor: backgroundBlue,
@@ -102,19 +115,34 @@ export async function generatePurchaseOrder(
         border: falseBorder,
       },
       {
-        text: "ORDER QTY",
+        text: "MANUFACTURER",
         fillColor: backgroundBlue,
         color: "white",
         border: falseBorder,
       },
       {
-        text: "SHIP QTY",
+        text: "UNIT PRICE",
+        fillColor: backgroundBlue,
+        color: "white",
+        border: falseBorder,
+      },
+      {
+        text: "LINE TOTAL",
         fillColor: backgroundBlue,
         color: "white",
         border: falseBorder,
       },
     ],
     ...partsList.map((part) => [
+      {
+        text: part.text, //UPDATE THIS WHOLE SECTION
+      },
+      {
+        text: part.text,
+      },
+      {
+        text: part.text,
+      },
       {
         text: part.text,
       },
@@ -130,17 +158,43 @@ export async function generatePurchaseOrder(
       },
     ]),
     [
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      emptyCol,
       {
-        text: "",
-        border: falseBorder,
-      },
-      {
-        text: "Total:",
+        text: "SUBTOTAL:",
         alignment: "right",
         border: falseBorder,
       },
-      { text: totalOrderQty, border: falseBorder },
-      { text: totalShipQty, border: falseBorder },
+      { text: "$" + "test", border: falseBorder },
+    ],
+    [
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      {
+        text: "HST:",
+        alignment: "right",
+        border: falseBorder,
+      },
+      { text: "$" + "test", border: falseBorder },
+    ],
+    [
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      emptyCol,
+      {
+        text: "TOTAL:",
+        alignment: "right",
+        border: falseBorder,
+      },
+      { text: "$" + "test", border: falseBorder },
     ],
   ];
 
@@ -161,7 +215,7 @@ export async function generatePurchaseOrder(
             ),
             width: 60,
             fit: [60, 60],
-            margin: [0, 0, 100, 0],
+            margin: [0, -10, 100, 0],
           },
           {
             width: "*",
@@ -224,7 +278,7 @@ export async function generatePurchaseOrder(
                 bold: true,
                 border: falseBorder,
               },
-              { text: "", bold: true, border: trueBorder }, //Replace empty string with PO#
+              { text: "Replace PO", bold: true, border: trueBorder }, //Replace empty string with PO#
             ],
             [
               {
@@ -334,42 +388,34 @@ export async function generatePurchaseOrder(
         margin: [-5, 0, -5, 0],
         table: {
           headerRows: 1,
-          widths: ["auto", "*", "auto", "*"],
+          widths: ["35%", "*", "25%"],
           body: [
             [
               {
-                text: "ORDER DATE",
+                text: "SHIPPING METHOD",
                 fillColor: backgroundBlue,
                 color: "white",
                 border: falseBorder,
               },
               {
-                text: "ORDER #",
+                text: "SHIPPING TERMS",
                 fillColor: backgroundBlue,
                 color: "white",
                 border: falseBorder,
               },
               {
-                text: "PO #",
-                fillColor: backgroundBlue,
-                color: "white",
-                border: falseBorder,
-              },
-              {
-                text: "CUSTOMER CONTACT",
+                text: "DELIVERY DATE",
                 fillColor: backgroundBlue,
                 color: "white",
                 border: falseBorder,
               },
             ],
-            emptyRow,
+
             [
-              { text: orderDate, border: falseBorder },
-              { text: orderNumber, border: falseBorder },
-              { text: purchaseOrder, border: falseBorder },
-              { text: customerContact, border: falseBorder },
+              { text: orderDate, border: falseBorder }, //UPDATE
+              { text: orderNumber, border: falseBorder }, //UPDATE
+              { text: purchaseOrder, border: falseBorder }, //UPDATE
             ],
-            emptyRow,
           ],
         },
       },
@@ -377,16 +423,16 @@ export async function generatePurchaseOrder(
         margin: [-5, 10, -5, 10],
         table: {
           headerRows: 1,
-          widths: ["auto", "*", "auto", "auto"],
+          widths: ["auto", "auto", "*", "auto", "auto", "auto", "auto"],
           body,
         },
       },
 
       {
-        margin: [-5, 0, -5, 0],
+        margin: [-5, -20, -5, 0],
         table: {
-          widths: ["*"],
-          heights: ["auto", 60, "auto", 60],
+          widths: ["*", "25%", "auto"],
+          heights: ["auto", 60, "auto"],
           body: [
             [
               {
@@ -394,42 +440,39 @@ export async function generatePurchaseOrder(
                 fillColor: backgroundGrey,
                 border: [true, true, true, false],
               },
+              emptyCol,
+              emptyCol,
             ],
             [
               {
                 text: postComment,
                 border: [true, false, true, true],
               },
-            ],
-            [
               {
-                text: "CUSTOMER SIGNATURE:",
-                fillColor: backgroundGrey,
-                border: [true, true, true, false],
+                text: "Mike Badus",
+                margin: [5, 52, 0, 0],
+                //font:
+                border: [false, false, false, true],
+              },
+              {
+                text: formattedDate,
+                margin: [0, 52, 0, 0],
+                border: [false, false, false, true],
               },
             ],
             [
+              emptyCol,
               {
-                text: "",
-                border: [true, false, true, true],
+                text: "Authorized by",
+                border: falseBorder,
+              },
+              {
+                text: "Date",
+                border: falseBorder,
               },
             ],
           ],
         },
-      },
-      {
-        text: "If you have any questions or concers, please contact\n",
-        alignment: "center",
-      },
-      {
-        text: "[" + userName + ", " + userPhone + ", " + userEmail + "]",
-        alignment: "center",
-      },
-      {
-        text: "Thank You For Your Business!",
-        alignment: "center",
-        italics: true,
-        bold: true,
       },
     ],
     styles: {
