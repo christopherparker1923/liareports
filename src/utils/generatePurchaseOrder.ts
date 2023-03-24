@@ -17,7 +17,8 @@ pdfMake.fonts = {
   },
 };
 // Define the PDF document structure
-export async function generatePurchaseOrder(
+export async function generatePurchaseOrder({
+  //vendorName: ,
   parts: PackingSlipPart[],
   //   vendor: Vendor,
   customer = "",
@@ -33,7 +34,7 @@ export async function generatePurchaseOrder(
   userPhone = "",
   userEmail = "",
   watermarkColor = "shuttleGrey"
-) {
+}) {
   const getBase64FromUrl = async (url: string): Promise<string> => {
     const data = await fetch(url);
     const blob = await data.blob();

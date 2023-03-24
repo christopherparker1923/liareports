@@ -31,4 +31,13 @@ export const manufacturerSchema = z.object({
 
 export const vendorSchema = z.object({
   name: z.string({ required_error: "Required" }),
+  addressNo: z.number({ required_error: "Required" }),
+  streetName: z.string({ required_error: "Required" }),
+  city: z.string({ required_error: "Required" }),
+  province: z.string({ required_error: "Required" }),
+  country: z.string({ required_error: "Required" }),
+  postalCode: z.string({ required_error: "Required" }),
+  phoneContact: z.string({ required_error: "Required" }),
+  faxContact: z.string().optional(),
+  emailContact: z.string({ required_error: "Required" }),
 });

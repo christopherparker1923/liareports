@@ -132,9 +132,29 @@ function PartFormLine({
   );
 }
 
+// type vendorOption=  {
+//     id: string;
+//     createdAt: Date;
+//     updatedAt: Date;
+//     name: string;
+//     addressNo: number;
+//     streetName: string;
+//     city: string;
+//     province: string;
+//     country: string;
+//     postalCode: string;
+//     phoneContact: string;
+//     faxContact: string | null;
+//     emailContact: string;
+//     vendorParts: (VendorPart & {
+//         ...;
+//     })[];
+//     value: string;
+// }
+
 const PackingSlip: NextPageWithLayout = () => {
   const currentDate = new Date();
-  const [selectedVendor, setSelectedVendor] = useState<string>();
+  const [selectedVendor, setSelectedVendor] = useState();
   const formattedDate = currentDate.toLocaleDateString();
   const { data: sessionData } = useSession();
   const [selectedParts, setSelectedParts] = useState<PackingSlipPart[]>([]);
@@ -156,7 +176,8 @@ const PackingSlip: NextPageWithLayout = () => {
   const { data: allVendors } = api.vendors.getAllVendorInfo.useQuery();
 
   const vendorOptions = allVendors?.map((vendor) => ({
-    value: vendor.id,
+    value: vendor.name,
+    ...vendor,
   }));
 
   const onPartChange = useCallback(
@@ -197,10 +218,9 @@ const PackingSlip: NextPageWithLayout = () => {
       <div className="flex flex-wrap gap-5">
         <Autocomplete
           label="Select a vendor"
-          placeholder="Start typing to search"
+          placeholder="Aztec"
           data={vendorOptions || []}
-          value={selectedVendor || ""}
-          onChange={setSelectedVendor}
+          onItemSubmit={(selectedVendor) => setSelectedVendor(selectedVendor)}
         />
         <TextInput
           value={customer}
@@ -324,7 +344,8 @@ const PackingSlip: NextPageWithLayout = () => {
           onClick={async () => {
             return void (await (
               await import("../../../../utils/generatePurchaseOrder")
-            ).generatePurchaseOrder(
+            ).generatePurchaseOrder({
+              //vendorName: selectedVendor?.name || "",
               selectedParts,
               customer,
               billingAddress,
@@ -338,8 +359,8 @@ const PackingSlip: NextPageWithLayout = () => {
               userName,
               userPhone,
               userEmail,
-              watermarkColor
-            ));
+              watermarkColor,
+            }));
           }}
         />
       </div>
