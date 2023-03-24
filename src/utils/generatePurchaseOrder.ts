@@ -4,7 +4,10 @@ import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
 import { StringValidation } from "zod";
-import type { PurchaseOrderPart } from "../pages/dashboard/generate/purchase-order";
+import type {
+  PurchaseOrderPart,
+  VendorAutocompleteItem,
+} from "../pages/dashboard/generate/purchase-order";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 pdfMake.fonts = {
   MrsSaintDelafield: {
@@ -23,7 +26,7 @@ pdfMake.fonts = {
 
 type purchaseOrderInputs = {
   parts: PurchaseOrderPart[];
-  vendor: Vendor;
+  vendor: VendorAutocompleteItem;
   orderDate: string;
   purchaseOrder: string;
   postComment: string;
@@ -39,6 +42,36 @@ type purchaseOrderInputs = {
   watermark: string;
   watermarkColor: string;
 };
+
+function formatMoney(number: number | string): string {
+  if (typeof number === "string") {
+    number = parseFloat(number);
+  }
+  if (isNaN(number)) {
+    return "Invalid input";
+  }
+  // Convert the number to a string with exactly two decimal places
+  const formattedNumber = number.toFixed(2);
+
+  // Split the string into the integer and decimal parts
+  const parts = formattedNumber.split(".");
+  const integerPart = parts[0] || "0"; // Use "0" as the default value if integerPart is undefined
+  const decimalPart = parts[1];
+
+  // Add commas every three digits before the decimal point
+  let integerPartWithCommas = "";
+  for (let i = integerPart.length - 1, j = 0; i >= 0; i--, j++) {
+    if (j % 3 === 0 && j !== 0) {
+      integerPartWithCommas = "," + integerPartWithCommas;
+    }
+    integerPartWithCommas = integerPart[i] + integerPartWithCommas;
+  }
+
+  // Add the dollar sign and combine the integer and decimal parts
+  const result = "$" + integerPartWithCommas + "." + decimalPart;
+
+  return result;
+}
 
 // Define the PDF document structure
 export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
@@ -117,18 +150,21 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
       {
         text: "QTY",
         fillColor: backgroundBlue,
+        alignment: "center",
         color: "white",
         border: falseBorder,
       },
       {
         text: "UNIT",
         fillColor: backgroundBlue,
+        alignment: "center",
         color: "white",
         border: falseBorder,
       },
       {
         text: "ITEM #",
         fillColor: backgroundBlue,
+        alignment: "center",
         color: "white",
         border: falseBorder,
       },
@@ -142,18 +178,21 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
       {
         text: "MANUFACTURER",
         fillColor: backgroundBlue,
+        alignment: "center",
         color: "white",
         border: falseBorder,
       },
       {
-        text: "UNIT PRICE",
+        text: "PRICE",
         fillColor: backgroundBlue,
+        alignment: "center",
         color: "white",
         border: falseBorder,
       },
       {
-        text: "LINE TOTAL",
+        text: "TOTAL",
         fillColor: backgroundBlue,
+        alignment: "center",
         color: "white",
         border: falseBorder,
       },
@@ -162,30 +201,37 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
       {
         text: part.quantity, //UPDATE THIS WHOLE SECTION
         alignment: "center",
+        fontSize: "10",
       },
       {
         text: part.unit,
         alignment: "center",
+        fontSize: "10",
       },
       {
         text: part.partNumber,
         alignment: "center",
+        fontSize: "10",
       },
       {
         text: part.description,
         alignment: "center",
+        fontSize: "10",
       },
       {
         text: part.manufacturerName,
         alignment: "center",
+        fontSize: "10",
       },
       {
-        text: part.unitPrice,
+        text: formatMoney(part.unitPrice),
         alignment: "center",
+        fontSize: "10",
       },
       {
-        text: part.lineTotal,
+        text: formatMoney(part.lineTotal),
         alignment: "center",
+        fontSize: "10",
       },
     ]),
     [
@@ -199,7 +245,7 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
         alignment: "right",
         border: falseBorder,
       },
-      { text: subtotal, border: falseBorder },
+      { text: formatMoney(subtotal), border: falseBorder },
     ],
     [
       emptyCol,
@@ -212,7 +258,7 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
         alignment: "right",
         border: falseBorder,
       },
-      { text: HST, border: falseBorder },
+      { text: formatMoney(HST), border: falseBorder },
     ],
     [
       emptyCol,
@@ -225,7 +271,7 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
         alignment: "right",
         border: falseBorder,
       },
-      { text: total, border: falseBorder },
+      { text: formatMoney(total), border: falseBorder },
     ],
   ];
 

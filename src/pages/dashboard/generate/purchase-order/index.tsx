@@ -76,7 +76,7 @@ function PartFormLine({
     };
   return (
     <div key={index} className="my-1 flex w-full justify-between gap-x-1">
-      <div className="flex w-1/5 flex-row">
+      <div className="flex w-1/6 flex-row">
         <Autocomplete
           className="w-full"
           value={part.partNumber}
@@ -131,7 +131,7 @@ function PartFormLine({
             onChange={(e) => handlePartChange("description")(e.target.value)}
           />
           <TextInput
-            className="w-1/10"
+            className="w-1/6"
             variant="filled"
             placeholder="Manufacturer"
             value={part.manufacturerName || ""}
@@ -158,8 +158,10 @@ function PartFormLine({
             min={0}
             className="w-20"
             defaultValue={1}
+            variant="filled"
             placeholder="Price"
             value={part.unitPrice}
+            hideControls={true}
             onChange={(e) => handlePartChange("unitPrice")(e || 0)}
           />
         </>
@@ -334,13 +336,13 @@ const PackingSlip: NextPageWithLayout = () => {
         />
       </div>
       <div className="my-1 flex w-full justify-between gap-x-1">
-        <Text className="flex w-1/5 flex-row" size="sm">
+        <Text className="flex w-1/6 flex-row" size="sm">
           Parts
         </Text>
         <Text className="flex w-2/5 grow flex-row" size="sm">
           Description
         </Text>
-        <Text className="w-1/10 flex flex-row" size="sm">
+        <Text className="flex w-1/6 flex-row" size="sm">
           Manufacturer
         </Text>
         <Text className="flex w-20 flex-row" size="sm">
@@ -377,11 +379,12 @@ const PackingSlip: NextPageWithLayout = () => {
         <AppButton
           label="Generate"
           onClick={async () => {
+            if (!selectedVendor) return console.log("No vendor selected error");
             return void (await (
               await import("../../../../utils/generatePurchaseOrder")
             ).generatePurchaseOrder({
               parts: selectedParts,
-              vendor: selectedVendor?.vendor,
+              vendor: selectedVendor,
               orderDate: formattedDate,
               purchaseOrder: "",
               postComment: "",
