@@ -1,9 +1,21 @@
 // Import the pdfmake library
-import pdfMake from "pdfmake/build/pdfmake";
+import pdfMake, { fonts } from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
 import type { PackingSlipPart } from "../pages/dashboard/generate/packing-slip";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+pdfMake.fonts = {
+  MrsSaintDelafield: {
+    normal: `${window.location.origin}/fonts/MrsSaintDelafield-Regular.ttf`,
+  },
+  Roboto: {
+    normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+    bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+    italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+    bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+  },
+};
 
 // Define the PDF document structure
 export async function generatePackingSlip(
@@ -150,6 +162,9 @@ export async function generatePackingSlip(
       angle: -45,
       color: watermarkColor,
       opacity: 0.2,
+    },
+    defaultStyle: {
+      font: "Roboto",
     },
     content: [
       {

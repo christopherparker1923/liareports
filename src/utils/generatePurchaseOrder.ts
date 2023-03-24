@@ -5,7 +5,17 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
 import type { PackingSlipPart } from "../pages/dashboard/generate/packing-slip";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
+pdfMake.fonts = {
+  MrsSaintDelafield: {
+    normal: `${window.location.origin}/fonts/MrsSaintDelafield-Regular.ttf`,
+  },
+  Roboto: {
+    normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+    bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+    italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+    bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+  },
+};
 // Define the PDF document structure
 export async function generatePurchaseOrder(
   parts: PackingSlipPart[],
@@ -451,7 +461,7 @@ export async function generatePurchaseOrder(
               {
                 text: "Mike Badus",
                 margin: [5, 52, 0, 0],
-                //font:
+                font: "MrsSaintDelafield",
                 border: [false, false, false, true],
               },
               {
