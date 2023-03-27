@@ -17,7 +17,7 @@ import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideP
 import { api } from "../../../../utils/api";
 import type { NextPageWithLayout } from "../../../_app";
 import { useSession } from "next-auth/react";
-import { Prisma } from "@prisma/client";
+import { Prisma, Project } from "@prisma/client";
 
 type VendorPartWithHistory = Prisma.VendorGetPayload<{
   include: {
@@ -40,6 +40,8 @@ type VendorPartWithHistory = Prisma.VendorGetPayload<{
   };
 }>;
 
+export type ProjectAutocompleteItem = AutocompleteItem & Project;
+
 export type VendorAutocompleteItem = AutocompleteItem & VendorPartWithHistory;
 
 export type PurchaseOrderPart = {
@@ -57,6 +59,21 @@ type PartLineProps = {
   part: PurchaseOrderPart;
   onPartChange: (index: number, part: PurchaseOrderPart) => void;
 };
+
+const waterMarkColours = [
+  { value: "red" },
+  { value: "blue" },
+  //{ value: "rhino" },
+  // { value: "puertoRico" },
+  // { value: "neptune" },
+  //{ value: "shuttleGray" },
+  //{ value: "blackSqueeze" },
+  //{ value: "santasGray" },
+  //{ value: "powderBlue" },
+  //{ value: "osloGray" },
+  // { value: "towerGray" },
+  { value: "green" },
+];
 
 function PartFormLine({
   index,
@@ -170,30 +187,27 @@ function PartFormLine({
   );
 }
 
-const PackingSlip: NextPageWithLayout = () => {
+const PurchaseOrder: NextPageWithLayout = () => {
   const currentDate = new Date();
   const [selectedVendor, setSelectedVendor] = useState<
     VendorAutocompleteItem | undefined
   >(undefined);
   const [selectedProject, setSelectedProject] = useState<
-    AutocompleteItem | undefined
+    ProjectAutocompleteItem | undefined
   >(undefined);
   const formattedDate = currentDate.toLocaleDateString();
+  const [deliveryDate, setDeliveryDate] = useState<string>();
   const { data: sessionData } = useSession();
   const [selectedParts, setSelectedParts] = useState<PurchaseOrderPart[]>([]);
-  const [customer, setCustomer] = useState<string>();
-  const [billingAddress, setBillingAddress] = useState<string>();
-  const [shippingAddress, setShippingAddress] = useState<string>();
+  const [shippingMethod, setShippingMethod] = useState<string>();
+  const [shippingTerms, setShippingTerms] = useState<string>();
   const [orderDate, setOrderDate] = useState<string>(formattedDate);
   const [orderNumber, setOrderNumber] = useState<string>();
-
+  const [shipTo, setShipTo] = useState<string>();
+  const [authorizedBy, setAuthorizedBy] = useState<string>();
   const [purchaseOrder, setPurchaseOrder] = useState<string>();
-  const [customerContact, setCustomerContact] = useState<string>();
   const [postComment, setPostComment] = useState<string>();
   const [watermark, setWatermark] = useState<string>();
-  const [userName, setUserName] = useState<string>();
-  const [userPhone, setUserPhone] = useState<string>();
-  const [userEmail, setUserEmail] = useState<string>();
   const [watermarkColor, setWatermarkColor] = useState<string>();
 
   const { data: allVendors } = api.vendors.getAllVendorInfo.useQuery();
@@ -263,7 +277,7 @@ const PackingSlip: NextPageWithLayout = () => {
           label="Select a project"
           placeholder=""
           data={availableProjects || []}
-          onItemSubmit={(selectedProject: AutocompleteItem) =>
+          onItemSubmit={(selectedProject: ProjectAutocompleteItem) =>
             setSelectedProject(selectedProject)
           }
         />
@@ -281,35 +295,47 @@ const PackingSlip: NextPageWithLayout = () => {
           onChange={(event) => setOrderDate(event.currentTarget.value)}
         />
         <TextInput
+          value={deliveryDate}
+          label="Delivery Date"
+          placeholder="ASAP"
+          defaultValue={deliveryDate}
+          onChange={(event) => setDeliveryDate(event.currentTarget.value)}
+        />
+        <TextInput
           value={orderNumber}
           label="Order Number"
           placeholder="[123456]"
           onChange={(event) => setOrderNumber(event.currentTarget.value)}
         />
         <TextInput
-          value={userName}
-          label="LIA Contact Name"
+          value={shipTo}
+          label="Ship To"
+          placeholder="Hold for pickup"
+          onChange={(event) => setShipTo(event.currentTarget.value)}
+        />
+        <TextInput
+          value={shippingMethod}
+          label="Shipping Method"
+          placeholder="Hold for pickup"
+          onChange={(event) => setShippingMethod(event.currentTarget.value)}
+        />
+        <TextInput
+          value={shippingTerms}
+          label="Shipping Terms"
+          placeholder="Ship complete"
+          onChange={(event) => setShippingTerms(event.currentTarget.value)}
+        />
+        <TextInput
+          value={authorizedBy}
+          label="Authorized By (Name)"
           placeholder="Your Name"
           defaultValue={sessionData?.user.name ?? ""}
-          onChange={(event) => setUserName(event.currentTarget.value)}
-        />
-        <TextInput
-          value={userPhone}
-          label="LIA Contact Number"
-          placeholder="Your Phone Number" //Add sessionData.user.phoneNumber
-          onChange={(event) => setUserPhone(event.currentTarget.value)}
-        />
-        <TextInput
-          value={userEmail}
-          label="LIA Contact Email"
-          placeholder="Your Email"
-          defaultValue={sessionData?.user.email ?? ""}
-          onChange={(event) => setUserEmail(event.currentTarget.value)}
+          onChange={(event) => setAuthorizedBy(event.currentTarget.value)}
         />
         <TextInput
           value={postComment}
           label="Comment"
-          placeholder="Appears in large 'Comments' box"
+          placeholder=""
           onChange={(event) => setPostComment(event.currentTarget.value)}
         />
         <TextInput
@@ -318,11 +344,13 @@ const PackingSlip: NextPageWithLayout = () => {
           placeholder="Appears translucent & angled across parts"
           onChange={(event) => setWatermark(event.currentTarget.value)}
         />
-        <TextInput
+        <Autocomplete
+          data={waterMarkColours}
+          limit={50}
           value={watermarkColor}
           label="Watermark Color"
-          placeholder="Defaults to grey; 'red', 'green' are options" //Add autocomplete to pick from legal colours
-          onChange={(event) => setWatermarkColor(event.currentTarget.value)}
+          placeholder="Defaults to grey" //Add autocomplete to pick from legal colours
+          onChange={(value) => setWatermarkColor(value)}
         />
       </div>
       <div className="my-1 flex w-full justify-between gap-x-1">
@@ -376,15 +404,15 @@ const PackingSlip: NextPageWithLayout = () => {
               parts: selectedParts,
               vendor: selectedVendor,
               orderDate: formattedDate,
-              purchaseOrder: purchaseOrder,
-              postComment: "",
-              shipTo: "",
-              shippingMethod: "",
-              shippingTerms: "",
-              deliveryDate: "",
-              jobNumber: "",
-              authorizedBy: "",
-              watermark: "",
+              purchaseOrder: purchaseOrder || "",
+              postComment: postComment || "",
+              shipTo: shipTo || "",
+              shippingMethod: shippingMethod || "",
+              shippingTerms: shippingTerms || "",
+              deliveryDate: deliveryDate || "",
+              jobNumber: selectedProject?.projectNumber || "",
+              authorizedBy: authorizedBy || "",
+              watermark: watermark || "",
               watermarkColor: watermarkColor || "shuttleGrey",
             }));
           }}
@@ -394,11 +422,11 @@ const PackingSlip: NextPageWithLayout = () => {
   );
 };
 
-PackingSlip.getLayout = function getLayout(page: ReactElement) {
+PurchaseOrder.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default PackingSlip;
+export default PurchaseOrder;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const basicProps = await getBasicServerSideProps(context);
   if (!basicProps.session) {
