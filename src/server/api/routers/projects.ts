@@ -46,11 +46,34 @@ export const projectsRouter = createTRPCRouter({
         },
         include: {
           projectParts: {
-            include: {
+            select: {
+              id: true,
+              manufacturerPartId: true,
+              parent: true,
+              parentId: true,
+              project: true,
+              projectNumber: true,
+              quantityOrdered: true,
+              quantityRequired: true,
+              quantityRecieved: true,
+              quantityCommitted: true,
               manufacturerPart: true,
             },
           },
         },
+        // include: {
+        //   projectParts: {
+        //     select: {
+        //       quantityRequired: true,
+        //       quantityOrdered: true,
+        //       quantityRecieved: true,
+        //       quantityCommitted: true,
+        //     },
+        //     include: {
+        //       manufacturerPart: true,
+        //     },
+        //   },
+        // },
       });
       console.log(projectChildren[0]?.projectParts);
       function buildTree(
@@ -120,6 +143,26 @@ export const projectsRouter = createTRPCRouter({
       });
       return projectPart;
     }),
+
+  removePartFromProject: publicProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        partId: z.string(),
+        parentId: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const projectPart = await ctx.prisma.projectPart.create({
+        data: {
+          projectNumber: input.projectId,
+          parentId: input.parentId,
+          manufacturerPartId: input.partId,
+        },
+      });
+      return projectPart;
+    }),
+
   addProjectChild: publicProcedure
     .input(
       z.object({
@@ -164,7 +207,17 @@ export const projectsRouter = createTRPCRouter({
 });
 
 type ProjectPartWithManufacturer = Prisma.ProjectPartGetPayload<{
-  include: {
+  select: {
+    id: true;
+    manufacturerPartId: true;
+    parent: true;
+    parentId: true;
+    project: true;
+    projectNumber: true;
+    quantityOrdered: true;
+    quantityCommitted: true;
+    quantityRecieved: true;
+    quantityRequired: true;
     manufacturerPart: true;
   };
 }>;

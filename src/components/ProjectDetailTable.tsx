@@ -2,7 +2,7 @@ import React from "react";
 
 import { api } from "../utils/api";
 
-import { Autocomplete } from "@mantine/core";
+import { Autocomplete, Button, NumberInput, Text } from "@mantine/core";
 import type { ProjectChildWithChildren } from "../server/api/routers/projects";
 import { ChildTypes } from "@prisma/client";
 import type {
@@ -37,6 +37,13 @@ function ProjectChildAutocomplete({
       await utils.projects.getProjectChildrenById.refetch(projectId);
     },
   });
+  const { mutate: deleteProjectChild } =
+    api.projectChilds.deleteProjectChild.useMutation({
+      onSuccess: async () => {
+        await utils.projects.getProjectChildrenById.refetch(projectId);
+      },
+    });
+
   const handleNewProjectChild = (value: string) => {
     console.log("🚀 ~ file: JacobTestTable.tsx:28 ~ parentId:", parentId);
     if (!projectId) return;
@@ -49,7 +56,7 @@ function ProjectChildAutocomplete({
   };
 
   return (
-    <div className="flex ">
+    <div className="flex w-2/5">
       {part?.name && (
         <div className="flex items-center">
           <input
@@ -87,6 +94,25 @@ function ProjectChildAutocomplete({
           return true;
         }}
       />
+      {part?.id && (
+        <Button
+          sx={(theme) => ({
+            color:
+              theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+
+            "&:hover": {
+              backgroundColor:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[8]
+                  : theme.colors.gray[2],
+            },
+          })}
+          className="border border-gray-500"
+          onClick={() => deleteProjectChild(part.id)}
+        >
+          Remove
+        </Button>
+      )}
     </div>
   );
 }
@@ -106,6 +132,12 @@ function ProjectPartAutocomplete({
   const [value, setValue] = React.useState(
     part?.manufacturerPart?.partNumber || ""
   );
+  const [partQuantities, setPartQuantities] = React.useState({
+    required: part?.quantityRequired || 1,
+    ordered: part?.quantityOrdered || 0,
+    recieved: part?.quantityRecieved || 0,
+    committed: part?.quantityCommitted || 0,
+  });
 
   const { data } = api.parts.getAllParts.useQuery();
   const utils = api.useContext();
@@ -114,6 +146,32 @@ function ProjectPartAutocomplete({
       await utils.projects.getProjectChildrenById.refetch(projectId);
     },
   });
+  const { mutate: updateProjectPartQuantities } =
+    api.projectParts.updateProjectPartQuantities.useMutation({
+      onSuccess: async () => {
+        await utils.projects.getProjectChildrenById.refetch(projectId);
+      },
+    });
+  const { mutate: deleteProjectPart } =
+    api.projectParts.deleteProjectPart.useMutation({
+      onSuccess: async () => {
+        await utils.projects.getProjectChildrenById.refetch(projectId);
+      },
+    });
+
+  function handleQuantityChange() {
+    console.log("handling");
+    if (!part?.id) return;
+    console.log("handled");
+    updateProjectPartQuantities({
+      id: part.id,
+      required: partQuantities.required,
+      ordered: partQuantities.ordered,
+      recieved: partQuantities.recieved,
+      committed: partQuantities.committed,
+    });
+  }
+
   function handleNewProjectPart(value: string) {
     const newPart = data?.find((part) => part.partNumber === value);
     if (!newPart) return;
@@ -126,6 +184,7 @@ function ProjectPartAutocomplete({
 
     setValue("");
   }
+
   return (
     <>
       <div className="my-1 flex w-full justify-between gap-x-1">
@@ -149,10 +208,83 @@ function ProjectPartAutocomplete({
               return true;
             }}
           />
+          {part?.id && (
+            <>
+              <Button
+                sx={(theme) => ({
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[0]
+                      : theme.black,
+
+                  "&:hover": {
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[8]
+                        : theme.colors.gray[2],
+                  },
+                })}
+                className="border border-gray-500"
+                onClick={() => deleteProjectPart(part.id)}
+              >
+                Remove
+              </Button>
+            </>
+          )}
         </div>
-        {/* <Text className="my-1 w-2/5" size="md">
-          {data?.description || "Description"}
-        </Text> */}
+        <div className="flex flex-row gap-x-1">
+          {part?.id && (
+            <>
+              <NumberInput
+                value={partQuantities.required}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    required: e || 1,
+                  })
+                }
+                onBlur={handleQuantityChange}
+                className="w-20"
+              />
+              <NumberInput
+                value={partQuantities.ordered}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    ordered: e || 0,
+                  })
+                }
+                onBlur={() => {
+                  console.log("blurcalled");
+                  handleQuantityChange;
+                }}
+                className="w-20"
+              />
+              <NumberInput
+                value={partQuantities.recieved}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    recieved: e || 0,
+                  })
+                }
+                onBlur={handleQuantityChange}
+                className="w-20"
+              />
+              <NumberInput
+                value={partQuantities.committed}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    committed: e || 0,
+                  })
+                }
+                onBlur={handleQuantityChange}
+                className="w-20"
+              />
+            </>
+          )}
+        </div>
       </div>
     </>
   );
@@ -185,9 +317,17 @@ function RecursiveTable({
   return (
     <>
       <div>
-        {!parentId && data.filter((item) => !item.children).length === 0 && (
-          <ProjectPartAutocomplete projectId={pid} />
-        )}
+        {
+          !parentId && data.filter((item) => !item.children).length === 0 && (
+            <ProjectPartAutocomplete projectId={pid} />
+          )
+          // && (
+          //   <ProjectPartAutocomplete
+          //     projectId={pid}
+          //     placeholder="project scope empty"
+          //   />
+          // )
+        }
         {data.map((item, index) => {
           return (
             <>
@@ -199,6 +339,7 @@ function RecursiveTable({
                       parentId={item.id}
                       projectId={pid}
                     />
+                    <Text>{item.id}</Text>
                   </>
                 ) : (
                   <>

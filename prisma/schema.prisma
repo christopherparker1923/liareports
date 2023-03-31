@@ -147,20 +147,20 @@ model Manufacturer {
 }
 
 model Vendor {
-  id          String       @id @default(cuid())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  name        String       @unique
-  addressNo   Int
-  streetName  String
-  city        String
-  province    String
-  country     String
-  postalCode  String
+  id           String       @id @default(cuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  name         String       @unique
+  addressNo    Int
+  streetName   String
+  city         String
+  province     String
+  country      String
+  postalCode   String
   phoneContact String
-  faxContact    String?
-  emailContact  String
-  vendorParts VendorPart[]
+  faxContact   String?
+  emailContact String
+  vendorParts  VendorPart[]
 }
 
 model Project {
@@ -202,6 +202,10 @@ model ProjectPart {
   manufacturerPartId String
   project            Project?         @relation(fields: [projectNumber], references: [projectNumber])
   projectNumber      String?
+  quantityRequired   Int              @default(1)
+  quantityOrdered    Int              @default(0)
+  quantityRecieved   Int              @default(0)
+  quantityCommitted  Int              @default(0)
   parent             ProjectChild?    @relation(fields: [parentId], references: [id])
   parentId           Int?
 

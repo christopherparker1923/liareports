@@ -1,6 +1,8 @@
 import { createTRPCRouter } from "./trpc";
 import { partsRouter } from "./routers/parts";
 import { projectsRouter } from "./routers/projects";
+import { projectChildsRouter } from "./routers/projectChilds";
+import { projectPartsRouter } from "./routers/projectParts";
 import { manufacturerRouter } from "./routers/manufacturers";
 import { vendorRouter } from "./routers/vendors";
 import { vendorPartPriceLeadHistoryRouter } from "./routers/vendorPartPriceLeadHistory";
@@ -14,6 +16,8 @@ import { vendorPartsRouter } from "./routers/vendorParts";
 export const appRouter = createTRPCRouter({
   parts: partsRouter,
   projects: projectsRouter,
+  projectParts: projectPartsRouter,
+  projectChilds: projectChildsRouter,
   manufacturers: manufacturerRouter,
   vendors: vendorRouter,
   vendorParts: vendorPartsRouter,
