@@ -243,7 +243,8 @@ function ProjectPartAutocomplete({
                     required: e || 1,
                   })
                 }
-                onBlur={handleQuantityChange}
+                // THIS IS HOW TO DO IT !
+                wrapperProps={{ onBlur: handleQuantityChange }}
                 className="w-20"
               />
               <NumberInput
@@ -362,22 +363,22 @@ function RecursiveTable({
                 <div style={{ marginLeft: 20 }}>
                   {item?.projectParts?.length ?? 0 > 0
                     ? item?.projectParts?.map((projectPart) => (
-                        <>
-                          <ProjectPartAutocomplete
-                            part={projectPart}
-                            placeholder="projectPart"
-                            parentId={item.parentId}
-                            projectId={pid}
-                          />
-                        </>
-                      ))
-                    : item.children && (
+                      <>
                         <ProjectPartAutocomplete
-                          placeholder="Empty Part Two"
-                          parentId={item.id}
+                          part={projectPart}
+                          placeholder="projectPart"
+                          parentId={item.parentId}
                           projectId={pid}
                         />
-                      )}
+                      </>
+                    ))
+                    : item.children && (
+                      <ProjectPartAutocomplete
+                        placeholder="Empty Part Two"
+                        parentId={item.id}
+                        projectId={pid}
+                      />
+                    )}
                   {item.children && (item?.projectParts?.length ?? 0) > 0 && (
                     <ProjectPartAutocomplete
                       placeholder="Empty Part Three"
