@@ -185,10 +185,11 @@ function ProjectPartAutocomplete({
     setValue("");
   }
 
+  console.log(part?.id);
   return (
     <>
-      <div className="my-1 flex w-full justify-between gap-x-1">
-        <div className="flex w-2/5 flex-row">
+      <div className="my-1 flex w-full justify-between gap-x-1" key={part?.id}>
+        <div className="flex w-2/5 flex-row" key={100000 + (part?.id || 0)}>
           <Autocomplete
             className="w-full"
             maxDropdownHeight={300}
@@ -232,7 +233,7 @@ function ProjectPartAutocomplete({
             </>
           )}
         </div>
-        <div className="flex flex-row gap-x-1">
+        <div className="flex flex-row gap-x-1" key={part?.id}>
           {part?.id && (
             <>
               <NumberInput
@@ -368,25 +369,25 @@ function RecursiveTable({
                     placeholder="Empty Part One"
                   />
                 )}
-                <div style={{ marginLeft: 20 }}>
+                <div style={{ marginLeft: 20 }} key={1000000 + item.id}>
                   {item?.projectParts?.length ?? 0 > 0
                     ? item?.projectParts?.map((projectPart) => (
-                      <>
+                        <>
+                          <ProjectPartAutocomplete
+                            part={projectPart}
+                            placeholder="projectPart"
+                            parentId={item.parentId}
+                            projectId={pid}
+                          />
+                        </>
+                      ))
+                    : item.children && (
                         <ProjectPartAutocomplete
-                          part={projectPart}
-                          placeholder="projectPart"
-                          parentId={item.parentId}
+                          placeholder="Empty Part Two"
+                          parentId={item.id}
                           projectId={pid}
                         />
-                      </>
-                    ))
-                    : item.children && (
-                      <ProjectPartAutocomplete
-                        placeholder="Empty Part Two"
-                        parentId={item.id}
-                        projectId={pid}
-                      />
-                    )}
+                      )}
                   {item.children && (item?.projectParts?.length ?? 0) > 0 && (
                     <ProjectPartAutocomplete
                       placeholder="Empty Part Three"
