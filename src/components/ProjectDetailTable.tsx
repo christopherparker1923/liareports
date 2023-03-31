@@ -236,6 +236,7 @@ function ProjectPartAutocomplete({
           {part?.id && (
             <>
               <NumberInput
+                min={0}
                 value={partQuantities.required}
                 onChange={(e) =>
                   setPartQuantities({
@@ -245,8 +246,10 @@ function ProjectPartAutocomplete({
                 }
                 onBlur={handleQuantityChange}
                 className="w-20"
+                noClampOnBlur={true}
               />
               <NumberInput
+                min={0}
                 value={partQuantities.ordered}
                 onChange={(e) =>
                   setPartQuantities({
@@ -259,8 +262,10 @@ function ProjectPartAutocomplete({
                   handleQuantityChange;
                 }}
                 className="w-20"
+                noClampOnBlur={true}
               />
               <NumberInput
+                min={0}
                 value={partQuantities.recieved}
                 onChange={(e) =>
                   setPartQuantities({
@@ -270,8 +275,10 @@ function ProjectPartAutocomplete({
                 }
                 onBlur={handleQuantityChange}
                 className="w-20"
+                noClampOnBlur={true}
               />
               <NumberInput
+                min={0}
                 value={partQuantities.committed}
                 onChange={(e) =>
                   setPartQuantities({
@@ -281,6 +288,7 @@ function ProjectPartAutocomplete({
                 }
                 onBlur={handleQuantityChange}
                 className="w-20"
+                noClampOnBlur={true}
               />
             </>
           )}
