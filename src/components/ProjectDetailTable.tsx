@@ -8,6 +8,8 @@ import type {
   ProjectChild,
   ProjectPart,
 } from "@prisma/client";
+import { randomUUID } from "crypto";
+import { randomId } from "@mantine/hooks";
 
 const childrenType = Object.values(ChildTypes);
 function ProjectChildAutocomplete({
@@ -53,8 +55,9 @@ function ProjectChildAutocomplete({
     setValue("");
   };
 
+
   return (
-    <div className="flex w-2/5">
+    <div className="flex w-2/5" key={randomId()}>
       {part?.name && (
         <div className="flex items-center">
           <input
@@ -172,7 +175,7 @@ function ProjectPartAutocomplete({
 
   function handleNewProjectPart(value: string) {
     const newPart = data?.find((part) => part.partNumber === value);
-    if (!newPart) return;
+    if (!newPart) return null;
     const payload = {
       partId: newPart?.id,
       parentId: parentId || undefined,
@@ -182,116 +185,116 @@ function ProjectPartAutocomplete({
 
     setValue("");
   }
+  const key = randomId()
+  console.log(key)
 
-  console.log(part?.id);
+
   return (
-    <>
-      <div className="my-1 flex w-full justify-between gap-x-1" key={part?.id}>
-        <div className="flex w-2/5 flex-row">
-          <Autocomplete
-            className="w-full"
-            maxDropdownHeight={300}
-            value={value}
-            onChange={(value) => handleNewProjectPart(value)}
-            placeholder={placeholder || "Part number"}
-            limit={50}
-            style={style}
-            data={
-              data?.map((part) => ({
-                value: part.partNumber || "No Description",
-                id: part.id,
-                description: part.description,
-              })) || []
-            }
-            filter={() => {
-              return true;
-            }}
-          />
-          {part?.id && (
-            <>
-              <Button
-                sx={(theme) => ({
-                  color:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[0]
-                      : theme.black,
+    <div className="my-1 flex w-full justify-between gap-x-1">
+      <div className="flex w-2/5 flex-row">
+        <Autocomplete
+          className="w-full"
+          maxDropdownHeight={300}
+          value={value}
+          onChange={(value) => handleNewProjectPart(value)}
+          placeholder={placeholder || "Part number"}
+          limit={50}
+          style={style}
+          data={
+            data?.map((part) => ({
+              value: part.partNumber || "No Description",
+              id: part.id,
+              description: part.description,
+            })) || []
+          }
+          filter={() => {
+            return true;
+          }}
+        />
+        {part?.id && (
+          <>
+            <Button
+              sx={(theme) => ({
+                color:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[0]
+                    : theme.black,
 
-                  "&:hover": {
-                    backgroundColor:
-                      theme.colorScheme === "dark"
-                        ? theme.colors.dark[8]
-                        : theme.colors.gray[2],
-                  },
-                })}
-                className="border border-gray-500"
-                onClick={() => deleteProjectPart(part.id)}
-              >
-                Remove
-              </Button>
-            </>
-          )}
-        </div>
-        <div className="flex flex-row gap-x-1" key={part?.id}>
-          {part?.id && (
-            <>
-              <NumberInput
-                min={0}
-                value={partQuantities.required}
-                onChange={(e) =>
-                  setPartQuantities({
-                    ...partQuantities,
-                    required: e || 1,
-                  })
-                }
-                // THIS IS HOW TO DO IT !
-                wrapperProps={{ onBlur: handleQuantityChange }}
-                className="w-20"
-                noClampOnBlur={true}
-              />
-              <NumberInput
-                min={0}
-                value={partQuantities.ordered}
-                onChange={(e) =>
-                  setPartQuantities({
-                    ...partQuantities,
-                    ordered: e || 0,
-                  })
-                }
-                wrapperProps={{ onBlur: handleQuantityChange }}
-                className="w-20"
-                noClampOnBlur={true}
-              />
-              <NumberInput
-                min={0}
-                value={partQuantities.recieved}
-                onChange={(e) =>
-                  setPartQuantities({
-                    ...partQuantities,
-                    recieved: e || 0,
-                  })
-                }
-                wrapperProps={{ onBlur: handleQuantityChange }}
-                className="w-20"
-                noClampOnBlur={true}
-              />
-              <NumberInput
-                min={0}
-                value={partQuantities.committed}
-                onChange={(e) =>
-                  setPartQuantities({
-                    ...partQuantities,
-                    committed: e || 0,
-                  })
-                }
-                wrapperProps={{ onBlur: handleQuantityChange }}
-                className="w-20"
-                noClampOnBlur={true}
-              />
-            </>
-          )}
-        </div>
+                "&:hover": {
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[8]
+                      : theme.colors.gray[2],
+                },
+              })}
+              className="border border-gray-500"
+              onClick={() => deleteProjectPart(part.id)}
+            >
+              Remove
+            </Button>
+          </>
+        )}
       </div>
-    </>
+      <div className="flex flex-row gap-x-1">
+        {part?.id && (
+          <>
+            <NumberInput
+              min={0}
+              value={partQuantities.required}
+              onChange={(e) =>
+                setPartQuantities({
+                  ...partQuantities,
+                  required: e || 1,
+                })
+              }
+              // THIS IS HOW TO DO IT !
+              wrapperProps={{ onBlur: handleQuantityChange }}
+              className="w-20"
+              noClampOnBlur={true}
+            />
+            <NumberInput
+              min={0}
+              value={partQuantities.ordered}
+              onChange={(e) =>
+                setPartQuantities({
+                  ...partQuantities,
+                  ordered: e || 0,
+                })
+              }
+              wrapperProps={{ onBlur: handleQuantityChange }}
+              className="w-20"
+              noClampOnBlur={true}
+            />
+            <NumberInput
+              min={0}
+              value={partQuantities.recieved}
+              onChange={(e) =>
+                setPartQuantities({
+                  ...partQuantities,
+                  recieved: e || 0,
+                })
+              }
+              wrapperProps={{ onBlur: handleQuantityChange }}
+              className="w-20"
+              noClampOnBlur={true}
+            />
+            <NumberInput
+              min={0}
+              value={partQuantities.committed}
+              onChange={(e) =>
+                setPartQuantities({
+                  ...partQuantities,
+                  committed: e || 0,
+                })
+              }
+              wrapperProps={{ onBlur: handleQuantityChange }}
+              className="w-20"
+              noClampOnBlur={true}
+            />
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -299,9 +302,7 @@ export function ProjectDetailTable({ pid }: { pid: string }) {
   const { data } = api.projects.getProjectChildrenById.useQuery(pid);
 
   return (
-    <>
-      <RecursiveTable data={data || []} pid={pid} />
-    </>
+    <RecursiveTable data={data || []} pid={pid} />
   );
 }
 
@@ -320,21 +321,21 @@ function RecursiveTable({
   if (!data) return null;
 
   return (
-    <div>
-      {
-        !parentId && data.filter((item) => !item.children).length === 0 && (
-          <ProjectPartAutocomplete projectId={pid} />
-        )
-        // && (
-        //   <ProjectPartAutocomplete
-        //     projectId={pid}
-        //     placeholder="project scope empty"
-        //   />
-        // )
-      }
+    <>
+      {/* { */}
+      {/*   !parentId && data.filter((item) => !item.children).length === 0 && ( */}
+      {/*     <ProjectPartAutocomplete projectId={pid} /> */}
+      {/*   ) */}
+      {/*   // && ( */}
+      {/*   //   <ProjectPartAutocomplete */}
+      {/*   //     projectId={pid} */}
+      {/*   //     placeholder="project scope empty" */}
+      {/*   //   /> */}
+      {/*   // ) */}
+      {/* } */}
       {data.map((item, index) => {
         return (
-          <div key={item.id}>
+          <div key={item.manufacturerPartId + "_" + item.id}>
             {item.children || data.length === 0 ? (
               <>
                 <ProjectChildAutocomplete
@@ -342,7 +343,6 @@ function RecursiveTable({
                   parentId={item.id}
                   projectId={pid}
                 />
-                <Text>{item.id}</Text>
               </>
             ) : (
               <>
@@ -362,25 +362,24 @@ function RecursiveTable({
                 placeholder="Empty Part One"
               />
             )}
-            <div style={{ marginLeft: 20 }} key={1000000 + item.id}>
+            <div style={{ marginLeft: 20 }} >
               {item?.projectParts?.length ?? 0 > 0
                 ? item?.projectParts?.map((projectPart) => (
-                    <>
-                      <ProjectPartAutocomplete
-                        part={projectPart}
-                        placeholder="projectPart"
-                        parentId={item.parentId}
-                        projectId={pid}
-                      />
-                    </>
-                  ))
+                  < ProjectPartAutocomplete
+                    part={projectPart}
+                    placeholder="projectPart"
+                    parentId={item.parentId}
+                    projectId={pid}
+                    key={projectPart.id}
+                  />
+                ))
                 : item.children && (
-                    <ProjectPartAutocomplete
-                      placeholder="Empty Part Two"
-                      parentId={item.id}
-                      projectId={pid}
-                    />
-                  )}
+                  <ProjectPartAutocomplete
+                    placeholder="Empty Part Two"
+                    parentId={item.id}
+                    projectId={pid}
+                  />
+                )}
               {item.children && (item?.projectParts?.length ?? 0) > 0 && (
                 <ProjectPartAutocomplete
                   placeholder="Empty Part Three"
@@ -405,6 +404,6 @@ function RecursiveTable({
         projectId={pid}
         parentId={parentId}
       />
-    </div>
+    </>
   );
 }
