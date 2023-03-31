@@ -1,7 +1,5 @@
 import React from "react";
-
 import { api } from "../utils/api";
-
 import { Autocomplete, Button, NumberInput, Text } from "@mantine/core";
 import type { ProjectChildWithChildren } from "../server/api/routers/projects";
 import { ChildTypes } from "@prisma/client";
@@ -189,7 +187,7 @@ function ProjectPartAutocomplete({
   return (
     <>
       <div className="my-1 flex w-full justify-between gap-x-1" key={part?.id}>
-        <div className="flex w-2/5 flex-row" key={100000 + (part?.id || 0)}>
+        <div className="flex w-2/5 flex-row">
           <Autocomplete
             className="w-full"
             maxDropdownHeight={300}
@@ -259,10 +257,7 @@ function ProjectPartAutocomplete({
                     ordered: e || 0,
                   })
                 }
-                onBlur={() => {
-                  console.log("blurcalled");
-                  handleQuantityChange;
-                }}
+                wrapperProps={{ onBlur: handleQuantityChange }}
                 className="w-20"
                 noClampOnBlur={true}
               />
@@ -275,7 +270,7 @@ function ProjectPartAutocomplete({
                     recieved: e || 0,
                   })
                 }
-                onBlur={handleQuantityChange}
+                wrapperProps={{ onBlur: handleQuantityChange }}
                 className="w-20"
                 noClampOnBlur={true}
               />
@@ -288,7 +283,7 @@ function ProjectPartAutocomplete({
                     committed: e || 0,
                   })
                 }
-                onBlur={handleQuantityChange}
+                wrapperProps={{ onBlur: handleQuantityChange }}
                 className="w-20"
                 noClampOnBlur={true}
               />
@@ -325,95 +320,91 @@ function RecursiveTable({
   if (!data) return null;
 
   return (
-    <>
-      <div>
-        {
-          !parentId && data.filter((item) => !item.children).length === 0 && (
-            <ProjectPartAutocomplete projectId={pid} />
-          )
-          // && (
-          //   <ProjectPartAutocomplete
-          //     projectId={pid}
-          //     placeholder="project scope empty"
-          //   />
-          // )
-        }
-        {data.map((item, index) => {
-          return (
-            <>
-              <div key={item.id}>
-                {item.children || data.length === 0 ? (
-                  <>
-                    <ProjectChildAutocomplete
-                      part={item}
-                      parentId={item.id}
-                      projectId={pid}
-                    />
-                    <Text>{item.id}</Text>
-                  </>
-                ) : (
-                  <>
-                    {
+    <div>
+      {
+        !parentId && data.filter((item) => !item.children).length === 0 && (
+          <ProjectPartAutocomplete projectId={pid} />
+        )
+        // && (
+        //   <ProjectPartAutocomplete
+        //     projectId={pid}
+        //     placeholder="project scope empty"
+        //   />
+        // )
+      }
+      {data.map((item, index) => {
+        return (
+          <div key={item.id}>
+            {item.children || data.length === 0 ? (
+              <>
+                <ProjectChildAutocomplete
+                  part={item}
+                  parentId={item.id}
+                  projectId={pid}
+                />
+                <Text>{item.id}</Text>
+              </>
+            ) : (
+              <>
+                {
+                  <ProjectPartAutocomplete
+                    part={item}
+                    parentId={item.parentId}
+                    projectId={pid}
+                  />
+                }
+              </>
+            )}
+            {item && !item.children && data[index + 1]?.children && (
+              <ProjectPartAutocomplete
+                parentId={item.parentId}
+                projectId={pid}
+                placeholder="Empty Part One"
+              />
+            )}
+            <div style={{ marginLeft: 20 }} key={1000000 + item.id}>
+              {item?.projectParts?.length ?? 0 > 0
+                ? item?.projectParts?.map((projectPart) => (
+                    <>
                       <ProjectPartAutocomplete
-                        part={item}
+                        part={projectPart}
+                        placeholder="projectPart"
                         parentId={item.parentId}
                         projectId={pid}
                       />
-                    }
-                  </>
-                )}
-                {item && !item.children && data[index + 1]?.children && (
-                  <ProjectPartAutocomplete
-                    parentId={item.parentId}
-                    projectId={pid}
-                    placeholder="Empty Part One"
-                  />
-                )}
-                <div style={{ marginLeft: 20 }} key={1000000 + item.id}>
-                  {item?.projectParts?.length ?? 0 > 0
-                    ? item?.projectParts?.map((projectPart) => (
-                        <>
-                          <ProjectPartAutocomplete
-                            part={projectPart}
-                            placeholder="projectPart"
-                            parentId={item.parentId}
-                            projectId={pid}
-                          />
-                        </>
-                      ))
-                    : item.children && (
-                        <ProjectPartAutocomplete
-                          placeholder="Empty Part Two"
-                          parentId={item.id}
-                          projectId={pid}
-                        />
-                      )}
-                  {item.children && (item?.projectParts?.length ?? 0) > 0 && (
+                    </>
+                  ))
+                : item.children && (
                     <ProjectPartAutocomplete
-                      placeholder="Empty Part Three"
+                      placeholder="Empty Part Two"
                       parentId={item.id}
                       projectId={pid}
                     />
                   )}
+              {item.children && (item?.projectParts?.length ?? 0) > 0 && (
+                <ProjectPartAutocomplete
+                  placeholder="Empty Part Three"
+                  parentId={item.id}
+                  projectId={pid}
+                />
+              )}
 
-                  {item.children ? (
-                    <RecursiveTable
-                      data={item.children as DataArrType}
-                      pid={pid}
-                      parentId={item.id}
-                    />
-                  ) : null}
-                </div>
-              </div>
-            </>
-          );
-        })}
-        <ProjectChildAutocomplete
-          placeholder="Child #2"
-          projectId={pid}
-          parentId={parentId}
-        />
-      </div>
-    </>
+              {item.children ? (
+                <RecursiveTable
+                  data={item.children as DataArrType}
+                  pid={pid}
+                  parentId={item.id}
+                />
+              ) : null}
+            </div>
+          </div>
+        );
+      })}
+      <ProjectChildAutocomplete
+        placeholder="Child #2"
+        projectId={pid}
+        parentId={parentId}
+      />
+    </div>
   );
 }
