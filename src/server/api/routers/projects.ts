@@ -46,34 +46,21 @@ export const projectsRouter = createTRPCRouter({
         },
         include: {
           projectParts: {
-            select: {
-              id: true,
-              manufacturerPartId: true,
-              parent: true,
-              parentId: true,
-              project: true,
-              projectNumber: true,
-              quantityOrdered: true,
-              quantityRequired: true,
-              quantityRecieved: true,
-              quantityCommitted: true,
-              manufacturerPart: true,
-            },
+            // select: {
+            //   id: true,
+            //   manufacturerPartId: true,
+            //   parent: true,
+            //   parentId: true,
+            //   project: true,
+            //   projectNumber: true,
+            //   quantityOrdered: true,
+            //   quantityRequired: true,
+            //   quantityRecieved: true,
+            //   quantityCommitted: true,
+            //   manufacturerPart: true,
+            // },
           },
         },
-        // include: {
-        //   projectParts: {
-        //     select: {
-        //       quantityRequired: true,
-        //       quantityOrdered: true,
-        //       quantityRecieved: true,
-        //       quantityCommitted: true,
-        //     },
-        //     include: {
-        //       manufacturerPart: true,
-        //     },
-        //   },
-        // },
       });
       console.log(projectChildren[0]?.projectParts);
       function buildTree(
