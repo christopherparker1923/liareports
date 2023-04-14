@@ -180,11 +180,11 @@ model Project {
 }
 
 model ProjectChild {
-  id              Int            @id @default(autoincrement())
+  id              String         @id @default(cuid())
   project         Project?       @relation(fields: [projectNumber], references: [projectNumber])
   projectNumber   String?
   parent          ProjectChild?  @relation("ProjectChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentId        Int?
+  parentId        String?
   projectChildren ProjectChild[] @relation("ProjectChild")
   name            String
   revision        String
@@ -197,7 +197,7 @@ model ProjectChild {
 }
 
 model ProjectPart {
-  id                 Int              @id @default(autoincrement())
+  id                 String           @id @default(cuid())
   manufacturerPart   ManufacturerPart @relation(fields: [manufacturerPartId], references: [id])
   manufacturerPartId String
   project            Project?         @relation(fields: [projectNumber], references: [projectNumber])
@@ -207,7 +207,7 @@ model ProjectPart {
   quantityRecieved   Int              @default(0)
   quantityCommitted  Int              @default(0)
   parent             ProjectChild?    @relation(fields: [parentId], references: [id])
-  parentId           Int?
+  parentId           String?
 
   @@index([manufacturerPartId])
   @@index([projectNumber])

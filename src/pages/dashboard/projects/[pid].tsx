@@ -8,7 +8,7 @@ import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProp
 import type { NextPageWithLayout } from "../../_app";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
-import { ProjectDetailTable } from "../../../components/ProjectDetailTable";
+import { ProjectDetailTable } from "../../../components/ProjectTable/ProjectDetailTable";
 
 const ProjectDetailView: NextPageWithLayout = () => {
   const router = useRouter();

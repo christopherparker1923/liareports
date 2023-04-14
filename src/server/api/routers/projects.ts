@@ -37,7 +37,7 @@ export const projectsRouter = createTRPCRouter({
     });
   }),
 
-  getProjectChildrenById: publicProcedure
+  getProjectChildrenByProjectNumber: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
       const projectChildren = await ctx.prisma.projectChild.findMany({
@@ -46,58 +46,59 @@ export const projectsRouter = createTRPCRouter({
         },
         include: {
           projectParts: {
-            // select: {
-            //   id: true,
-            //   manufacturerPartId: true,
-            //   parent: true,
-            //   parentId: true,
-            //   project: true,
-            //   projectNumber: true,
-            //   quantityOrdered: true,
-            //   quantityRequired: true,
-            //   quantityRecieved: true,
-            //   quantityCommitted: true,
-            //   manufacturerPart: true,
-            // },
+            include: {
+              manufacturerPart: {
+                select: {
+                  partNumber: true,
+                },
+              },
+            },
           },
         },
-      });
-      console.log(projectChildren[0]?.projectParts);
-      function buildTree(
-        projectChildren: ProjectChildWithChildren[],
-        parentId: number | null = null
-      ) {
-        const tree: ProjectChildWithChildren[] = [];
-        projectChildren
-          .filter((child) => child.parentId === parentId)
-          .forEach((child) => {
-            child.children = buildTree(projectChildren, child.id);
-            tree.push(child);
-          });
-        return tree;
-      }
-
-      const projectSpecificParts = await ctx.prisma.projectPart.findMany({
-        where: {
-          projectNumber: input,
-        },
-        include: {
-          manufacturerPart: true,
+        orderBy: {
+          parentId: "desc",
         },
       });
 
-      const partArray = buildTree(projectChildren);
-      const topPartArray = projectSpecificParts.filter(
-        (part) => part.parentId === null
-      ) as DataArrType;
-
-      const fullArray = [...partArray, ...topPartArray].reverse();
-      return fullArray as DataArrType;
+      return buildTree(projectChildren, input);
     }),
+  upsertChild: publicProcedure
+    .input(
+      z.object({
+        id: z.string().optional(),
+        childType: z.string(),
+        parentId: z.string().optional().nullish(),
+        projectNumber: z.string(),
+        name: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const childType: ChildTypes = input.childType as ChildTypes;
+      return await ctx.prisma.projectChild.upsert({
+        where: {
+          id: input.id,
+        },
+        update: {
+          childType: childType,
+          name: input.name,
+          parentId: input.parentId,
+          projectNumber: input.projectNumber,
+        },
+        create: {
+          childType: childType,
+          name: input.name || childType,
+          parentId: input.parentId,
+          projectNumber: input.projectNumber,
+          revision: "y",
+          status: "y",
+        },
+      });
+    }),
+
   updateChildName: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
         name: z.string(),
       })
     )
@@ -117,7 +118,7 @@ export const projectsRouter = createTRPCRouter({
       z.object({
         projectId: z.string(),
         partId: z.string(),
-        parentId: z.number().optional(),
+        parentId: z.string().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -192,23 +193,52 @@ export const projectsRouter = createTRPCRouter({
       });
     }),
 });
-
-type ProjectPartWithManufacturer = Prisma.ProjectPartGetPayload<{
-  select: {
-    id: true;
-    manufacturerPartId: true;
-    parent: true;
-    parentId: true;
-    project: true;
-    projectNumber: true;
-    quantityOrdered: true;
-    quantityCommitted: true;
-    quantityRecieved: true;
-    quantityRequired: true;
-    manufacturerPart: true;
+export type ProjectChildren = Prisma.ProjectChildGetPayload<{
+  include: {
+    projectParts: true;
   };
 }>;
-export interface ProjectChildWithChildren extends ProjectChild {
-  children?: ProjectChildWithChildren[];
-  projectParts?: ProjectPartWithManufacturer[];
+type TreeNode<T> = T & { children?: Tree<T> } & ProjectChildren;
+export type Tree<T> = TreeNode<T>[];
+
+export function setdefault<K extends PropertyKey, T>(
+  obj: { [key in K]: T },
+  prop: K,
+  fallback: T
+): T {
+  if (!(prop in obj)) {
+    obj[prop] = fallback;
+  }
+  return obj[prop];
+}
+
+function buildTree<T extends ProjectChild>(
+  projects: T[],
+  projectNumber: string
+) {
+  const byParentId = {} as { [key: string]: Tree<T> };
+  const rootId = projectNumber;
+  for (const project of projects) {
+    const id = project.parentId ?? rootId;
+    setdefault(byParentId, id, [] as Tree<T>).push(project);
+  }
+  //root are those with null as parentId
+  if (!(rootId in byParentId)) {
+    throw new Error("no root projects");
+  }
+
+  function buildBranch(parentId: string) {
+    if (!(parentId in byParentId)) {
+      return [] as Tree<T>;
+    }
+    const branch = byParentId[parentId];
+
+    if (!branch) return [] as Tree<T>;
+    for (const project of branch) {
+      project.children = buildBranch(project.id);
+    }
+    return branch;
+  }
+
+  return buildBranch(rootId);
 }
