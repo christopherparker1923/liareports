@@ -29,7 +29,22 @@ export function AddVendorModal() {
     <>
       <AppButton label="New Vendor" onClick={open} />
       <Modal opened={opened} onClose={close} title="Add New Vendor" centered>
-        <form onSubmit={form.onSubmit((values) => createVendor(values))}>
+        <form
+          onSubmit={form.onSubmit((values) =>
+            createVendor({
+              //fields go here
+              addressNo: 0,
+              city: "",
+              country: "",
+              emailContact: "",
+              name: values.name,
+              phoneContact: "",
+              postalCode: "",
+              province: "",
+              streetName: "",
+            })
+          )}
+        >
           <TextInput
             withAsterisk
             label="Vendor Name"

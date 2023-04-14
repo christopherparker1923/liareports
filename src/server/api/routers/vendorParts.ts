@@ -15,6 +15,7 @@ export const vendorPartsRouter = createTRPCRouter({
               },
               create: {
                 name: input.vendorName,
+                //needs other fields
               },
             },
           },
