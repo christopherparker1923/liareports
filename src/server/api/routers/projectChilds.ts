@@ -4,7 +4,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const projectChildsRouter = createTRPCRouter({
   deleteProjectChild: publicProcedure
-    .input(z.number())
+    .input(z.string())
     .mutation(async ({ input, ctx }) => {
       return await ctx.prisma.projectChild.delete({
         where: {
