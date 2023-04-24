@@ -55,7 +55,6 @@ function RecursiveTable({
               part={child}
               parentId={parentId}
               projectId={pid}
-              re
             />
             {child?.projectParts?.map((projectPart) => (
               <ProjectPartAutocomplete
