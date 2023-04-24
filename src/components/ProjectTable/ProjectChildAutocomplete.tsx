@@ -58,14 +58,15 @@ export default function ProjectChildAutocomplete({
                 name: newChild.childType,
                 projectParts: [],
                 projectNumber: projectId,
-                revision: "y",
-                status: "DRAFT",
+                revision: "y", //make default values
+                status: "y", //make default values
               },
             ],
           };
         }
       );
       // Return a context object with the snapshotted value
+      setValue("");
       return { previousChildren };
     },
     // If the mutation fails,
