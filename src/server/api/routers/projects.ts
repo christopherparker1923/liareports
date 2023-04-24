@@ -1,4 +1,9 @@
-import type { ChildTypes, Prisma, ProjectChild, ProjectPart } from "@prisma/client";
+import type {
+  ChildTypes,
+  Prisma,
+  ProjectChild,
+  ProjectPart,
+} from "@prisma/client";
 import { z } from "zod";
 import { projectSchema } from "../../../components/ProjectForm";
 
@@ -75,7 +80,7 @@ export const projectsRouter = createTRPCRouter({
       const childType: ChildTypes = input.childType as ChildTypes;
       return await ctx.prisma.projectChild.upsert({
         where: {
-          id: input.id,
+          id: input.id || "",
         },
         update: {
           childType: childType,
@@ -197,7 +202,7 @@ export type ProjectChildren = Prisma.ProjectChildGetPayload<{
     projectParts: true;
   };
 }>;
-type TreeNode<T> = T & { children?: Tree<T>; } & ProjectChildren;
+type TreeNode<T> = T & { children?: Tree<T> } & ProjectChildren;
 export type Tree<T> = TreeNode<T>[];
 
 export function setdefault<K extends PropertyKey, T>(
@@ -211,11 +216,11 @@ export function setdefault<K extends PropertyKey, T>(
   return obj[prop];
 }
 
-function buildTree<T extends ProjectChild & { projectParts: ProjectPart[]; }>(
+function buildTree<T extends ProjectChild & { projectParts: ProjectPart[] }>(
   projects: T[],
   projectNumber: string
 ) {
-  const byParentId = {} as { [key: string]: Tree<T>; };
+  const byParentId = {} as { [key: string]: Tree<T> };
   const rootId = projectNumber;
   for (const project of projects) {
     const id = project.parentId ?? rootId;

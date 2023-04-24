@@ -26,7 +26,9 @@ export default function ProjectChildAutocomplete({
   const [value, setValue] = useState<ChildTypes | string>(
     part?.childType || ""
   );
-  const [name, setName] = useState<string | undefined>(part?.name);
+  const [name, setName] = useState<string | undefined>(
+    part?.name || part?.childType
+  );
 
   const { mutate: upsertChild } = api.projects.upsertChild.useMutation();
   function handleChildChange({
