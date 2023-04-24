@@ -1,5 +1,8 @@
 import type {
-  ChildTypes, Prisma, ProjectChild, ProjectPart
+  ChildTypes,
+  Prisma,
+  ProjectChild,
+  ProjectPart,
 } from "@prisma/client";
 import { z } from "zod";
 import { projectSchema } from "../../../components/ProjectForm";
@@ -63,21 +66,16 @@ export const projectsRouter = createTRPCRouter({
 
       const rootParts = await ctx.prisma.projectPart.findMany({
         where: {
-          AND: [
-            { projectNumber: input },
-            { parentId: null }
-          ]
-        }, include: {
+          AND: [{ projectNumber: input }, { parentId: null }],
+        },
+        include: {
           manufacturerPart: true,
-
-        }
+        },
       });
       console.log(rootParts);
 
-
-      const tree = buildTree(projectChildren, input,);
+      const tree = buildTree(projectChildren, input);
       return { rootParts, tree };
-
     }),
   upsertChild: publicProcedure
     .input(
@@ -142,7 +140,6 @@ export const projectsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       if (!input.partId) return;
 
-
       const projectPart = await ctx.prisma.projectPart.upsert({
         create: {
           projectNumber: input.projectId,
@@ -156,7 +153,7 @@ export const projectsRouter = createTRPCRouter({
         },
         where: {
           id: input.partId,
-        }
+        },
       });
       return projectPart;
     }),
@@ -227,7 +224,7 @@ export type ProjectChildren = Prisma.ProjectChildGetPayload<{
     projectParts: true;
   };
 }>;
-type TreeNode<T> = T & { children?: Tree<T>; } & ProjectChildren;
+type TreeNode<T> = T & { children?: Tree<T> } & ProjectChildren;
 export type Tree<T> = TreeNode<T>[];
 
 export function setdefault<K extends PropertyKey, T>(
@@ -241,11 +238,11 @@ export function setdefault<K extends PropertyKey, T>(
   return obj[prop];
 }
 
-function buildTree<T extends ProjectChild & { projectParts: ProjectPart[]; }>(
+function buildTree<T extends ProjectChild & { projectParts: ProjectPart[] }>(
   projects: T[],
   projectNumber: string
 ) {
-  const byParentId = {} as { [key: string]: Tree<T>; };
+  const byParentId = {} as { [key: string]: Tree<T> };
   const rootId = projectNumber;
   for (const project of projects) {
     const id = project.parentId ?? rootId;
