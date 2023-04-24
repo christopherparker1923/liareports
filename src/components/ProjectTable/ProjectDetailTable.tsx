@@ -8,7 +8,9 @@ import { ProjectChildren, Tree } from "../../server/api/routers/projects";
 export function ProjectDetailTable({ pid }: { pid: string }) {
   const { data } = api.projects.getProjectChildrenByProjectNumber.useQuery(
     pid,
-    { refetchOnWindowFocus: false }
+    {
+      refetchOnWindowFocus: false,
+    }
   );
 
   return (
@@ -42,7 +44,6 @@ function RecursiveTable({
   pid: string;
   parentId?: string | null;
 }) {
-  console.log(data);
   if (!data) return null;
 
   return (
@@ -54,6 +55,7 @@ function RecursiveTable({
               part={child}
               parentId={parentId}
               projectId={pid}
+              re
             />
             {child?.projectParts?.map((projectPart) => (
               <ProjectPartAutocomplete

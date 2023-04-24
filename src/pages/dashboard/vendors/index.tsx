@@ -26,7 +26,6 @@ const Vendors: NextPageWithLayout = () => {
     },
   });
 
-  console.log(allVendors);
   return (
     <>
       <AddVendorModal />

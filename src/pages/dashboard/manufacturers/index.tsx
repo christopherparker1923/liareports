@@ -22,7 +22,6 @@ const Manufacturers: NextPageWithLayout = () => {
     },
   });
 
-  console.log(allManufacturers);
   return (
     <>
       <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>

@@ -21,7 +21,6 @@ export default function ProjectPartAutocomplete({
   style?: React.CSSProperties;
   projectId: string;
 }) {
-  console.log(part);
   const [value, setValue] = useState(part?.manufacturerPart.partNumber || "");
 
   const { data } = api.parts.getAllParts.useQuery();

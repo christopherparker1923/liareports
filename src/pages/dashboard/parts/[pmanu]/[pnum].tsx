@@ -28,8 +28,6 @@ const PartDetailView: NextPageWithLayout = () => {
     manuName: pmanu,
   });
 
-  console.log("allvendorhist", allVendorsHistory);
-
   function sortVendorPartPriceLeadHistoryByStartDate(
     leadHistoryList: VendorPartPriceLeadHistory[]
   ) {

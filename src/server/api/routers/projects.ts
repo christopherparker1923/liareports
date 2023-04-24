@@ -73,9 +73,11 @@ export const projectsRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const childType: ChildTypes = input.childType as ChildTypes;
+      const id = input.id;
+      console.log(id);
       return await ctx.prisma.projectChild.upsert({
         where: {
-          id: input.id,
+          id: id || "",
         },
         update: {
           childType: childType,

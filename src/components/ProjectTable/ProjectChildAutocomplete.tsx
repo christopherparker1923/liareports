@@ -8,6 +8,7 @@ import { randomId } from "@mantine/hooks";
 import { ChildTypes, ProjectChild } from "@prisma/client";
 import { useState } from "react";
 import { api } from "../../utils/api";
+import { Tree } from "../../server/api/routers/projects";
 
 const childrenType = Object.values(ChildTypes);
 
@@ -27,8 +28,52 @@ export default function ProjectChildAutocomplete({
     part?.childType || ""
   );
   const [name, setName] = useState<string | undefined>(part?.name);
+  const utils = api.useContext();
+  const { mutate: upsertChild } = api.projects.upsertChild.useMutation({
+    onMutate: async (newChild) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await utils.projects.getProjectChildrenByProjectNumber.cancel();
 
-  const { mutate: upsertChild } = api.projects.upsertChild.useMutation();
+      // Snapshot the previous value
+      const previousChildren =
+        utils.projects.getProjectChildrenByProjectNumber.getData(projectId);
+      if (!previousChildren) return;
+      utils.projects.getProjectChildrenByProjectNumber.setData(
+        projectId,
+        () => [
+          ...previousChildren,
+          {
+            childType: newChild.childType as ChildTypes,
+            id: randomId(),
+            parentId: parentId ?? null,
+            name: newChild.childType,
+            projectParts: [],
+            projectNumber: projectId,
+            revision: "y",
+            status: "DRAFT",
+          },
+        ]
+      );
+      // Optimistically update to the new value
+      // Return a context object with the snapshotted value
+      return { previousChildren };
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, newTodo, context) => {
+      utils.projects.getProjectChildrenByProjectNumber.setData(
+        projectId,
+        context?.previousChildren
+      );
+    },
+    // Always refetch after error or success:
+    onSettled: async () => {
+      await utils.projects.getProjectChildrenByProjectNumber.invalidate(
+        projectId
+      );
+    },
+  });
   function handleChildChange({
     value,
     newName,
