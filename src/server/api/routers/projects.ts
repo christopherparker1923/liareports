@@ -1,4 +1,9 @@
-import type { ChildTypes, Prisma, ProjectChild, ProjectPart } from "@prisma/client";
+import type {
+  ChildTypes,
+  Prisma,
+  ProjectChild,
+  ProjectPart,
+} from "@prisma/client";
 import { z } from "zod";
 import { projectSchema } from "../../../components/ProjectForm";
 
@@ -77,7 +82,7 @@ export const projectsRouter = createTRPCRouter({
       console.log(id);
       return await ctx.prisma.projectChild.upsert({
         where: {
-          id: id || "",
+          id: input.id || "",
         },
         update: {
           childType: childType,

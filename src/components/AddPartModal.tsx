@@ -89,7 +89,12 @@ export function AddPartModal() {
             />
 
             <Group position="center">
-              <HoverCard position="right" width={280} shadow="md">
+              <HoverCard
+                withinPortal={true}
+                position="right"
+                width={280}
+                shadow="md"
+              >
                 <HoverCard.Target>
                   <div className="flex items-center gap-2">
                     <NumberInput
@@ -143,7 +148,12 @@ export function AddPartModal() {
                 />
               </div>
               <Group position="center">
-                <HoverCard position="right" width={280} shadow="md">
+                <HoverCard
+                  withinPortal={true}
+                  position="right"
+                  width={280}
+                  shadow="md"
+                >
                   <HoverCard.Target>
                     <NumberInput
                       withAsterisk
