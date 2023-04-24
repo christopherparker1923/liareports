@@ -50,13 +50,14 @@ export default function ProjectChildAutocomplete({
             name: newChild.childType,
             projectParts: [],
             projectNumber: projectId,
-            revision: "y",
-            status: "DRAFT",
+            revision: "y", //Make default values
+            status: "y", //Make default values
           },
         ]
       );
       // Optimistically update to the new value
       // Return a context object with the snapshotted value
+      setValue("");
       return { previousChildren };
     },
     // If the mutation fails,

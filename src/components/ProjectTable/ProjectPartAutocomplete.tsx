@@ -42,9 +42,6 @@ export default function ProjectPartAutocomplete({
               description: part.description,
             })) || []
           }
-          filter={() => {
-            return true;
-          }}
         />
         {/* {part?.id && ( */}
         {/*   <> */}
