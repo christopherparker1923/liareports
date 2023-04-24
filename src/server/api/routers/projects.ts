@@ -1,8 +1,5 @@
 import type {
-  ChildTypes,
-  Prisma,
-  ProjectChild,
-  ProjectPart,
+  ChildTypes, Prisma, ProjectChild, ProjectPart
 } from "@prisma/client";
 import { z } from "zod";
 import { projectSchema } from "../../../components/ProjectForm";
@@ -64,7 +61,23 @@ export const projectsRouter = createTRPCRouter({
         },
       });
 
-      return buildTree(projectChildren, input);
+      const rootParts = await ctx.prisma.projectPart.findMany({
+        where: {
+          AND: [
+            { projectNumber: input },
+            { parentId: null }
+          ]
+        }, include: {
+          manufacturerPart: true,
+
+        }
+      });
+      console.log(rootParts);
+
+
+      const tree = buildTree(projectChildren, input,);
+      return { rootParts, tree };
+
     }),
   upsertChild: publicProcedure
     .input(
@@ -79,10 +92,9 @@ export const projectsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const childType: ChildTypes = input.childType as ChildTypes;
       const id = input.id;
-      console.log(id);
       return await ctx.prisma.projectChild.upsert({
         where: {
-          id: input.id || "",
+          id: id || "",
         },
         update: {
           childType: childType,
@@ -128,12 +140,23 @@ export const projectsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const projectPart = await ctx.prisma.projectPart.create({
-        data: {
+      if (!input.partId) return;
+
+
+      const projectPart = await ctx.prisma.projectPart.upsert({
+        create: {
           projectNumber: input.projectId,
           parentId: input.parentId,
           manufacturerPartId: input.partId,
         },
+        update: {
+          projectNumber: input.projectId,
+          parentId: input.parentId,
+          manufacturerPartId: input.partId,
+        },
+        where: {
+          id: input.partId,
+        }
       });
       return projectPart;
     }),

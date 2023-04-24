@@ -1,5 +1,9 @@
 import React from "react";
-import type { ProjectChild, ProjectPart } from "@prisma/client";
+import type {
+  ManufacturerPart,
+  ProjectChild,
+  ProjectPart,
+} from "@prisma/client";
 import { api } from "../../utils/api";
 import ProjectPartAutocomplete from "./ProjectPartAutocomplete";
 import ProjectChildAutocomplete from "./ProjectChildAutocomplete";
@@ -12,10 +16,22 @@ export function ProjectDetailTable({ pid }: { pid: string }) {
       refetchOnWindowFocus: false,
     }
   );
+  if (!data) return null;
+  const { rootParts, tree } = data;
 
   return (
     <>
-      <RecursiveTable data={data || []} pid={pid} />
+      {rootParts.map((part) => {
+        return (
+          <ProjectPartAutocomplete
+            key={part.id}
+            parentId={undefined}
+            part={part}
+            projectId={pid}
+          />
+        );
+      })}
+      <RecursiveTable data={tree || []} pid={pid} />
       {/* <ProjectChildAutocomplete */}
       {/*   part={undefined} */}
       {/*   parentId={null} */}

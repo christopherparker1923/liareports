@@ -24,6 +24,31 @@ export default function ProjectPartAutocomplete({
   const [value, setValue] = useState(part?.manufacturerPart.partNumber || "");
 
   const { data } = api.parts.getAllParts.useQuery();
+  const utils = api.useContext();
+  const { mutate: upsertPart } = api.projects.addPartToProject.useMutation({
+    onSettled: async () => {
+      setValue("");
+      await utils.projects.getProjectChildrenByProjectNumber.invalidate(
+        projectId
+      );
+    },
+  });
+
+  function handlePartChange({
+    description,
+    value,
+    id,
+  }: {
+    description: string;
+    value: string;
+    id: string;
+  }) {
+    upsertPart({
+      partId: id,
+      projectId,
+      parentId: parentId ?? undefined,
+    });
+  }
   return (
     <div className="my-1 flex w-full justify-between gap-x-1">
       <div className={`${parentId ? "pl-8" : ""} flex w-2/5 flex-row`}>
@@ -35,6 +60,7 @@ export default function ProjectPartAutocomplete({
           placeholder={placeholder || "Part number"}
           limit={50}
           style={style}
+          onItemSubmit={handlePartChange}
           data={
             data?.map((part) => ({
               value: part.partNumber || "No Description",
@@ -42,9 +68,6 @@ export default function ProjectPartAutocomplete({
               description: part.description,
             })) || []
           }
-          filter={() => {
-            return true;
-          }}
         />
         {/* {part?.id && ( */}
         {/*   <> */}

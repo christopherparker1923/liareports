@@ -28,7 +28,9 @@ export default function ProjectChildAutocomplete({
     part?.childType || ""
   );
   const [name, setName] = useState<string | undefined>(part?.name);
+
   const utils = api.useContext();
+
   const { mutate: upsertChild } = api.projects.upsertChild.useMutation({
     onMutate: async (newChild) => {
       // Cancel any outgoing refetches
@@ -38,24 +40,31 @@ export default function ProjectChildAutocomplete({
       // Snapshot the previous value
       const previousChildren =
         utils.projects.getProjectChildrenByProjectNumber.getData(projectId);
+
       if (!previousChildren) return;
+
+      // Optimistically update to the new value
       utils.projects.getProjectChildrenByProjectNumber.setData(
         projectId,
-        () => [
-          ...previousChildren,
-          {
-            childType: newChild.childType as ChildTypes,
-            id: randomId(),
-            parentId: parentId ?? null,
-            name: newChild.childType,
-            projectParts: [],
-            projectNumber: projectId,
-            revision: "y",
-            status: "DRAFT",
-          },
-        ]
+        () => {
+          return {
+            rootParts: previousChildren.rootParts,
+            tree: [
+              ...previousChildren.tree,
+              {
+                childType: newChild.childType as ChildTypes,
+                id: randomId(),
+                parentId: parentId ?? null,
+                name: newChild.childType,
+                projectParts: [],
+                projectNumber: projectId,
+                revision: "y",
+                status: "DRAFT",
+              },
+            ],
+          };
+        }
       );
-      // Optimistically update to the new value
       // Return a context object with the snapshotted value
       return { previousChildren };
     },
