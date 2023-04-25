@@ -34,7 +34,13 @@ export default function ProjectPartAutocomplete({
     },
   });
 
-  const deleteProjectPart = api.projectParts.deleteProjectPart.useMutation();
+  const deleteProjectPart = api.projectParts.deleteProjectPart.useMutation({
+    onSettled: async () => {
+      await utils.projects.getProjectChildrenByProjectNumber.invalidate(
+        projectId
+      );
+    },
+  });
 
   function handlePartChange({
     description,

@@ -30,6 +30,13 @@ export default function ProjectChildAutocomplete({
   const [name, setName] = useState<string | undefined>(part?.name);
 
   const utils = api.useContext();
+  const deleteProjectChild = api.projectChilds.deleteProjectChild.useMutation({
+    onSettled: async () => {
+      await utils.projects.getProjectChildrenByProjectNumber.invalidate(
+        projectId
+      );
+    },
+  });
 
   const { mutate: upsertChild } = api.projects.upsertChild.useMutation({
     onMutate: async (newChild) => {
@@ -126,6 +133,29 @@ export default function ProjectChildAutocomplete({
         placeholder={placeholder || "Child Type"}
         onItemSubmit={handleChildChange}
       />
+      {part?.id && (
+        <>
+          <Button
+            sx={(theme) => ({
+              color:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[0]
+                  : theme.black,
+
+              "&:hover": {
+                backgroundColor:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[8]
+                    : theme.colors.gray[2],
+              },
+            })}
+            className="border border-gray-500"
+            onClick={() => deleteProjectChild.mutate(part.id)}
+          >
+            Remove
+          </Button>
+        </>
+      )}
     </div>
   );
 }

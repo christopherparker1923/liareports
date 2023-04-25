@@ -21,9 +21,26 @@ const ProjectDetailView: NextPageWithLayout = () => {
   if (!pid) return <div>Invalid project id</div>;
   return (
     <>
-      {/* <Text size="lg">{project.data?.projectNumber}</Text> */}
-      {/* <Text size="lg">{project.data?.projectLead}</Text> */}
-      {/* <ProjectTableCustom pid={pid} /> */}
+      <div className="flex justify-between">
+        <div className="g-x-1">
+          <Text size="lg">{project.data?.projectNumber}</Text>
+          <Text size="lg">{project.data?.projectLead}</Text>
+        </div>
+        <div className="flex gap-x-1">
+          <Text className="w-20" size="lg">
+            Required
+          </Text>
+          <Text className="w-20" size="lg">
+            Ordered
+          </Text>
+          <Text className="w-20" size="lg">
+            Received
+          </Text>
+          <Text className="w-20" size="lg">
+            Committed
+          </Text>
+        </div>
+      </div>
       <ProjectDetailTable pid={pid} />
       {/* <TestProjectTable pid={pid} /> */}
     </>

@@ -249,9 +249,9 @@ function buildTree<T extends ProjectChild & { projectParts: ProjectPart[] }>(
     setdefault(byParentId, id, [] as Tree<T>).push(project);
   }
   //root are those with null as parentId
-  if (!(rootId in byParentId)) {
-    throw new Error("no root projects");
-  }
+  // if (!(rootId in byParentId)) {
+  //   throw new Error("no root projects");
+  // }
 
   function buildBranch(parentId: string) {
     if (!(parentId in byParentId)) {

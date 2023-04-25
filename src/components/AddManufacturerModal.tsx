@@ -5,7 +5,7 @@ import { api } from "../utils/api";
 import { AppButton } from "./AppButton";
 import { manufacturerSchema } from "./ZodSchemas";
 
-export function AddVendorModal() {
+export function AddManufacturerModal() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm({
