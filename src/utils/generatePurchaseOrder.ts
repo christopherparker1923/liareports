@@ -64,11 +64,15 @@ function formatMoney(number: number | string): string {
     if (j % 3 === 0 && j !== 0) {
       integerPartWithCommas = "," + integerPartWithCommas;
     }
-    integerPartWithCommas = integerPart[i] + integerPartWithCommas;
+    if (integerPart[i] === undefined || integerPartWithCommas === undefined) {
+      return "Undefined Error";
+    }
+    integerPartWithCommas = `${integerPart[i]} ${integerPartWithCommas}`; //eslint-disable-line  @typescript-eslint/restrict-template-expressions
   }
 
   // Add the dollar sign and combine the integer and decimal parts
-  const result = "$" + integerPartWithCommas + "." + decimalPart;
+  if (decimalPart === undefined) return "Undefined Error";
+  const result = `$${integerPartWithCommas}.${decimalPart}`;
 
   return result;
 }
@@ -406,7 +410,8 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
             ],
             [
               {
-                text: inputs.vendor.addressNo + " " + inputs.vendor.streetName,
+                text: `${inputs.vendor.addressNo} ${inputs.vendor.streetName}`,
+
                 border: falseBorder,
               },
               emptyCol,
