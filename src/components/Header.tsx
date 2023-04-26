@@ -1,4 +1,10 @@
-import { Header, Burger, MediaQuery, useMantineTheme } from "@mantine/core";
+import {
+  Header,
+  Burger,
+  MediaQuery,
+  useMantineTheme,
+  Tooltip,
+} from "@mantine/core";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
@@ -29,13 +35,26 @@ export const HeaderResponsive = ({ opened, setOpen }: HeaderProps) => {
             mr="xl"
           />
         </MediaQuery>
-        <Link href="/dashboard" className="pointer">
-          <Logo width={48} height={48} />
-        </Link>
+        <Tooltip
+          label="Home"
+          position="right"
+          sx={(theme) => ({
+            color:
+              theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+            backgroundColor:
+              theme.colorScheme === "dark"
+                ? theme.colors.dark[8]
+                : theme.colors.gray[2],
+          })}
+        >
+          <Link href="/dashboard" className="pointer">
+            <Logo width={48} height={48} />
+          </Link>
+        </Tooltip>
       </div>
       <div className="flex w-full justify-evenly xs:w-fit">
-        <NavButton>Dashboard</NavButton>
-        <NavButton>Inventory</NavButton>
+        {/* <NavButton>Dashboard</NavButton>
+        <NavButton>Inventory</NavButton> */}
         <NavButton onClick={() => void signOut()}>Sign Out</NavButton>
         <DarkModeToggle />
       </div>

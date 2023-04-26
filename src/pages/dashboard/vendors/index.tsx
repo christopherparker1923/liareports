@@ -13,6 +13,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { VendorAddPartAutoComplete } from "../../../components/VendorAddPartAutocomplete";
 import { vendorSchema } from "../../../components/ZodSchemas";
 import { AddVendorModal } from "../../../components/AddVendorModal";
+import Link from "next/link";
 
 const Vendors: NextPageWithLayout = () => {
   const allVendors = api.vendors.getAllVendors.useQuery();
@@ -64,9 +65,13 @@ const Vendors: NextPageWithLayout = () => {
                 {vendor.vendorParts?.map((part) => {
                   return (
                     <div key={part.id} className="flex items-center gap-2">
-                      <Text className="w-1/5">
-                        {part.ManufacturerPart.partNumber ?? ""}
-                      </Text>
+                      <Link
+                        className="w-1/5"
+                        href={`parts/${part.ManufacturerPart.manufacturerName}/${part.ManufacturerPart.partNumber}`}
+                      >
+                        <Text>{part.ManufacturerPart.partNumber ?? ""}</Text>
+                      </Link>
+
                       {/* <Text className="w-1/12">{part.price ?? ""}</Text>
                       <Text className="w-1/12">{part.stock ?? ""}</Text>
                       <Text className="w-1/12">{part.leadTime ?? ""}</Text> */}

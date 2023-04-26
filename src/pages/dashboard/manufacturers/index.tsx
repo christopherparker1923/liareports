@@ -9,6 +9,7 @@ import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
+import { AddManufacturerModal } from "../../../components/AddManufacturerModal";
 
 const Manufacturers: NextPageWithLayout = () => {
   const allManufacturers =
@@ -24,6 +25,7 @@ const Manufacturers: NextPageWithLayout = () => {
 
   return (
     <>
+      <AddManufacturerModal></AddManufacturerModal>
       <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>
         <Text>
           Confirm manufacturer deletion?

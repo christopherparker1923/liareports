@@ -34,6 +34,14 @@ export default function ProjectPartAutocomplete({
     },
   });
 
+  const deleteProjectPart = api.projectParts.deleteProjectPart.useMutation({
+    onSettled: async () => {
+      await utils.projects.getProjectChildrenByProjectNumber.invalidate(
+        projectId
+      );
+    },
+  });
+
   function handlePartChange({
     description,
     value,
@@ -69,31 +77,31 @@ export default function ProjectPartAutocomplete({
             })) || []
           }
         />
-        {/* {part?.id && ( */}
-        {/*   <> */}
-        {/*     <Button */}
-        {/*       sx={(theme) => ({ */}
-        {/*         color: */}
-        {/*           theme.colorScheme === "dark" */}
-        {/*             ? theme.colors.dark[0] */}
-        {/*             : theme.black, */}
+        {part?.id && (
+          <>
+            <Button
+              sx={(theme) => ({
+                color:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[0]
+                    : theme.black,
 
-        {/*         "&:hover": { */}
-        {/*           backgroundColor: */}
-        {/*             theme.colorScheme === "dark" */}
-        {/*               ? theme.colors.dark[8] */}
-        {/*               : theme.colors.gray[2], */}
-        {/*         }, */}
-        {/*       })} */}
-        {/*       className="border border-gray-500" */}
-        {/*       onClick={() => deleteProjectPart(part.id)} */}
-        {/*     > */}
-        {/*       Remove */}
-        {/*     </Button> */}
-        {/*   </> */}
-        {/* )} */}
+                "&:hover": {
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[8]
+                      : theme.colors.gray[2],
+                },
+              })}
+              className="border border-gray-500"
+              onClick={() => deleteProjectPart.mutate(part.id)}
+            >
+              Remove
+            </Button>
+          </>
+        )}
       </div>
-      {/* <PartQuantities part={part} projectNumber={projectId} /> */}
+      <PartQuantities part={part} projectNumber={projectId} />
     </div>
   );
 }

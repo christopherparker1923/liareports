@@ -11,13 +11,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <Text>Resize app to see responsive navbar in action</Text>
-      <Button
-        className="tw-bg-blue-500 dark:bg-green-500"
-        onClick={() => toggleColorScheme()}
-      >
-        Toggle Mode
-      </Button>
+      <Text>Welcome to LIAReports!</Text>
     </>
   );
 };
@@ -27,10 +21,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const basicProps = await getBasicServerSideProps(context);
   if (!basicProps.session) {
     return {
-      // redirect: {
-      //   destination: "/",
-      //   permanent: false,
-      // },
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
       props: {
         ...basicProps,
       },

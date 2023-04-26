@@ -7,7 +7,11 @@ export default function PartQuantities({
   part,
   projectNumber,
 }: {
-  part?: ProjectPart & { manufacturerPart?: ManufacturerPart };
+  part?: ProjectPart & {
+    manufacturerPart: {
+      partNumber: string;
+    };
+  };
   projectNumber: string;
 }) {
   const [partQuantities, setPartQuantities] = useState({

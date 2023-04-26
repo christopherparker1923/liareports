@@ -9,15 +9,8 @@ export const vendorPartsRouter = createTRPCRouter({
       await ctx.prisma.vendorPart.create({
         data: {
           Vendor: {
-            connectOrCreate: {
-              where: {
-                name: input.vendorName,
-              },
-              create: {
-                name: input.vendorName,
-
-                //needs other fields
-              },
+            connect: {
+              name: input.vendorName,
             },
           },
           ManufacturerPart: {
