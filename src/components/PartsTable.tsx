@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,6 +10,8 @@ import Link from "next/link";
 import { AddPartModal } from "./AddPartModal";
 
 export function PartsTable() {
+  const [search, setSearch] = useState("");
+
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
       pageIndex: 0,
@@ -18,10 +20,11 @@ export function PartsTable() {
   const fetchDataOptions = {
     pageSize,
     pageIndex,
+    search,
   };
 
-  const parts = api.parts.getAllPartsFull.useQuery(fetchDataOptions, {
-    queryKey: ["parts.getAllPartsFull", fetchDataOptions],
+  const parts = api.parts.getQueriedPartsFull.useQuery(fetchDataOptions, {
+    queryKey: ["parts.getQueriedPartsFull", fetchDataOptions],
     keepPreviousData: true,
   });
 
@@ -110,12 +113,23 @@ export function PartsTable() {
     // getPaginationRowModel: getPaginationRowModel(), // If only doing manual pagination, you don't need this
     debugTable: true,
   });
+
+  const updateSeach = async () => {
+    await parts.refetch();
+  };
+
   if (!parts.data) {
     return <div>Loading...</div>;
   }
   return (
     <div className="p-2">
       <div className="h-2" />
+      <input
+        className="rounded border p-1"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <button onClick={() => updateSeach()}>update search</button>
       <div className="overflow-auto rounded-lg border border-b-0 border-zinc-500">
         <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-zinc-900 dark:text-gray-400">

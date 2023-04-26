@@ -1,4 +1,4 @@
-import type { PartTypes, Project, ProjectPart } from "@prisma/client";
+import { PartTags, PartTypes, Project, ProjectPart } from "@prisma/client";
 import { z } from "zod";
 import { partSchema } from "../../../components/ZodSchemas";
 
@@ -25,23 +25,61 @@ export const partsRouter = createTRPCRouter({
     return parts;
   }),
 
-  getAllPartsFull: publicProcedure
+  getQueriedPartsFull: publicProcedure
     .input(
       z.object({
         pageSize: z.number().min(1).max(100),
         pageIndex: z.number().min(0),
+        search: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
+
+
+      const partTags = [] as PartTags[];
+      Object.keys(PartTags).forEach((partTag) => {
+        if (partTag.toLowerCase().includes(input.search?.toLowerCase() ?? "")) partTags.push(partTag as PartTags);
+      });
+
       const parts = await ctx.prisma.manufacturerPart.findMany({
         skip: input.pageSize * input.pageIndex,
         take: input.pageSize,
+        where: {
+          OR: [
+            {
+              description: {
+                contains: input.search,
+              },
+            },
+            {
+              manufacturerName: {
+                contains: input.search,
+              },
+            },
+            {
+              partNumber: {
+                contains: input.search,
+              },
+            },
+            {
+              partTags: {
+                some: {
+                  name: {
+                    in: partTags
+                  }
+                }
+              }
+            },
+          ],
+        },
         include: {
           Manufacturer: true,
           partTags: true,
           ProjectPart: true,
         },
-        orderBy: { id: "asc" },
+        orderBy: {
+          partNumber: "asc"
+        },
       });
 
       const pageMax = Math.ceil(
@@ -153,9 +191,9 @@ export const partsRouter = createTRPCRouter({
     }),
 });
 type ProjectPartByProjectCount = {
-  [key: string]: { count: number; lead: string };
+  [key: string]: { count: number; lead: string; };
 };
 
 type ProjectPartByProject = {
-  [key: string]: (ProjectPart & { project: Project | null })[];
+  [key: string]: (ProjectPart & { project: Project | null; })[];
 };
