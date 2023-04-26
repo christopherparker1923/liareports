@@ -8,9 +8,13 @@ import type { PaginationState } from "@tanstack/react-table";
 import { api } from "../utils/api";
 import Link from "next/link";
 import { AddPartModal } from "./AddPartModal";
+import { useDebouncedValue } from "@mantine/hooks";
 
 export function PartsTable() {
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 500);
+
+  console.log(debouncedSearch[0]);
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
@@ -20,7 +24,7 @@ export function PartsTable() {
   const fetchDataOptions = {
     pageSize,
     pageIndex,
-    search,
+    search: debouncedSearch[0],
   };
 
   const parts = api.parts.getQueriedPartsFull.useQuery(fetchDataOptions, {

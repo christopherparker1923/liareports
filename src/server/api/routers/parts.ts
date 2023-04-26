@@ -41,6 +41,12 @@ export const partsRouter = createTRPCRouter({
         if (partTag.toLowerCase().includes(input.search?.toLowerCase() ?? "")) partTags.push(partTag as PartTags);
       });
 
+
+      const partTypes = [] as PartTypes[];
+      Object.keys(PartTypes).forEach((partType) => {
+        if (partType.toLowerCase().includes(input.search?.toLowerCase() ?? "")) partTypes.push(partType as PartTypes);
+      });
+
       const parts = await ctx.prisma.manufacturerPart.findMany({
         skip: input.pageSize * input.pageIndex,
         take: input.pageSize,
@@ -68,6 +74,11 @@ export const partsRouter = createTRPCRouter({
                     in: partTags
                   }
                 }
+              }
+            },
+            {
+              partType: {
+                in: partTypes
               }
             },
           ],
