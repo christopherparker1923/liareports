@@ -18,7 +18,10 @@ export default function PartPriceLead({
     part.manufacturerPartId
   );
 
-  if (!history) return <Text>No part history</Text>;
+  if (!history) return <></>;
+
+  if (!history[0]?.VendorPart[0]?.VendorPartPriceLeadHistory[0])
+    return <Text>No part history</Text>;
 
   let leadTime = 0;
   let price = 0;
