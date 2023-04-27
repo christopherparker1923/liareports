@@ -12,13 +12,13 @@ export default function PartPriceLead({
     };
   };
 }) {
-  if (!part?.id) return;
+  if (!part?.id) return <></>;
 
   const { data: history } = api.parts.getMostRecentPriceLeadHistory.useQuery(
     part.manufacturerPartId
   );
 
-  if (!history) return "No part history";
+  if (!history) return <Text>No part history</Text>;
 
   let leadTime = 0;
   let price = 0;
@@ -39,10 +39,12 @@ export default function PartPriceLead({
 
   console.log(history);
   return (
-    <div className="flex flex-row gap-x-1">
-      <Text>
-        {vendor} {price} {leadTime} {latestStartDate.toDateString()}
-      </Text>
-    </div>
+    <>
+      <div className="flex flex-row gap-x-1">
+        <Text>
+          {vendor} {price} {leadTime} {latestStartDate.toDateString()}
+        </Text>
+      </div>
+    </>
   );
 }
