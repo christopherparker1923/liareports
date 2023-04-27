@@ -22,6 +22,7 @@ export default function PartPriceLead({
 
   let leadTime = 0;
   let price = 0;
+  let stock = 0;
   let latestStartDate = new Date("1900-01-01");
   let vendor = "";
 
@@ -33,6 +34,7 @@ export default function PartPriceLead({
         latestStartDate = startDate;
         leadTime = priceHistory.leadTime;
         price = priceHistory.price;
+        stock - priceHistory.stock;
       }
     });
   });
@@ -42,7 +44,7 @@ export default function PartPriceLead({
     <>
       <div className="flex flex-row gap-x-1">
         <Text>
-          {vendor} {price} {leadTime} {latestStartDate.toDateString()}
+          {vendor} {price} {leadTime} {stock} {latestStartDate.toDateString()}
         </Text>
       </div>
     </>
