@@ -13,6 +13,25 @@ export const partsRouter = createTRPCRouter({
       };
     }),
 
+  getMostRecentPriceLeadHistory: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const history = await ctx.prisma.manufacturerPart.findMany({
+        where: {
+          id: input,
+        },
+        include: {
+          VendorPart: {
+            include: {
+              VendorPartPriceLeadHistory: true,
+              Vendor: true,
+            },
+          },
+        },
+      });
+      return history;
+    }),
+
   getAllParts: publicProcedure.query(async ({ ctx }) => {
     const parts = await ctx.prisma.manufacturerPart.findMany({
       select: {
@@ -34,17 +53,16 @@ export const partsRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-
-
       const partTags = [] as PartTags[];
       Object.keys(PartTags).forEach((partTag) => {
-        if (partTag.toLowerCase().includes(input.search?.toLowerCase() ?? "")) partTags.push(partTag as PartTags);
+        if (partTag.toLowerCase().includes(input.search?.toLowerCase() ?? ""))
+          partTags.push(partTag as PartTags);
       });
-
 
       const partTypes = [] as PartTypes[];
       Object.keys(PartTypes).forEach((partType) => {
-        if (partType.toLowerCase().includes(input.search?.toLowerCase() ?? "")) partTypes.push(partType as PartTypes);
+        if (partType.toLowerCase().includes(input.search?.toLowerCase() ?? ""))
+          partTypes.push(partType as PartTypes);
       });
 
       const parts = await ctx.prisma.manufacturerPart.findMany({
@@ -71,15 +89,15 @@ export const partsRouter = createTRPCRouter({
               partTags: {
                 some: {
                   name: {
-                    in: partTags
-                  }
-                }
-              }
+                    in: partTags,
+                  },
+                },
+              },
             },
             {
               partType: {
-                in: partTypes
-              }
+                in: partTypes,
+              },
             },
           ],
         },
@@ -89,7 +107,7 @@ export const partsRouter = createTRPCRouter({
           ProjectPart: true,
         },
         orderBy: {
-          partNumber: "asc"
+          partNumber: "asc",
         },
       });
 
@@ -202,9 +220,9 @@ export const partsRouter = createTRPCRouter({
     }),
 });
 type ProjectPartByProjectCount = {
-  [key: string]: { count: number; lead: string; };
+  [key: string]: { count: number; lead: string };
 };
 
 type ProjectPartByProject = {
-  [key: string]: (ProjectPart & { project: Project | null; })[];
+  [key: string]: (ProjectPart & { project: Project | null })[];
 };

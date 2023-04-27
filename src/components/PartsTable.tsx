@@ -9,6 +9,8 @@ import { api } from "../utils/api";
 import Link from "next/link";
 import { AddPartModal } from "./AddPartModal";
 import { useDebouncedValue } from "@mantine/hooks";
+import { Input, TextInput } from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
 
 export function PartsTable() {
   const [search, setSearch] = useState("");
@@ -128,12 +130,13 @@ export function PartsTable() {
   return (
     <div className="p-2">
       <div className="h-2" />
-      <input
-        className="rounded border p-1"
+      <Input
+        icon={<IconSearch />}
+        className="mb-1 w-2/5 rounded border-zinc-500 text-gray-500  dark:text-gray-400"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <button onClick={() => updateSeach()}>update search</button>
+      {/* <button onClick={() => updateSeach()}>update search</button> */}
       <div className="overflow-auto rounded-lg border border-b-0 border-zinc-500">
         <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-zinc-900 dark:text-gray-400">

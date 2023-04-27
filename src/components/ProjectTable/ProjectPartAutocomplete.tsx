@@ -3,6 +3,7 @@ import type { ProjectPart, ManufacturerPart } from "@prisma/client";
 import { useState } from "react";
 import { api } from "../../utils/api";
 import PartQuantities from "./PartQuantities";
+import PartPriceLead from "./PartPriceLead";
 
 export default function ProjectPartAutocomplete({
   part,
@@ -101,6 +102,7 @@ export default function ProjectPartAutocomplete({
           </>
         )}
       </div>
+      <PartPriceLead part={part} />
       <PartQuantities part={part} projectNumber={projectId} />
     </div>
   );
