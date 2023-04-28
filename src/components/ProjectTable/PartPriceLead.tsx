@@ -21,7 +21,7 @@ export default function PartPriceLead({
   if (!history) return <></>;
 
   if (!history[0]?.VendorPart[0]?.VendorPartPriceLeadHistory[0])
-    return <Text>No part history</Text>;
+    return <Text>No price history</Text>;
 
   let leadTime = 0;
   let price = 0;
