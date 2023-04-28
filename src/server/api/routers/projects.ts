@@ -54,6 +54,15 @@ export const projectsRouter = createTRPCRouter({
               manufacturerPart: {
                 select: {
                   partNumber: true,
+                  VendorPart: {
+                    select: {
+                      VendorPartPriceLeadHistory: {
+                        orderBy: {
+                          startDate: "desc",
+                        }
+                      }
+                    }
+                  }
                 },
               },
             },
@@ -69,7 +78,21 @@ export const projectsRouter = createTRPCRouter({
           AND: [{ projectNumber: input }, { parentId: null }],
         },
         include: {
-          manufacturerPart: true,
+          manufacturerPart: {
+            select: {
+              partNumber: true,
+              VendorPart: {
+                select: {
+                  VendorPartPriceLeadHistory: {
+                    orderBy: {
+                      startDate: "desc",
+                    }
+                  }
+                }
+              }
+            }
+          },
+
         },
       });
       console.log(rootParts);
@@ -224,7 +247,7 @@ export type ProjectChildren = Prisma.ProjectChildGetPayload<{
     projectParts: true;
   };
 }>;
-type TreeNode<T> = T & { children?: Tree<T> } & ProjectChildren;
+export type TreeNode<T> = T & { children?: Tree<T>; } & ProjectChildren;
 export type Tree<T> = TreeNode<T>[];
 
 export function setdefault<K extends PropertyKey, T>(
@@ -238,11 +261,11 @@ export function setdefault<K extends PropertyKey, T>(
   return obj[prop];
 }
 
-function buildTree<T extends ProjectChild & { projectParts: ProjectPart[] }>(
+function buildTree<T extends ProjectChild & { projectParts: ProjectPart[]; }>(
   projects: T[],
   projectNumber: string
 ) {
-  const byParentId = {} as { [key: string]: Tree<T> };
+  const byParentId = {} as { [key: string]: Tree<T>; };
   const rootId = projectNumber;
   for (const project of projects) {
     const id = project.parentId ?? rootId;

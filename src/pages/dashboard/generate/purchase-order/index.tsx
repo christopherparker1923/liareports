@@ -258,7 +258,6 @@ const PurchaseOrder: NextPageWithLayout = () => {
     value: project.projectNumber,
   }));
 
-
   return (
     //Put in a flex box with 2 inputs per row
     <>

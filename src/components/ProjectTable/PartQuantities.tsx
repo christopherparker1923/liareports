@@ -24,7 +24,7 @@ export default function PartQuantities({
   const { mutate: updateProjectPartQuantities } =
     api.projectParts.updateProjectPartQuantities.useMutation({
       onSuccess: async () => {
-        await utils.projects.getProjectChildrenByProjectNumber.refetch(
+        await utils.projects.getProjectChildrenByProjectNumber.invalidate(
           projectNumber
         );
       },
