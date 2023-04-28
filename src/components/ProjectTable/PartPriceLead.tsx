@@ -46,9 +46,11 @@ export default function PartPriceLead({
   return (
     <>
       <div className="flex flex-row gap-x-1">
-        <Text>
-          {vendor} {price} {leadTime} {stock} {latestStartDate.toDateString()}
-        </Text>
+        <Text className="w-24">{vendor}</Text>
+        <Text className="w-24">{`$${price}`}</Text>
+        <Text className="w-24">{`${leadTime} days`}</Text>
+        <Text className="w-24">{stock}</Text>
+        <Text className="w-24">{latestStartDate.toLocaleDateString()}</Text>
       </div>
     </>
   );

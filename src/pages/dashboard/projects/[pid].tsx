@@ -22,23 +22,50 @@ const ProjectDetailView: NextPageWithLayout = () => {
   return (
     <>
       <div className="flex justify-between">
-        <div className="g-x-1">
-          <Text size="lg">{project.data?.projectNumber}</Text>
-          <Text size="lg">{project.data?.projectLead}</Text>
+        <div className="g-x-1 w-2/5">
+          <Text size="lg">{`Project: ${project.data?.projectNumber}`}</Text>
+          <Text size="lg">{`Lead: ${project.data?.projectLead}`}</Text>
         </div>
-        <div className="flex gap-x-1">
-          <Text className="w-20" size="lg">
-            Required
+        <div>
+          <Text className="w-full" size="lg">
+            Latest Quote:
           </Text>
-          <Text className="w-20" size="lg">
-            Ordered
+          <div className="flex gap-x-1">
+            <Text className="w-24" size="lg">
+              Vendor
+            </Text>
+            <Text className="w-24" size="lg">
+              Price
+            </Text>
+            <Text className="w-24" size="lg">
+              Lead Time
+            </Text>
+            <Text className="w-24" size="lg">
+              Stock
+            </Text>
+            <Text className="w-24" size="lg">
+              Date
+            </Text>
+          </div>
+        </div>
+        <div>
+          <Text className="w-full" size="lg">
+            Inventory Tracking:
           </Text>
-          <Text className="w-20" size="lg">
-            Received
-          </Text>
-          <Text className="w-20" size="lg">
-            Committed
-          </Text>
+          <div className="flex gap-x-1 align-bottom">
+            <Text className="w-20" size="lg">
+              Required
+            </Text>
+            <Text className="w-20" size="lg">
+              Ordered
+            </Text>
+            <Text className="w-20" size="lg">
+              Received
+            </Text>
+            <Text className="w-20" size="lg">
+              Committed
+            </Text>
+          </div>
         </div>
       </div>
       <ProjectDetailTable pid={pid} />
