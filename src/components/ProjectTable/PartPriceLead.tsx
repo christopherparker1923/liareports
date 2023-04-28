@@ -37,7 +37,7 @@ export default function PartPriceLead({
         latestStartDate = startDate;
         leadTime = priceHistory.leadTime;
         price = priceHistory.price;
-        stock - priceHistory.stock;
+        stock = priceHistory.stock;
       }
     });
   });
