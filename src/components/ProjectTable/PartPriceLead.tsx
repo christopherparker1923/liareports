@@ -21,7 +21,7 @@ export default function PartPriceLead({
   if (!history) return <></>;
 
   if (!history[0]?.VendorPart[0]?.VendorPartPriceLeadHistory[0])
-    return <Text>No part history</Text>;
+    return <Text>No price history</Text>;
 
   let leadTime = 0;
   let price = 0;
@@ -37,7 +37,7 @@ export default function PartPriceLead({
         latestStartDate = startDate;
         leadTime = priceHistory.leadTime;
         price = priceHistory.price;
-        stock - priceHistory.stock;
+        stock = priceHistory.stock;
       }
     });
   });
@@ -46,9 +46,11 @@ export default function PartPriceLead({
   return (
     <>
       <div className="flex flex-row gap-x-1">
-        <Text>
-          {vendor} {price} {leadTime} {stock} {latestStartDate.toDateString()}
-        </Text>
+        <Text className="w-24">{vendor}</Text>
+        <Text className="w-24">{`$${price}`}</Text>
+        <Text className="w-24">{`${leadTime} days`}</Text>
+        <Text className="w-24">{stock}</Text>
+        <Text className="w-24">{latestStartDate.toLocaleDateString()}</Text>
       </div>
     </>
   );
