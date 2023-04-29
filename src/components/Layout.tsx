@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { HeaderResponsive } from "./Header";
-import { MyNavbar } from "./MyNavbar";
+import { MyNavbar } from "./NavBar/MyNavbar";
 
 export function Layout({ children }: { children: ReactNode }) {
   const [opened, setOpened] = useState(false);
