@@ -3,11 +3,18 @@ import {
   IconFileSettings,
   IconFileArrowRight,
   IconFileDollar,
+  IconAlignBoxBottomCenter,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { MainLink } from "../MainLink";
 
-export const NavBarGenerateAccordion = () => {
+export const NavBarGenerateAccordion = ({
+  colour,
+  icon,
+}: {
+  colour: string;
+  icon: React.ReactNode;
+}) => {
   return (
     <Accordion
       styles={() => ({
@@ -19,28 +26,20 @@ export const NavBarGenerateAccordion = () => {
       <Accordion.Item value="packingSlip">
         <Accordion.Control style={{ padding: "10px" }}>
           <Group>
-            <ThemeIcon color="red" variant="light">
-              <IconFileSettings />
+            <ThemeIcon color={colour} variant="light">
+              {icon}
             </ThemeIcon>
             <Text size="sm">Generate</Text>
           </Group>
         </Accordion.Control>
         <Accordion.Panel className="ml-4">
           <Link href="/dashboard/generate/packing-slip">
-            <MainLink
-              color="red"
-              icon={<IconFileArrowRight />}
-              label="Packing Slip"
-            />
+            <MainLink color={colour} icon={icon} label="Packing Slip" />
           </Link>
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
           <Link href="/dashboard/generate/purchase-order" className="p-0">
-            <MainLink
-              color="red"
-              icon={<IconFileDollar />}
-              label="Purchase Order"
-            />
+            <MainLink color={colour} icon={icon} label="Purchase Order" />
           </Link>
         </Accordion.Panel>
       </Accordion.Item>

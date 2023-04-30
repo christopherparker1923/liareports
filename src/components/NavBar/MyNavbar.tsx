@@ -3,6 +3,9 @@ import {
   IconAlignBoxBottomCenter,
   IconBuildingFactory2,
   IconBuildingStore,
+  IconFileExport,
+  IconFileImport,
+  IconFileSettings,
   IconTriangleSquareCircle,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
@@ -11,6 +14,7 @@ import { MainLink } from "../MainLink";
 import { NavBarGenerateAccordion } from "./NavBarGenerateAccordion";
 import { NavBarImportAccordion } from "./NavBarImportAccordion";
 import { UserDetails } from "./UserDetails";
+import { NavBarExportAccordion } from "./NavBarExportAccordion";
 
 type NavBarProps = {
   opened: boolean;
@@ -28,34 +32,31 @@ export function MyNavbar({ opened }: NavBarProps) {
       <Navbar.Section>
         <Link href="/dashboard/projects">
           <MainLink
-            color="blue"
+            color="red"
             icon={<IconAlignBoxBottomCenter />}
             label="Projects"
           />
         </Link>
         <Link href="/dashboard/parts">
           <MainLink
-            color="violet"
+            color="orange"
             icon={<IconTriangleSquareCircle />}
             label="Parts"
           />
         </Link>
         <Link href="/dashboard/manufacturers">
           <MainLink
-            color="teal"
+            color="yellow"
             icon={<IconBuildingFactory2 />}
             label="Manufacturers"
           />
         </Link>
         <Link href="/dashboard/vendors">
-          <MainLink
-            color="orange"
-            icon={<IconBuildingStore />}
-            label="Vendors"
-          />
+          <MainLink color="lime" icon={<IconBuildingStore />} label="Vendors" />
         </Link>
-        <NavBarGenerateAccordion />
-        <NavBarImportAccordion />
+        <NavBarGenerateAccordion colour="green" icon={<IconFileSettings />} />
+        <NavBarImportAccordion colour="blue" icon={<IconFileImport />} />
+        <NavBarExportAccordion colour="violet" icon={<IconFileExport />} />
       </Navbar.Section>
       <Navbar.Section>
         {sessionData && <UserDetails session={sessionData} />}

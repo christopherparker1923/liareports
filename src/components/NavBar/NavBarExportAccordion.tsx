@@ -3,12 +3,13 @@ import {
   IconFileSettings,
   IconFileArrowRight,
   IconFileDollar,
-  IconFileImport,
+  IconFileExport,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { MainLink } from "../MainLink";
+import { appRouter } from "../../server/api/root";
 
-export const NavBarImportAccordion = ({
+export const NavBarExportAccordion = ({
   colour,
   icon,
 }: {
@@ -29,39 +30,21 @@ export const NavBarImportAccordion = ({
             <ThemeIcon color={colour} variant="light">
               {icon}
             </ThemeIcon>
-            <Text size="sm">Import</Text>
+            <Text size="sm">Export</Text>
           </Group>
         </Accordion.Control>
         <Accordion.Panel className="ml-4">
           <Link href="/dashboard/generate/packing-slip">
-            <MainLink color={colour} icon={icon} label="Parts - Placehodler" />
-          </Link>
-        </Accordion.Panel>
-        <Accordion.Panel className="ml-4">
-          <Link href="/dashboard/generate/purchase-order" className="p-0">
             <MainLink
               color={colour}
               icon={icon}
-              label="Part History - Placeholder"
+              label="Projects - Placeholder"
             />
           </Link>
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
-          <Link href="/dashboard/generate/purchase-order" className="p-0">
-            <MainLink
-              color={colour}
-              icon={icon}
-              label="Manufacturers - Placeholder"
-            />
-          </Link>
-        </Accordion.Panel>
-        <Accordion.Panel className="ml-4">
-          <Link href="/dashboard/generate/purchase-order" className="p-0">
-            <MainLink
-              color={colour}
-              icon={icon}
-              label="Vendors - Placeholder"
-            />
+          <Link href="/pages/api/export/exportParts" className="p-0">
+            <MainLink color={colour} icon={icon} label="Parts - Placeholder" />
           </Link>
         </Accordion.Panel>
       </Accordion.Item>

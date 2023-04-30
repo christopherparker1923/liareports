@@ -5,14 +5,6 @@ import { partSchema } from "../../../components/ZodSchemas";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const partsRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
   getMostRecentPriceLeadHistory: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
@@ -33,14 +25,7 @@ export const partsRouter = createTRPCRouter({
     }),
 
   getAllParts: publicProcedure.query(async ({ ctx }) => {
-    const parts = await ctx.prisma.manufacturerPart.findMany({
-      select: {
-        description: true,
-        manufacturerName: true,
-        partNumber: true,
-        id: true,
-      },
-    });
+    const parts = await ctx.prisma.manufacturerPart.findMany({});
     return parts;
   }),
 
@@ -169,35 +154,6 @@ export const partsRouter = createTRPCRouter({
         },
       });
 
-      // const resultOne: ProjectPartByProject = {};
-      // for (const item of part?.ProjectPart ?? []) {
-      //   const key = item.project?.projectNumber;
-      //   if (!key) continue;
-      //   if (!resultOne[key]) {
-      //     resultOne[key] = [] as (typeof item)[];
-      //   }
-      //   resultOne[key]?.push(item);
-      // }
-      // console.log("🚀 ~ file: parts.ts:106 ~ .query ~ resultOne:", resultOne);
-      //returns this for the test part
-      // {
-      //   '22199': [
-      //     {
-      //       id: 1,
-      //       manufacturerPartId: 'clfd1cdt901c6to3gaz0r8i9o',
-      //       projectNumber: '22199',
-      //       parentId: null,
-      //       project: [Object]
-      //     },
-      //     {
-      //       id: 2,
-      //       manufacturerPartId: 'clfd1cdt901c6to3gaz0r8i9o',
-      //       projectNumber: '22199',
-      //       parentId: null,
-      //       project: [Object]
-      //     }
-      //   ];
-      // }
       const resultTwo: ProjectPartByProjectCount = {};
       for (const item of part?.ProjectPart ?? []) {
         const key = item.project?.projectNumber;
@@ -210,8 +166,6 @@ export const partsRouter = createTRPCRouter({
         }
         resultTwo[key]!.count++;
       }
-      //returns this for the test part
-      // { '22199': 2 }
       console.log("🚀 ~ file: parts.ts:134 ~ .query ~ resultTwo:", resultTwo);
       return {
         projectPartCounts: resultTwo,
