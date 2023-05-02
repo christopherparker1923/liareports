@@ -4,7 +4,10 @@ import importCSV from "../importCSV";
 import { readFileSync } from "fs";
 import { api } from "../../../utils/api";
 import Papa from "papaparse";
-
+/*
+* I suggest we do this client side, similar to how we do the Packing Slip/Purchase Order
+* utils/generatePackingSlip.ts - as an example, excel instead of pdf, but similar idea
+*/
 function exportParts() {
   const { data: parts } = api.parts.getAllParts.useQuery();
   if (!parts) return "Error";
