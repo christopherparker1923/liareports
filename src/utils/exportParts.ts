@@ -1,28 +1,26 @@
-import csv from "fast-csv";
-import { date } from "zod";
-import { prisma } from "../server/db";
-import fs from "fs";
+import Papa from "papaparse";
+import { api } from "./api";
+import { ManufacturerPart } from "@prisma/client";
 
-const ExportParts = () => {
-  const handleExportClick = async () => {
-    try {
-      const data = await prisma.manufacturerPart.findMany(); // Replace "yourTableName" with the actual name of the table you want to export
-      //let fs = require("fs");
-      const currentDate = new Date().toISOString().split("T")[0];
-      const csvStream = csv.format({ headers: true });
-      csvStream.pipe(fs.createWriteStream(`Part_Export_${currentDate}`)); // Specify the desired filename
-
-      data.forEach((row: any) => {
-        csvStream.write(row);
-      });
-
-      csvStream.end();
-    } catch (error) {
-      console.error("Error exporting to CSV:", error);
-    }
-  };
-
-  return "success";
+const ExportParts = (data: ManufacturerPart[]) => {
+  try {
+    const csv = Papa.unparse(data, {});
+    const csvFull = "data:text/csv;charset=utf-8," + csv;
+    const encodedUri = encodeURI(csvFull);
+    const link = document.createElement("a");
+    link.setAttribute(
+      "href",
+      encodedUri
+    );
+    link.setAttribute("download", "parts.csv");
+    // Trigger a click event on the anchor element to start the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error("Error exporting to CSV:", error);
+  }
 };
+
 
 export default ExportParts;
