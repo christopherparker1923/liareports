@@ -23,10 +23,10 @@ const ProjectDetailView: NextPageWithLayout = () => {
     <>
       <div className="flex justify-between">
         <div className="g-x-1 w-2/5">
-          {/*eslint-disable-next-line @typescript-eslint/restrict-template-expressions*/}
-          <Text size="lg">{`Project: ${project.data?.projectNumber}`}</Text>{" "}
-          {/*eslint-disable-next-line @typescript-eslint/restrict-template-expressions*/}
-          <Text size="lg">{`Lead: ${project.data?.projectLead}`}</Text>
+          <Text size="lg">{`Project: ${
+            project.data?.projectNumber || ""
+          }`}</Text>{" "}
+          <Text size="lg">{`Lead: ${project.data?.projectLead || ""}`}</Text>
         </div>
         <div>
           <Text className="w-full" size="lg">
