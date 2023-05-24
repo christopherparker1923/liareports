@@ -151,6 +151,7 @@ export const partsRouter = createTRPCRouter({
               project: true,
             },
           },
+          partTags: {},
         },
       });
 
@@ -169,7 +170,7 @@ export const partsRouter = createTRPCRouter({
       console.log("🚀 ~ file: parts.ts:134 ~ .query ~ resultTwo:", resultTwo);
       return {
         projectPartCounts: resultTwo,
-        partDescription: part?.description,
+        part: part,
       };
     }),
 });

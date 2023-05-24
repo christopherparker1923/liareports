@@ -29,7 +29,7 @@ export const AppButton = (props: AppButtonProps & UnstyledButtonProps) => {
               : theme.colors.gray[2],
         },
       })}
-      className="border border-gray-500"
+      className="border border-gray-500 bg-zinc-200 hover:bg-zinc-400 dark:bg-zinc-900 dark:hover:bg-zinc-700"
     >
       <Text size="sm">{props.label}</Text>
     </UnstyledButton>

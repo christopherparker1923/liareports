@@ -205,7 +205,7 @@ export function AddPartModal() {
           </form>
         </Modal>
 
-        <Group className="my-3 justify-start " position="center">
+        <Group className="justify-start " position="center">
           <AppButton label="Add Part" onClick={open}></AppButton>
         </Group>
       </div>

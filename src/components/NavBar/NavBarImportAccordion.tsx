@@ -33,21 +33,17 @@ export const NavBarImportAccordion = ({
           </Group>
         </Accordion.Control>
         <Accordion.Panel className="ml-4">
-          <Link href="/dashboard/generate/packing-slip">
-            <MainLink color={colour} icon={icon} label="Parts - Placehodler" />
+          <Link href="/dashboard/import/parts">
+            <MainLink color={colour} icon={icon} label="Parts" />
           </Link>
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
-          <Link href="/dashboard/generate/purchase-order" className="p-0">
-            <MainLink
-              color={colour}
-              icon={icon}
-              label="Part History - Placeholder"
-            />
+          <Link href="/dashboard/import/partHistory" className="p-0">
+            <MainLink color={colour} icon={icon} label="Part History" />
           </Link>
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
-          <Link href="/dashboard/generate/purchase-order" className="p-0">
+          <Link href="/dashboard/import" className="p-0">
             <MainLink
               color={colour}
               icon={icon}
@@ -56,7 +52,7 @@ export const NavBarImportAccordion = ({
           </Link>
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
-          <Link href="/dashboard/generate/purchase-order" className="p-0">
+          <Link href="/dashboard/import" className="p-0">
             <MainLink
               color={colour}
               icon={icon}

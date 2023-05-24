@@ -61,7 +61,7 @@ const PartDetailView: NextPageWithLayout = () => {
         <AddPartHistoryModal pnum={pnum} pmanu={pmanu} />
       </div>
       <Text className="mb-2" size="md">
-        {manufacturerPart?.partDescription}
+        {manufacturerPart?.part?.description}
       </Text>
       <div>
         <div className="flex flex-wrap gap-2">
@@ -97,6 +97,48 @@ const PartDetailView: NextPageWithLayout = () => {
             );
           })}
         </div>
+        <Card className="mt-2" shadow="sm" padding="lg" radius="md" withBorder>
+          <Card.Section>
+            <Text className="p-2" size="xl">
+              Specifications
+            </Text>
+          </Card.Section>
+          <Divider variant="solid" />
+          <Card.Section className="pt-2">
+            <div className="flex">
+              <Text className="w-1/5 p-2">{`Height: ${manufacturerPart.part?.height}`}</Text>
+              <Text className="w-1/5 p-2">{`UL Cert: ${manufacturerPart.part?.ULCert}`}</Text>
+              <Text className="w-1/5 p-2">{`Part Type: ${manufacturerPart.part?.partType}`}</Text>
+              <Text className="w-1/5 p-2">{`Preference: ${manufacturerPart.part?.preference}`}</Text>
+            </div>
+            <div className="flex">
+              <Text className="w-1/5 p-2">{`Width (Radius): ${manufacturerPart.part?.width}`}</Text>
+              <Text className="w-1/5 p-2">{`CSA Cert: ${manufacturerPart.part?.CSACert}`}</Text>
+            </div>
+            <div className="flex">
+              <Text className="w-1/5 p-2">{`Depth (Length): ${manufacturerPart.part?.length}`}</Text>
+            </div>
+          </Card.Section>
+        </Card>
+        <Card className="mt-2" shadow="sm" padding="lg" radius="md" withBorder>
+          <Card.Section>
+            <Text className="p-2" size="xl">
+              Part Tags
+            </Text>
+          </Card.Section>
+          <Divider variant="solid" />
+          <Card.Section className="pt-2">
+            <div className="flex">
+              {manufacturerPart.part?.partTags?.map((tag) => {
+                return (
+                  <Text className="w-1/5 p-2" key={tag.id}>
+                    {tag.name}
+                  </Text>
+                );
+              })}
+            </div>
+          </Card.Section>
+        </Card>
         <Card className="mt-2" shadow="sm" padding="lg" radius="md" withBorder>
           <Card.Section>
             <Text className="p-2" size="xl">

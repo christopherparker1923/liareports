@@ -129,13 +129,15 @@ export function PartsTable() {
   }
   return (
     <div className="p-2">
-      <div className="h-2" />
-      <Input
-        icon={<IconSearch />}
-        className="mb-1 w-2/5 rounded border-zinc-500 text-gray-500  dark:text-gray-400"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      <div className="align-center mb-2 flex justify-center gap-2">
+        <AddPartModal />
+        <Input
+          icon={<IconSearch />}
+          className="mb-1 w-2/5 rounded border-zinc-500 text-gray-500  dark:text-gray-400"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
       {/* <button onClick={() => updateSeach()}>update search</button> */}
       <div className="overflow-auto rounded-lg border border-b-0 border-zinc-500">
         <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -271,7 +273,6 @@ export function PartsTable() {
         {parts.isFetching ? "Loading..." : null}
       </div>
       <div>{table.getRowModel().rows.length} Rows</div>
-      <AddPartModal />
     </div>
   );
 }

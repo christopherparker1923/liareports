@@ -1,6 +1,14 @@
 // pages/index.tsx
 
-import { Accordion, Dialog, Flex, Modal, Text, TextInput } from "@mantine/core";
+import {
+  Accordion,
+  Button,
+  Dialog,
+  Flex,
+  Modal,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { GetServerSideProps } from "next";
 import { ReactElement, useState } from "react";
@@ -18,8 +26,10 @@ import Link from "next/link";
 const Vendors: NextPageWithLayout = () => {
   const allVendors = api.vendors.getAllVendors.useQuery();
   const [vendorForDelete, setVendorForDelete] = useState("");
+  const [vendorPartForDelete, setVendorPartForDelete] = useState("");
 
-  const [openedDialog, setOpenedDialog] = useState(false);
+  const [openedVendorDialog, setOpenedVendorDialog] = useState(false);
+  const [openedVendorPartDialog, setOpenedVendorPartDialog] = useState(false);
 
   const deleteVendor = api.vendors.deleteVendor.useMutation({
     onSuccess: async () => {
@@ -27,24 +37,56 @@ const Vendors: NextPageWithLayout = () => {
     },
   });
 
+  const deleteVendorPart = api.vendorParts.deleteVendorPart.useMutation({
+    onSettled: async () => {
+      await allVendors.refetch();
+    },
+  });
+
   return (
     <>
       <AddVendorModal />
-      <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>
+      <Dialog
+        position={{ left: "50%", top: "25%" }}
+        opened={openedVendorDialog}
+      >
         <Text>
           Confirm vendor deletion?
           <Flex>
             <AppButton
               label="Delete"
               onClick={() => {
-                setOpenedDialog(false);
+                setOpenedVendorDialog(false);
                 deleteVendor.mutate(vendorForDelete);
               }}
             />
             <AppButton
               label="Cancel"
               onClick={() => {
-                setOpenedDialog(false);
+                setOpenedVendorDialog(false);
+              }}
+            />
+          </Flex>
+        </Text>
+      </Dialog>
+      <Dialog
+        position={{ left: "50%", top: "25%" }}
+        opened={openedVendorPartDialog}
+      >
+        <Text>
+          Confirm part deletion?
+          <Flex>
+            <AppButton
+              label="Delete"
+              onClick={() => {
+                setOpenedVendorPartDialog(false);
+                deleteVendorPart.mutate(vendorPartForDelete);
+              }}
+            />
+            <AppButton
+              label="Cancel"
+              onClick={() => {
+                setOpenedVendorPartDialog(false);
               }}
             />
           </Flex>
@@ -70,8 +112,29 @@ const Vendors: NextPageWithLayout = () => {
                         href={`parts/${part.ManufacturerPart.manufacturerName}/${part.ManufacturerPart.partNumber}`}
                       >
                         <Text>{part.ManufacturerPart.partNumber ?? ""}</Text>
-                      </Link>
+                      </Link>{" "}
+                      <Button
+                        sx={(theme) => ({
+                          color:
+                            theme.colorScheme === "dark"
+                              ? theme.colors.dark[0]
+                              : theme.black,
 
+                          "&:hover": {
+                            backgroundColor:
+                              theme.colorScheme === "dark"
+                                ? theme.colors.dark[8]
+                                : theme.colors.gray[2],
+                          },
+                        })}
+                        className="border border-gray-500"
+                        onClick={() => {
+                          setOpenedVendorPartDialog(true);
+                          setVendorPartForDelete(part.id);
+                        }}
+                      >
+                        Remove
+                      </Button>
                       {/* <Text className="w-1/12">{part.price ?? ""}</Text>
                       <Text className="w-1/12">{part.stock ?? ""}</Text>
                       <Text className="w-1/12">{part.leadTime ?? ""}</Text> */}
@@ -83,7 +146,7 @@ const Vendors: NextPageWithLayout = () => {
                   label="Delete"
                   hidden={vendor.vendorParts.length != 0}
                   onClick={() => {
-                    setOpenedDialog(true);
+                    setOpenedVendorDialog(true);
                     setVendorForDelete(vendor.name);
                   }}
                 />

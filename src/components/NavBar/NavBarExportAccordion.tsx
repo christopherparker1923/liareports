@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { MainLink } from "../MainLink";
 import { appRouter } from "../../server/api/root";
+import ExportParts from "../../utils/exportParts";
 
 export const NavBarExportAccordion = ({
   colour,
@@ -43,9 +44,12 @@ export const NavBarExportAccordion = ({
           </Link>
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
-          <Link href="/pages/api/export/exportParts" className="p-0">
-            <MainLink color={colour} icon={icon} label="Parts - Placeholder" />
-          </Link>
+          <MainLink
+            color={colour}
+            icon={icon}
+            label="Parts"
+            onClick={ExportParts}
+          />
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>

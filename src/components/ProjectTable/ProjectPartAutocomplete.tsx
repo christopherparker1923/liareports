@@ -60,7 +60,7 @@ export default function ProjectPartAutocomplete({
   }
   return (
     <div className="my-1 flex w-full justify-between gap-x-1">
-      <div className={`${parentId ? "pl-8" : ""} flex w-2/5 flex-row`}>
+      <div className={`${parentId ? "pl-8" : ""} flex w-1/5 flex-row`}>
         <Autocomplete
           className="w-full"
           maxDropdownHeight={300}

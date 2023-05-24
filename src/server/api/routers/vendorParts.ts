@@ -115,4 +115,14 @@ export const vendorPartsRouter = createTRPCRouter({
       });
       return vendorParts;
     }),
+
+  deleteVendorPart: publicProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.prisma.vendorPart.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
 });
