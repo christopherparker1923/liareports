@@ -6,13 +6,14 @@ const ExportParts = (data: ManufacturerPart[]) => {
   console.log("Export Call");
   console.log("inExportCall: ", data);
   try {
+    const currentDate = new Date().toISOString().split("T")[0];
     const csv = Papa.unparse(data, { skipEmptyLines: false });
     const link = document.createElement("a");
     link.setAttribute(
       "href",
       URL.createObjectURL(new Blob([csv], { type: "text/csv" }))
     );
-    link.setAttribute("download", "parts.csv");
+    link.setAttribute("download", `Export-Parts-${currentDate}.csv`);
     // Trigger a click event on the anchor element to start the download
     document.body.appendChild(link);
     link.click();
