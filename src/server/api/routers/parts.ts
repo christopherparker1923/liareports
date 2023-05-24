@@ -175,9 +175,9 @@ export const partsRouter = createTRPCRouter({
     }),
 });
 type ProjectPartByProjectCount = {
-  [key: string]: { count: number; lead: string };
+  [key: string]: { count: number; lead: string; };
 };
 
 type ProjectPartByProject = {
-  [key: string]: (ProjectPart & { project: Project | null })[];
+  [key: string]: (ProjectPart & { project: Project | null; })[];
 };
