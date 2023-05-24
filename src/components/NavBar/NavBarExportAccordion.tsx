@@ -24,6 +24,7 @@ export const NavBarExportAccordion = ({
   });
   const fetchParts = async () => {
     await refetch();
+    if (!data) return;
     ExportParts(data);
   };
   return (

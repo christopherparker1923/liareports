@@ -2,15 +2,16 @@ import Papa from "papaparse";
 import { api } from "./api";
 import { ManufacturerPart } from "@prisma/client";
 
+
+
+
 const ExportParts = (data: ManufacturerPart[]) => {
   try {
-    const csv = Papa.unparse(data, {});
-    const csvFull = "data:text/csv;charset=utf-8," + csv;
-    const encodedUri = encodeURI(csvFull);
+    const csv = Papa.unparse(data, { skipEmptyLines: false, });
     const link = document.createElement("a");
     link.setAttribute(
       "href",
-      encodedUri
+      URL.createObjectURL(new Blob([csv], { type: "text/csv" }))
     );
     link.setAttribute("download", "parts.csv");
     // Trigger a click event on the anchor element to start the download
