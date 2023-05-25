@@ -173,6 +173,21 @@ export const partsRouter = createTRPCRouter({
         part: part,
       };
     }),
+  // TODO: Fix the z.object to not be any, also probably need to add row[0] and row[1] 
+  importParts: publicProcedure.input(z.object({ part: z.any() })).mutation(async ({ ctx, input }) => {
+    const { part } = input;
+    return await ctx.prisma.manufacturerPart.upsert({
+      create: part,
+      update: part,
+      where: {
+        id: row[0],
+        // manufacturerName_partNumber: {
+        //   manufacturerName: row[0]!,
+        //   partNumber: row[1]!,
+        // },
+      },
+    });
+  }),
 });
 type ProjectPartByProjectCount = {
   [key: string]: { count: number; lead: string; };

@@ -1,12 +1,14 @@
-import { GetServerSideProps } from "next";
-import { ReactElement, useState } from "react";
+import type { GetServerSideProps } from "next";
+import type { ReactElement } from "react";
+import { useState } from "react";
 import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
-import { NextPageWithLayout } from "../../../_app";
+import type { NextPageWithLayout } from "../../../_app";
 import { Button, FileInput, Text, Notification } from "@mantine/core";
 import { AppButton } from "../../../../components/AppButton";
 import ImportPartsUtil from "../../../../utils/importParts";
 import { IconX } from "@tabler/icons-react";
+import { api } from "../../../../utils/api";
 
 const ImportParts: NextPageWithLayout = () => {
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -14,7 +16,9 @@ const ImportParts: NextPageWithLayout = () => {
     chooseValidFileNotificationVisiblity,
     setChooseValidFileNotificationVisibility,
   ] = useState(false);
-  console.log(importFile);
+
+  // TODO: Use this mutuate inplace inplace of the prisma.upsert in importParts.ts, you can pass this around as an argument to a function!
+  const { mutate } = api.parts.importParts.useMutation();
   return (
     <>
       <FileInput
