@@ -3,8 +3,6 @@ import { api } from "./api";
 import { ManufacturerPart } from "@prisma/client";
 
 const ExportParts = (data: ManufacturerPart[]) => {
-  console.log("Export Call");
-  console.log("inExportCall: ", data);
   try {
     const currentDate = new Date().toISOString().split("T")[0];
     const csv = Papa.unparse(data, { skipEmptyLines: false });
