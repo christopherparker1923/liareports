@@ -173,26 +173,45 @@ export const partsRouter = createTRPCRouter({
         part: part,
       };
     }),
-  // TODO: Fix the z.object to not be any, also probably need to add row[0] and row[1] 
-  importParts: publicProcedure.input(z.object({ part: z.any() })).mutation(async ({ ctx, input }) => {
-    const { part } = input;
-    return await ctx.prisma.manufacturerPart.upsert({
-      create: part,
-      update: part,
-      where: {
-        id: row[0],
-        // manufacturerName_partNumber: {
-        //   manufacturerName: row[0]!,
-        //   partNumber: row[1]!,
-        // },
-      },
-    });
-  }),
+  // TODO: Fix the z.object to not be any, also probably need to add row[0] and row[1]
+  importParts: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        part: z.object({
+          partNumber: z.string(),
+          partType: z.nativeEnum(PartTypes),
+          length: z.number(),
+          width: z.number(),
+          height: z.number(),
+          CSACert: z.boolean(),
+          ULCert: z.boolean(),
+          preference: z.number(),
+          description: z.string(),
+          partTags: z.object({ connectOrCreate: z.any() }),
+          Manufacturer: z.object({ connectOrCreate: z.any() }),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, part } = input;
+      return await ctx.prisma.manufacturerPart.upsert({
+        create: part,
+        update: part,
+        where: {
+          id: id,
+          // manufacturerName_partNumber: {
+          //   manufacturerName: row[0]!,
+          //   partNumber: row[1]!,
+          // },
+        },
+      });
+    }),
 });
 type ProjectPartByProjectCount = {
-  [key: string]: { count: number; lead: string; };
+  [key: string]: { count: number; lead: string };
 };
 
 type ProjectPartByProject = {
-  [key: string]: (ProjectPart & { project: Project | null; })[];
+  [key: string]: (ProjectPart & { project: Project | null })[];
 };

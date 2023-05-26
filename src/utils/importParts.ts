@@ -3,11 +3,14 @@ import { api } from "./api";
 import { ManufacturerPart, PartTags, PartTypes } from "@prisma/client";
 import { prisma } from "../server/db";
 
-const ImportPartsUtil = (data: File) => {
+const ImportPartsUtil = (
+  mutate: ,
+  data: File
+) => {
   console.log("Export Call: ", data);
 
   Papa.parse(data, {
-    complete: function ({ data }: { data: string[][]; }) {
+    complete: function ({ data }: { data: string[][] }) {
       console.log("Inside papa.parse");
       Promise.all(
         data.slice(1, -1).map((row) => {
@@ -19,22 +22,22 @@ const ImportPartsUtil = (data: File) => {
             length: parseInt(row[5] || ""),
             width: parseInt(row[6] || ""),
             height: parseInt(row[7] || ""),
-            CSACert: row[8] || false,
-            ULCert: row[9] || false,
+            CSACert: Boolean(row[8]) || false,
+            ULCert: Boolean(row[9]) || false,
             preference: parseInt(row[10] || "0"),
-            description: row[11]!,
+            description: row[11] || "",
             partTags:
               row[12] && row[12]?.length > 0
                 ? {
-                  connectOrCreate: {
-                    create: {
-                      name: row[12]!.trim() as PartTags,
+                    connectOrCreate: {
+                      create: {
+                        name: row[12]!.trim() as PartTags,
+                      },
+                      where: {
+                        name: row[12] as PartTags,
+                      },
                     },
-                    where: {
-                      name: row[12] as PartTags,
-                    },
-                  },
-                }
+                  }
                 : {},
             Manufacturer: {
               connectOrCreate: {
