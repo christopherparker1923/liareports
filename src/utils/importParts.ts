@@ -4,7 +4,7 @@ import { ManufacturerPart, PartTags, PartTypes } from "@prisma/client";
 import { prisma } from "../server/db";
 
 const ImportPartsUtil = (
-  mutate: ,
+  //mutate: ,
   data: File
 ) => {
   console.log("Export Call: ", data);

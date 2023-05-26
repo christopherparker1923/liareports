@@ -1,9 +1,9 @@
-import { PartTags } from "@prisma/client";
+import { PartTags, PartTypes } from "@prisma/client";
 import { z } from "zod";
 
 export const partSchema = z.object({
   partNumber: z.string({ required_error: "Required" }),
-  partType: z.string({ required_error: "Required" }),
+  partType: z.nativeEnum(PartTypes, { required_error: "Required" }),
   length: z.number().optional(),
   width: z.number().optional(),
   height: z.number().optional(),

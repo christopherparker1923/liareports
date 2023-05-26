@@ -41,7 +41,8 @@ const ImportParts: NextPageWithLayout = () => {
             return;
           }
           console.log("Calling Import PartsUtil");
-          ImportPartsUtil(mutate, importFile);
+          //ImportPartsUtil(mutate, importFile);
+          ImportPartsUtil(importFile);
         }}
       ></AppButton>
       {chooseValidFileNotificationVisiblity && (

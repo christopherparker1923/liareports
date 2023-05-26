@@ -178,26 +178,52 @@ export const partsRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        part: z.object({
-          partNumber: z.string(),
-          partType: z.nativeEnum(PartTypes),
-          length: z.number(),
-          width: z.number(),
-          height: z.number(),
-          CSACert: z.boolean(),
-          ULCert: z.boolean(),
-          preference: z.number(),
-          description: z.string(),
-          partTags: z.object({ connectOrCreate: z.any() }),
-          Manufacturer: z.object({ connectOrCreate: z.any() }),
-        }),
+        part: partSchema,
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, part } = input;
+      const { id: id, part: part } = input;
       return await ctx.prisma.manufacturerPart.upsert({
-        create: part,
-        update: part,
+        create: {
+          partNumber: part.partNumber,
+          partType: part.partType as PartTypes,
+          length: part.length,
+          width: part.width,
+          height: part.height,
+          CSACert: part.CSACert,
+          ULCert: part.ULCert,
+          preference: part.preference,
+          description: part.description,
+          partTags: {},
+          //!! this will break the record in the db, do not uncomment
+          // partTags: {
+          //   connectOrCreate: input.partTags.map((tag) => {
+          //     return { where: { name: tag }, create: { name: tag } };
+          //   }),
+          // },
+          image: "",
+          manufacturerName: part.manufacturerName,
+        },
+        update: {
+          partNumber: part.partNumber,
+          partType: part.partType as PartTypes,
+          length: part.length,
+          width: part.width,
+          height: part.height,
+          CSACert: part.CSACert,
+          ULCert: part.ULCert,
+          preference: part.preference,
+          description: part.description,
+          partTags: {},
+          //!! this will break the record in the db, do not uncomment
+          // partTags: {
+          //   connectOrCreate: input.partTags.map((tag) => {
+          //     return { where: { name: tag }, create: { name: tag } };
+          //   }),
+          // },
+          image: "",
+          manufacturerName: part.manufacturerName,
+        },
         where: {
           id: id,
           // manufacturerName_partNumber: {
