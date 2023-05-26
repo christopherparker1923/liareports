@@ -18,7 +18,7 @@ const ImportParts: NextPageWithLayout = () => {
   ] = useState(false);
 
   // TODO: Use this mutuate inplace inplace of the prisma.upsert in importParts.ts, you can pass this around as an argument to a function!
-  const { mutate } = api.parts.importParts.useMutation();
+  const { mutate: importPartsMutate } = api.parts.importParts.useMutation();
   return (
     <>
       <FileInput
@@ -83,3 +83,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+
+export type mutateType = { typeof(importPartsMutate) };

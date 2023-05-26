@@ -52,17 +52,7 @@ const ImportPartsUtil = (
           };
           console.log(part);
 
-          return prisma.manufacturerPart.upsert({
-            create: part,
-            update: part,
-            where: {
-              id: row[0],
-              // manufacturerName_partNumber: {
-              //   manufacturerName: row[0]!,
-              //   partNumber: row[1]!,
-              // },
-            },
-          });
+          return mutate(id:row[0], part: part)
         })
       ).catch((error) => console.error("Error exporting to CSV:", error));
     },

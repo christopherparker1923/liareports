@@ -25,7 +25,11 @@ export const partsRouter = createTRPCRouter({
     }),
 
   getAllParts: publicProcedure.query(async ({ ctx }) => {
-    const parts = await ctx.prisma.manufacturerPart.findMany({});
+    const parts = await ctx.prisma.manufacturerPart.findMany({
+      include: {
+        partTags: true,
+      },
+    });
     return parts;
   }),
 
@@ -194,13 +198,11 @@ export const partsRouter = createTRPCRouter({
           ULCert: part.ULCert,
           preference: part.preference,
           description: part.description,
-          partTags: {},
-          //!! this will break the record in the db, do not uncomment
-          // partTags: {
-          //   connectOrCreate: input.partTags.map((tag) => {
-          //     return { where: { name: tag }, create: { name: tag } };
-          //   }),
-          // },
+          // partTags: {},
+          // !! this will break the record in the db, do not uncomment
+          partTags: {
+            create: part.partTags.map((tag) => ({ name: tag })),
+          },
           image: "",
           manufacturerName: part.manufacturerName,
         },
@@ -214,13 +216,9 @@ export const partsRouter = createTRPCRouter({
           ULCert: part.ULCert,
           preference: part.preference,
           description: part.description,
-          partTags: {},
-          //!! this will break the record in the db, do not uncomment
-          // partTags: {
-          //   connectOrCreate: input.partTags.map((tag) => {
-          //     return { where: { name: tag }, create: { name: tag } };
-          //   }),
-          // },
+          partTags: {
+            create: part.partTags.map((tag) => ({ name: tag })),
+          },
           image: "",
           manufacturerName: part.manufacturerName,
         },
