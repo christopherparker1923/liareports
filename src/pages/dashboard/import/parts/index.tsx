@@ -11,10 +11,9 @@ import { IconX } from "@tabler/icons-react";
 import { api } from "../../../../utils/api";
 import Papa from "papaparse";
 import { PartTags, PartTypes } from "@prisma/client";
-import { partSchema } from "../../../../components/ZodSchemas";
 
 const ImportParts: NextPageWithLayout = () => {
-  const [importFile, setImportFile] = useState<File | null>(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   const [
     chooseValidFileNotificationVisiblity,
     setChooseValidFileNotificationVisibility,
@@ -22,7 +21,7 @@ const ImportParts: NextPageWithLayout = () => {
 
   // TODO: Use this mutuate inplace inplace of the prisma.upsert in importParts.ts, you can pass this around as an argument to a function!
   const { mutate } = api.parts.importParts.useMutation();
-  const test = () => {
+  const importFile = () => {
     Papa.parse(FileInput as unknown as File, {
       complete: function ({ data }: { data: string[][] }) {
         const parts = data.slice(1, -1).map((row) => {
@@ -53,8 +52,8 @@ const ImportParts: NextPageWithLayout = () => {
         label="Select Parts File"
         description=".csv"
         className="mb-2 w-96"
-        value={importFile}
-        onChange={setImportFile}
+        value={csvFile}
+        onChange={setCsvFile}
       />
       <AppButton
         label={"Run Import"}
