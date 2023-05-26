@@ -9,6 +9,9 @@ import { AppButton } from "../../../../components/AppButton";
 import ImportPartsUtil from "../../../../utils/importParts";
 import { IconX } from "@tabler/icons-react";
 import { api } from "../../../../utils/api";
+import Papa from "papaparse";
+import { PartTags, PartTypes } from "@prisma/client";
+import { partSchema } from "../../../../components/ZodSchemas";
 
 const ImportParts: NextPageWithLayout = () => {
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -18,7 +21,31 @@ const ImportParts: NextPageWithLayout = () => {
   ] = useState(false);
 
   // TODO: Use this mutuate inplace inplace of the prisma.upsert in importParts.ts, you can pass this around as an argument to a function!
-  const { mutate: importPartsMutate } = api.parts.importParts.useMutation();
+  const { mutate } = api.parts.importParts.useMutation();
+  const test = () => {
+    Papa.parse(FileInput as unknown as File, {
+      complete: function ({ data }: { data: string[][] }) {
+        const parts = data.slice(1, -1).map((row) => {
+          const part = {
+            partNumber: row[3]!,
+            partType: row[4]?.trim() as PartTypes,
+            length: parseInt(row[5] || ""),
+            width: parseInt(row[6] || ""),
+            height: parseInt(row[7] || ""),
+            CSACert: Boolean(row[8]) || false,
+            ULCert: Boolean(row[9]) || false,
+            preference: parseInt(row[10] || "0"),
+            description: row[11] || "",
+            partTags: [] as PartTags[],
+            manufacturerName: row[12] || "",
+          };
+          return { id: row[0] as string, part };
+        });
+        if (!parts) return;
+        mutate(parts);
+      },
+    });
+  };
   return (
     <>
       <FileInput

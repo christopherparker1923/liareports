@@ -180,62 +180,64 @@ export const partsRouter = createTRPCRouter({
   // TODO: Fix the z.object to not be any, also probably need to add row[0] and row[1]
   importParts: publicProcedure
     .input(
-      z.object({
+      z.array(z.object({
         id: z.string(),
         part: partSchema,
       })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { id: id, part: part } = input;
-      return await ctx.prisma.manufacturerPart.upsert({
-        create: {
-          partNumber: part.partNumber,
-          partType: part.partType as PartTypes,
-          length: part.length,
-          width: part.width,
-          height: part.height,
-          CSACert: part.CSACert,
-          ULCert: part.ULCert,
-          preference: part.preference,
-          description: part.description,
-          // partTags: {},
-          // !! this will break the record in the db, do not uncomment
-          partTags: {
-            create: part.partTags.map((tag) => ({ name: tag })),
+      ))
+    .mutation(async ({ ctx, input: inputArray }) => {
+      await Promise.all(inputArray.map(async (input) => {
+        const { id: id, part: part } = input;
+        return await ctx.prisma.manufacturerPart.upsert({
+          create: {
+            partNumber: part.partNumber,
+            partType: part.partType as PartTypes,
+            length: part.length,
+            width: part.width,
+            height: part.height,
+            CSACert: part.CSACert,
+            ULCert: part.ULCert,
+            preference: part.preference,
+            description: part.description,
+            // partTags: {},
+            // !! this will break the record in the db, do not uncomment
+            partTags: {
+              create: part.partTags.map((tag) => ({ name: tag })),
+            },
+            image: "",
+            manufacturerName: part.manufacturerName,
           },
-          image: "",
-          manufacturerName: part.manufacturerName,
-        },
-        update: {
-          partNumber: part.partNumber,
-          partType: part.partType as PartTypes,
-          length: part.length,
-          width: part.width,
-          height: part.height,
-          CSACert: part.CSACert,
-          ULCert: part.ULCert,
-          preference: part.preference,
-          description: part.description,
-          partTags: {
-            create: part.partTags.map((tag) => ({ name: tag })),
+          update: {
+            partNumber: part.partNumber,
+            partType: part.partType as PartTypes,
+            length: part.length,
+            width: part.width,
+            height: part.height,
+            CSACert: part.CSACert,
+            ULCert: part.ULCert,
+            preference: part.preference,
+            description: part.description,
+            partTags: {
+              create: part.partTags.map((tag) => ({ name: tag })),
+            },
+            image: "",
+            manufacturerName: part.manufacturerName,
           },
-          image: "",
-          manufacturerName: part.manufacturerName,
-        },
-        where: {
-          id: id,
-          // manufacturerName_partNumber: {
-          //   manufacturerName: row[0]!,
-          //   partNumber: row[1]!,
-          // },
-        },
-      });
+          where: {
+            id: id,
+            // manufacturerName_partNumber: {
+            //   manufacturerName: row[0]!,
+            //   partNumber: row[1]!,
+            // },
+          },
+        });
+      }));
     }),
 });
 type ProjectPartByProjectCount = {
-  [key: string]: { count: number; lead: string };
+  [key: string]: { count: number; lead: string; };
 };
 
 type ProjectPartByProject = {
-  [key: string]: (ProjectPart & { project: Project | null })[];
+  [key: string]: (ProjectPart & { project: Project | null; })[];
 };
