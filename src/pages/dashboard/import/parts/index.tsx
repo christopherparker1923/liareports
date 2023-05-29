@@ -22,9 +22,11 @@ const ImportParts: NextPageWithLayout = () => {
   // TODO: Use this mutuate inplace inplace of the prisma.upsert in importParts.ts, you can pass this around as an argument to a function!
   const { mutate } = api.parts.importParts.useMutation();
   const importFile = () => {
-    Papa.parse(FileInput as unknown as File, {
+    // console.log("About to parse csvFile: ", csvFile);
+    Papa.parse(csvFile as unknown as File, {
       complete: function ({ data }: { data: string[][] }) {
         const parts = data.slice(1, -1).map((row) => {
+          // console.log("partTags: ", row[14]);
           const part = {
             partNumber: row[3]!,
             partType: row[4]?.trim() as PartTypes,
@@ -35,12 +37,22 @@ const ImportParts: NextPageWithLayout = () => {
             ULCert: Boolean(row[9]) || false,
             preference: parseInt(row[10] || "0"),
             description: row[11] || "",
-            partTags: [] as PartTags[],
-            manufacturerName: row[12] || "",
+            partTags:
+              (row[14] != "" &&
+                (row[14]
+                  ?.trim()
+                  .split(",")
+                  .map((word) => word.trim()) as PartTags[])) ||
+              ([] as PartTags[]),
+            manufacturerName: row[13] || "",
           };
           return { id: row[0] as string, part };
         });
         if (!parts) return;
+        // console.log(
+        //   "Tags after parsin about to be mutated: ",
+        //   parts[0]?.part.partTags
+        // );
         mutate(parts);
       },
     });
@@ -58,17 +70,14 @@ const ImportParts: NextPageWithLayout = () => {
       <AppButton
         label={"Run Import"}
         onClick={() => {
-          if (!importFile) {
+          if (!csvFile) {
             setChooseValidFileNotificationVisibility(true);
-            console.log(
-              "Returning without calling ImportPartsUtil: ",
-              importFile
-            );
+            console.log("Returning without calling ImportPartsUtil: ", csvFile);
             return;
           }
           console.log("Calling Import PartsUtil");
           //ImportPartsUtil(mutate, importFile);
-          ImportPartsUtil(importFile);
+          importFile();
         }}
       ></AppButton>
       {chooseValidFileNotificationVisiblity && (
@@ -109,5 +118,3 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
-
-export type mutateType = { typeof(importPartsMutate) };
