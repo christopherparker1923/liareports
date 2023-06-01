@@ -9,13 +9,19 @@ import {
   Textarea,
   MultiSelect,
   Text,
+  Affix,
+  rem,
 } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { PartTypes, PartTags } from "@prisma/client";
 import { api } from "../utils/api";
 import { AppButton } from "./AppButton";
 import { partSchema } from "./ZodSchemas";
+import { useState } from "react";
+import { error } from "console";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 export function AddPartModal() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -32,7 +38,7 @@ export function AddPartModal() {
       height: undefined,
       CSACert: false,
       ULCert: false,
-      preference: 1,
+      preference: 5,
       description: "",
       partTags: [] as PartTags[],
       image: "",
@@ -40,22 +46,49 @@ export function AddPartModal() {
     },
   });
 
-  const { mutate: createPart } = api.parts.createPart.useMutation({
-    onError: () => {
-      console.log("error");
+  const {
+    mutate: createPart,
+    data: createPartData,
+    error: createPartError,
+    isLoading: createPartIsLoading,
+  } = api.parts.createPart.useMutation({
+    onError: (createPartError: any) => {
+      console.log("returned error: ", createPartError);
+      Notifications.show({
+        title: "Error Creating Part",
+        message: `${createPartError?.message || "error message unavailable"}`,
+        icon: <IconX />,
+        color: "red",
+      });
     },
-    onSuccess: () => {
-      console.log("success");
+    onSuccess: (createPartData: any) => {
       close();
-      // void queryClient.parts.getAllPartsFull.refetch();
+      console.log("returned data: ", createPartData);
+      Notifications.show({
+        title: "Success",
+        message: `${createPartData?.partNumber || "partNumber unavailable"}`,
+        icon: <IconCheck />,
+        color: "green",
+      });
     },
   });
-
+  // if (createPartIsLoading) {
+  //   Notifications.show({
+  //     title: "Loading",
+  //     message: "",
+  //     loading: true,
+  //   });
+  // }
   return (
     <>
       <div>
         <Modal opened={opened} onClose={close} title="Add New Part" centered>
-          <form onSubmit={form.onSubmit((values) => createPart(values))}>
+          <form
+            onSubmit={form.onSubmit((values) => {
+              //@ts-ignore
+              createPart(values);
+            })}
+          >
             <Autocomplete
               withAsterisk
               label="Manufacturer"
@@ -64,7 +97,7 @@ export function AddPartModal() {
               placeholder={"ALLEN BRADLEY"}
               limit={50}
               data={
-                validManufacturerNames?.map((manufacturer) => {
+                validManufacturerNames?.map((manufacturer: any) => {
                   return manufacturer.name;
                 }) || []
               }
