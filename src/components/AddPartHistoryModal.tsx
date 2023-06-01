@@ -2,7 +2,7 @@ import { Autocomplete, Modal, NumberInput, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { VendorPartPriceLeadHistory } from "@prisma/client";
+import type { VendorPartPriceLeadHistory } from "@prisma/client";
 import { IconCurrencyDollar } from "@tabler/icons-react";
 import { useState } from "react";
 import { api } from "../utils/api";
