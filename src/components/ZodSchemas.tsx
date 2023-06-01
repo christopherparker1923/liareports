@@ -13,7 +13,7 @@ export const partSchema = z.object({
   description: z.string().optional(),
   partTags: z.nativeEnum(PartTags, { required_error: "Required" }).array(),
   image: z.string().optional(),
-  manufacturerName: z.string({ required_error: "Required" }),
+  manufacturerName: z.string({ required_error: "Required" }).min(1),
 });
 
 export const vendorPartPriceLeadHistorySchema = z.object({

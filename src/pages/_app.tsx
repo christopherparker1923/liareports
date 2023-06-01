@@ -9,6 +9,7 @@ import { toggleTheme } from "../utils/toggleColorScheme";
 import type { ReactElement, ReactNode } from "react";
 import { useState } from "react";
 import type { NextPage } from "next";
+import { Notifications } from "@mantine/notifications";
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -56,6 +57,7 @@ const MyApp = ({
             withNormalizeCSS
           >
             {getLayout(<Component {...pageProps} />)}
+            <Notifications />
           </MantineProvider>
         </ColorSchemeProvider>
       </SessionProvider>

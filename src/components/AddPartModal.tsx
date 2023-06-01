@@ -9,10 +9,8 @@ import {
   Textarea,
   MultiSelect,
   Text,
-  Affix,
-  rem,
 } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
+import { notifications } from "@mantine/notifications";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { PartTypes, PartTags } from "@prisma/client";
@@ -46,46 +44,46 @@ export function AddPartModal() {
     },
   });
 
-  const {
-    mutate: createPart,
-    data: createPartData,
-    error: createPartError,
-    isLoading: createPartIsLoading,
-  } = api.parts.createPart.useMutation({
-    onError: (createPartError: any) => {
-      console.log("returned error: ", createPartError);
-      Notifications.show({
-        title: "Error Creating Part",
-        message: `${createPartError?.message || "error message unavailable"}`,
-        icon: <IconX />,
-        color: "red",
-      });
-    },
-    onSuccess: (createPartData: any) => {
-      close();
-      console.log("returned data: ", createPartData);
-      Notifications.show({
-        title: "Success",
-        message: `${createPartData?.partNumber || "partNumber unavailable"}`,
-        icon: <IconCheck />,
-        color: "green",
-      });
-    },
-  });
-  // if (createPartIsLoading) {
-  //   Notifications.show({
-  //     title: "Loading",
-  //     message: "",
-  //     loading: true,
-  //   });
-  // }
+  const { mutate: createPart, isLoading: createPartIsLoading } =
+    api.parts.createPart.useMutation({
+      onError: (createPartError) => {
+        console.log("returned error: ", createPartError);
+        notifications.clean();
+        notifications.show({
+          title: "Error Creating Part",
+          message: `${createPartError?.message || "error message unavailable"}`,
+          icon: <IconX />,
+          color: "red",
+          autoClose: 4000,
+        });
+      },
+      onSuccess: (createPartData) => {
+        close();
+        console.log("returned data: ", createPartData);
+        notifications.clean();
+        notifications.show({
+          title: "Success",
+          message: `${createPartData?.partNumber || "partNumber unavailable"}`,
+          icon: <IconCheck />,
+          color: "green",
+          autoClose: 4000,
+        });
+      },
+    });
+  if (createPartIsLoading) {
+    notifications.show({
+      title: "Loading",
+      message: "",
+      loading: true,
+      autoClose: false,
+    });
+  }
   return (
     <>
       <div>
         <Modal opened={opened} onClose={close} title="Add New Part" centered>
           <form
             onSubmit={form.onSubmit((values) => {
-              //@ts-ignore
               createPart(values);
             })}
           >
