@@ -3,7 +3,8 @@
 import { Accordion, Dialog, Flex, Text } from "@mantine/core";
 import type { GetServerSideProps } from "next";
 import Link from "next/link";
-import { ReactElement, useState } from "react";
+import type { ReactElement } from "react";
+import { useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";

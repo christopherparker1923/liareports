@@ -1,6 +1,5 @@
-import { NumberInput, Text } from "@mantine/core";
-import { ManufacturerPart, ProjectPart } from "@prisma/client";
-import { useState } from "react";
+import { Text } from "@mantine/core";
+import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
 
 export default function PartPriceLead({

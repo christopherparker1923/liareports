@@ -8,7 +8,7 @@ import {
 } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 
 export function UserDetails({ session }: { session: Session }) {
   const theme = useMantineTheme();

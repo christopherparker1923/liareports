@@ -9,7 +9,7 @@ import { api } from "../utils/api";
 import Link from "next/link";
 import { AddPartModal } from "./AddPartModal";
 import { useDebouncedValue } from "@mantine/hooks";
-import { Input, TextInput } from "@mantine/core";
+import { Input } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 
 export function PartsTable() {
@@ -120,9 +120,9 @@ export function PartsTable() {
     debugTable: true,
   });
 
-  const updateSeach = async () => {
-    await parts.refetch();
-  };
+  // const updateSearch = async () => {
+  //   await parts.refetch();
+  // };
 
   if (!parts.data) {
     return <div>Loading...</div>;

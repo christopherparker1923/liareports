@@ -1,4 +1,3 @@
-import { Sorting } from "@tanstack/react-table";
 import { z } from "zod";
 import { vendorSchema } from "../../../components/ZodSchemas";
 

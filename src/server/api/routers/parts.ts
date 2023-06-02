@@ -1,4 +1,4 @@
-import { PartTags, PartTypes, Project, ProjectPart } from "@prisma/client";
+import { PartTags, PartTypes } from "@prisma/client";
 import { z } from "zod";
 import { partSchema } from "../../../components/ZodSchemas";
 
@@ -184,7 +184,7 @@ export const partsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input: inputArray }) => {
       await Promise.all(
-        inputArray.map(async (input: any) => {
+        inputArray.map(async (input) => {
           const { id: id, part: part } = input;
           return await ctx.prisma.manufacturerPart.upsert({
             create: {
@@ -198,7 +198,7 @@ export const partsRouter = createTRPCRouter({
               preference: part.preference,
               description: part.description,
               partTags: {
-                connect: part.partTags.map((tag: any) => ({ name: tag })),
+                connect: part.partTags.map((tag) => ({ name: tag })),
               },
               image: "",
               manufacturerName: part.manufacturerName,
@@ -214,7 +214,7 @@ export const partsRouter = createTRPCRouter({
               preference: part.preference,
               description: part.description,
               partTags: {
-                connect: part.partTags.map((tag: any) => ({ name: tag })),
+                connect: part.partTags.map((tag) => ({ name: tag })),
               },
               image: "",
               manufacturerName: part.manufacturerName,
@@ -235,6 +235,6 @@ type ProjectPartByProjectCount = {
   [key: string]: { count: number; lead: string };
 };
 
-type ProjectPartByProject = {
-  [key: string]: (ProjectPart & { project: Project | null })[];
-};
+// type ProjectPartByProject = {
+//   [key: string]: (ProjectPart & { project: Project | null })[];
+// };

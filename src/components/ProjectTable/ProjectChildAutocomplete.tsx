@@ -1,14 +1,9 @@
-import {
-  Autocomplete,
-  AutocompleteItem,
-  Button,
-  TextInput,
-} from "@mantine/core";
+import { Autocomplete, Button, TextInput } from "@mantine/core";
 import { randomId } from "@mantine/hooks";
-import { ChildTypes, ProjectChild } from "@prisma/client";
+import { ChildTypes } from "@prisma/client";
+import type { ProjectChild } from "@prisma/client";
 import { useState } from "react";
 import { api } from "../../utils/api";
-import { Tree } from "../../server/api/routers/projects";
 
 const childrenType = Object.values(ChildTypes);
 

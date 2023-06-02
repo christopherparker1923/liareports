@@ -1,13 +1,7 @@
 import { Accordion, Group, ThemeIcon, Text } from "@mantine/core";
-import {
-  IconFileSettings,
-  IconFileArrowRight,
-  IconFileDollar,
-  IconFileExport,
-} from "@tabler/icons-react";
+
 import Link from "next/link";
 import { MainLink } from "../MainLink";
-import { appRouter } from "../../server/api/root";
 import ExportParts from "../../utils/exportParts";
 import { api } from "../../utils/api";
 

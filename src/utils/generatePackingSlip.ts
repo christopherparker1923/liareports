@@ -1,5 +1,5 @@
 // Import the pdfmake library
-import pdfMake, { fonts } from "pdfmake/build/pdfmake";
+import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
 import type { PackingSlipPart } from "../pages/dashboard/generate/packing-slip";

@@ -1,18 +1,9 @@
 import React, { useMemo, useState } from "react";
-import type {
-  ManufacturerPart,
-  Prisma,
-  ProjectChild,
-  ProjectPart,
-} from "@prisma/client";
+import type { Prisma, ProjectChild, ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
 import ProjectPartAutocomplete from "./ProjectPartAutocomplete";
 import ProjectChildAutocomplete from "./ProjectChildAutocomplete";
-import {
-  ProjectChildren,
-  Tree,
-  TreeNode,
-} from "../../server/api/routers/projects";
+import { Tree } from "../../server/api/routers/projects";
 
 type ProjectChildWithHistory = Prisma.ProjectChildGetPayload<{
   include: {

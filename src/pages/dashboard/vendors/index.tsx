@@ -1,25 +1,15 @@
 // pages/index.tsx
 
-import {
-  Accordion,
-  Button,
-  Dialog,
-  Flex,
-  Modal,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Accordion, Button, Dialog, Flex, Text } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { ReactElement, useState } from "react";
+import type { ReactElement } from "react";
+import { useState } from "react";
 import { AppButton } from "../../../components/AppButton";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
-import { useForm, zodResolver } from "@mantine/form";
 import { VendorAddPartAutoComplete } from "../../../components/VendorAddPartAutocomplete";
-import { vendorSchema } from "../../../components/ZodSchemas";
 import { AddVendorModal } from "../../../components/AddVendorModal";
 import Link from "next/link";
 

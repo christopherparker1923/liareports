@@ -1,5 +1,5 @@
-import { Autocomplete, Button, NumberInput } from "@mantine/core";
-import type { ProjectPart, ManufacturerPart } from "@prisma/client";
+import { Autocomplete, Button } from "@mantine/core";
+import type { ProjectPart } from "@prisma/client";
 import { useState } from "react";
 import { api } from "../../utils/api";
 import PartQuantities from "./PartQuantities";

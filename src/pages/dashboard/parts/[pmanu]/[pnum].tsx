@@ -1,23 +1,21 @@
 import { Card, Divider, Text } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import { ReactElement, useState } from "react";
+import type { ReactElement } from "react";
 import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../../_app";
 import { useRouter } from "next/router";
 import { AddPartHistoryModal } from "../../../../components/AddPartHistoryModal";
 import { PlotPartHistory } from "../../../../components/PlotPartHistory";
-import { useDisclosure } from "@mantine/hooks";
-import { AppButton } from "../../../../components/AppButton";
 import { api } from "../../../../utils/api";
-import { VendorPart, VendorPartPriceLeadHistory } from "@prisma/client";
+import { VendorPartPriceLeadHistory } from "@prisma/client";
 
 const PartDetailView: NextPageWithLayout = () => {
   const router = useRouter();
   const { pnum, pmanu } = router.query as { pmanu: string; pnum: string };
-  const [sortedVendorPartHistory, setSortedVendorPartHistory] = useState<
-    VendorPartPriceLeadHistory[]
-  >([]);
+  // const [sortedVendorPartHistory, setSortedVendorPartHistory] = useState<
+  //   VendorPartPriceLeadHistory[]
+  // >([]);
   const { data: manufacturerPart } =
     api.parts.getManuPartFromNumberAndManu.useQuery({
       partNumber: pnum,
@@ -106,17 +104,31 @@ const PartDetailView: NextPageWithLayout = () => {
           <Divider variant="solid" />
           <Card.Section className="pt-2">
             <div className="flex">
-              <Text className="w-1/5 p-2">{`Height: ${manufacturerPart.part?.height}`}</Text>
-              <Text className="w-1/5 p-2">{`UL Cert: ${manufacturerPart.part?.ULCert}`}</Text>
-              <Text className="w-1/5 p-2">{`Part Type: ${manufacturerPart.part?.partType}`}</Text>
-              <Text className="w-1/5 p-2">{`Preference: ${manufacturerPart.part?.preference}`}</Text>
+              <Text className="w-1/5 p-2">{`Height: ${
+                manufacturerPart.part?.height || "na"
+              }`}</Text>
+              <Text className="w-1/5 p-2">{`UL Cert: ${(
+                manufacturerPart.part?.ULCert || false
+              ).toString()}`}</Text>
+              <Text className="w-1/5 p-2">{`Part Type: ${
+                manufacturerPart.part?.partType || "na"
+              }`}</Text>
+              <Text className="w-1/5 p-2">{`Preference: ${
+                manufacturerPart.part?.preference || "na"
+              }`}</Text>
             </div>
             <div className="flex">
-              <Text className="w-1/5 p-2">{`Width (Radius): ${manufacturerPart.part?.width}`}</Text>
-              <Text className="w-1/5 p-2">{`CSA Cert: ${manufacturerPart.part?.CSACert}`}</Text>
+              <Text className="w-1/5 p-2">{`Width (Radius): ${
+                manufacturerPart.part?.width || "na"
+              }`}</Text>
+              <Text className="w-1/5 p-2">{`CSA Cert: ${(
+                manufacturerPart.part?.CSACert || false
+              ).toString()}`}</Text>
             </div>
             <div className="flex">
-              <Text className="w-1/5 p-2">{`Depth (Length): ${manufacturerPart.part?.length}`}</Text>
+              <Text className="w-1/5 p-2">{`Depth (Length): ${
+                manufacturerPart.part?.length || "na"
+              }`}</Text>
             </div>
           </Card.Section>
         </Card>

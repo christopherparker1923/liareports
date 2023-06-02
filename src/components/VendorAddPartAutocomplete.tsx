@@ -1,5 +1,5 @@
 import { Autocomplete } from "@mantine/core";
-import { VendorPart } from "@prisma/client";
+import type { VendorPart } from "@prisma/client";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 import { api } from "../utils/api";

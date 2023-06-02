@@ -1,5 +1,5 @@
 import { NumberInput } from "@mantine/core";
-import { ManufacturerPart, ProjectPart } from "@prisma/client";
+import type { ProjectPart } from "@prisma/client";
 import { useState } from "react";
 import { api } from "../../utils/api";
 

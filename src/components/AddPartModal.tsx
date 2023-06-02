@@ -17,8 +17,6 @@ import { PartTypes, PartTags } from "@prisma/client";
 import { api } from "../utils/api";
 import { AppButton } from "./AppButton";
 import { partSchema } from "./ZodSchemas";
-import { useState } from "react";
-import { error } from "console";
 import { IconCheck, IconX } from "@tabler/icons-react";
 
 export function AddPartModal() {
@@ -84,6 +82,7 @@ export function AddPartModal() {
         <Modal opened={opened} onClose={close} title="Add New Part" centered>
           <form
             onSubmit={form.onSubmit((values) => {
+              //@ts-expect-error: the partTags data is seen as partTags[] on one side and (tag1 | tag2 | ...)[] on the other side
               createPart(values);
             })}
           >
@@ -95,7 +94,7 @@ export function AddPartModal() {
               placeholder={"ALLEN BRADLEY"}
               limit={50}
               data={
-                validManufacturerNames?.map((manufacturer: any) => {
+                validManufacturerNames?.map((manufacturer) => {
                   return manufacturer.name;
                 }) || []
               }

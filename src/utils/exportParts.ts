@@ -1,6 +1,5 @@
 import Papa from "papaparse";
-import { api } from "./api";
-import { ManufacturerPart, PartTag } from "@prisma/client";
+import type { ManufacturerPart, PartTag } from "@prisma/client";
 
 const ExportParts = (
   data: (ManufacturerPart & {
@@ -14,7 +13,7 @@ const ExportParts = (
         partTags: part.partTags.map((tag) => tag.name).join(", "),
       };
     });
-    const currentDate = new Date().toISOString().split("T")[0];
+    const currentDate = new Date()?.toISOString()?.split("T")[0] || "";
     const csv = Papa.unparse(dataWithPartTags, { skipEmptyLines: false });
     const link = document.createElement("a");
     link.setAttribute(

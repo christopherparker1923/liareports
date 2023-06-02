@@ -1,9 +1,6 @@
-// Import the pdfmake library
-import { Vendor } from "@prisma/client";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
-import { StringValidation } from "zod";
 import type {
   PurchaseOrderPart,
   VendorAutocompleteItem,
@@ -146,8 +143,6 @@ export async function generatePurchaseOrder(inputs: purchaseOrderInputs) {
   const falseBorder = [false, false, false, false];
   const trueBorder = [true, true, true, true];
   const emptyCol = { text: "", border: falseBorder };
-  const emptyRowOfFour = [emptyCol, emptyCol, emptyCol, emptyCol];
-  const emptyRowOfThree = [emptyCol, emptyCol, emptyCol];
 
   const body = [
     [
