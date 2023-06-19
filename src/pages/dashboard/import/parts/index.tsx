@@ -7,20 +7,51 @@ import type { NextPageWithLayout } from "../../../_app";
 import { Button, FileInput, Text, Notification } from "@mantine/core";
 import { AppButton } from "../../../../components/AppButton";
 import ImportPartsUtil from "../../../../utils/importParts";
-import { IconX } from "@tabler/icons-react";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { api } from "../../../../utils/api";
 import Papa from "papaparse";
 import { PartTags, PartTypes } from "@prisma/client";
+import { notifications } from "@mantine/notifications";
 
 const ImportParts: NextPageWithLayout = () => {
   const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [
-    chooseValidFileNotificationVisiblity,
-    setChooseValidFileNotificationVisibility,
-  ] = useState(false);
 
   // TODO: Use this mutuate inplace inplace of the prisma.upsert in importParts.ts, you can pass this around as an argument to a function!
-  const { mutate } = api.parts.importParts.useMutation();
+  const {
+    data: importPartsData,
+    mutate: importParts,
+    isLoading: importPartsIsLoading,
+  } = api.parts.importParts.useMutation({
+    onError: (importPartsError) => {
+      notifications.clean();
+      notifications.show({
+        title: "Error Creating Part",
+        message: `${importPartsError?.message || "error message unavailable"}`,
+        icon: <IconX />,
+        color: "red",
+        autoClose: 10000,
+      });
+    },
+    onSuccess: (createPartData) => {
+      close();
+      notifications.clean();
+      notifications.show({
+        title: "Success",
+        message: `${createPartData?.partNumber || "partNumber unavailable"}`,
+        icon: <IconCheck />,
+        color: "green",
+        autoClose: 4000,
+      });
+    },
+  });
+  if (importPartsIsLoading) {
+    notifications.show({
+      title: "Loading",
+      message: "",
+      loading: true,
+      autoClose: false,
+    });
+  }
   const importFile = () => {
     // console.log("About to parse csvFile: ", csvFile);
     Papa.parse(csvFile as unknown as File, {
@@ -53,7 +84,7 @@ const ImportParts: NextPageWithLayout = () => {
         //   "Tags after parsin about to be mutated: ",
         //   parts[0]?.part.partTags
         // );
-        mutate(parts);
+        importParts(parts);
       },
     });
   };
@@ -71,7 +102,14 @@ const ImportParts: NextPageWithLayout = () => {
         label={"Run Import"}
         onClick={() => {
           if (!csvFile) {
-            setChooseValidFileNotificationVisibility(true);
+            notifications.show({
+              title: "Invalid Input",
+              message: `Select a valid CSV file`,
+              icon: <IconX />,
+              color: "red",
+              autoClose: 4000,
+            });
+            //setChooseValidFileNotificationVisibility(true);
             console.log("Returning without calling ImportPartsUtil: ", csvFile);
             return;
           }
@@ -80,16 +118,6 @@ const ImportParts: NextPageWithLayout = () => {
           importFile();
         }}
       ></AppButton>
-      {chooseValidFileNotificationVisiblity && (
-        <Notification
-          className="mt-11 w-2/5"
-          onClose={() => setChooseValidFileNotificationVisibility(false)}
-          icon={<IconX size="1.1rem" />}
-          color="red"
-        >
-          Select a CSV file to continue
-        </Notification>
-      )}
     </>
   );
 };

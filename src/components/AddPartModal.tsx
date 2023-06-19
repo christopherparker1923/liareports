@@ -28,7 +28,7 @@ export function AddPartModal() {
     validate: zodResolver(partSchema),
     initialValues: {
       partNumber: "",
-      partType: "",
+      partType: "" as PartTypes,
       length: undefined,
       width: undefined,
       height: undefined,
@@ -46,7 +46,8 @@ export function AddPartModal() {
     api.parts.createPart.useMutation({
       onError: (createPartError) => {
         console.log("returned error: ", createPartError);
-        notifications.clean();
+        //notifications.clean();
+        console.log("error");
         notifications.show({
           title: "Error Creating Part",
           message: `${createPartError?.message || "error message unavailable"}`,
@@ -58,7 +59,7 @@ export function AddPartModal() {
       onSuccess: (createPartData) => {
         close();
         console.log("returned data: ", createPartData);
-        notifications.clean();
+        //notifications.clean();
         notifications.show({
           title: "Success",
           message: `${createPartData?.partNumber || "partNumber unavailable"}`,
@@ -82,7 +83,6 @@ export function AddPartModal() {
         <Modal opened={opened} onClose={close} title="Add New Part" centered>
           <form
             onSubmit={form.onSubmit((values) => {
-              //@ts-expect-error: the partTags data is seen as partTags[] on one side and (tag1 | tag2 | ...)[] on the other side
               createPart(values);
             })}
           >
