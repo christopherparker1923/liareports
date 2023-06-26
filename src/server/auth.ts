@@ -38,10 +38,12 @@ import AzureADProvider from "next-auth/providers/azure-ad";
  **/
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        //session.user.role = user.role; //<-- put other properties on the session here
+    async session({ session, user }) {
+      const dbUser = await prisma.user.findUnique({
+        where: { email: user.email || undefined },
+      });
+      if (session.user && dbUser) {
+        session.user = dbUser;
       }
       return session;
     },

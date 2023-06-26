@@ -21,6 +21,8 @@ export function UserDetails({ session }: { session: Session }) {
     return str.slice(0, halfway) + "..." + str.slice(str.length - halfway);
   }
 
+  console.log("Session: ", session);
+
   return (
     <Box
       sx={{

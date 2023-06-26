@@ -22,6 +22,9 @@ type NavBarProps = {
 };
 export function MyNavbar({ opened }: NavBarProps) {
   const { data: sessionData } = useSession();
+
+  console.log("TopSession: ", sessionData);
+
   return (
     <Navbar
       p="md"
