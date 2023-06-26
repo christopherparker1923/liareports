@@ -183,7 +183,7 @@ export const partsRouter = createTRPCRouter({
       )
     )
     .mutation(async ({ ctx, input: inputArray }) => {
-      await Promise.all(
+      return await Promise.all(
         inputArray.map(async (input) => {
           const { id: id, part: part } = input;
           return await ctx.prisma.manufacturerPart.upsert({

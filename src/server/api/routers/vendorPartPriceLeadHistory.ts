@@ -22,7 +22,7 @@ export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
     .input(vendorPartPriceLeadHistorySchema)
     .mutation(async ({ input, ctx }) => {
       //await ctx.prisma.vendorPartPriceLeadHistory.deleteMany(); //dont forget
-      const userId = ctx.session?.user.id || "clfcnvujy0000mh08xv4po7oz";
+      const userId = ctx.session?.user?.id || "clfcnvujy0000mh08xv4po7oz";
       // if (!userId) {
       //   return {
       //     success: false,

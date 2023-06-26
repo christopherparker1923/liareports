@@ -18,7 +18,7 @@ export const projectsRouter = createTRPCRouter({
           ...input,
           createdBy: {
             connect: {
-              id: ctx.session?.user.id,
+              id: ctx.session?.user?.id,
             },
           },
         },
@@ -59,10 +59,10 @@ export const projectsRouter = createTRPCRouter({
                       VendorPartPriceLeadHistory: {
                         orderBy: {
                           startDate: "desc",
-                        }
-                      }
-                    }
-                  }
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -86,13 +86,12 @@ export const projectsRouter = createTRPCRouter({
                   VendorPartPriceLeadHistory: {
                     orderBy: {
                       startDate: "desc",
-                    }
-                  }
-                }
-              }
-            }
+                    },
+                  },
+                },
+              },
+            },
           },
-
         },
       });
       console.log(rootParts);
@@ -247,7 +246,7 @@ export type ProjectChildren = Prisma.ProjectChildGetPayload<{
     projectParts: true;
   };
 }>;
-export type TreeNode<T> = T & { children?: Tree<T>; } & ProjectChildren;
+export type TreeNode<T> = T & { children?: Tree<T> } & ProjectChildren;
 export type Tree<T> = TreeNode<T>[];
 
 export function setdefault<K extends PropertyKey, T>(
@@ -261,11 +260,11 @@ export function setdefault<K extends PropertyKey, T>(
   return obj[prop];
 }
 
-function buildTree<T extends ProjectChild & { projectParts: ProjectPart[]; }>(
+function buildTree<T extends ProjectChild & { projectParts: ProjectPart[] }>(
   projects: T[],
   projectNumber: string
 ) {
-  const byParentId = {} as { [key: string]: Tree<T>; };
+  const byParentId = {} as { [key: string]: Tree<T> };
   const rootId = projectNumber;
   for (const project of projects) {
     const id = project.parentId ?? rootId;

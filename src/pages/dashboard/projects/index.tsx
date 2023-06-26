@@ -11,6 +11,7 @@ import { ProjectForm } from "../../../components/ProjectForm";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
+import { useSession } from "next-auth/react";
 
 const Projects: NextPageWithLayout = () => {
   const allProjects = api.projects.getAllProjects.useQuery();
@@ -20,6 +21,7 @@ const Projects: NextPageWithLayout = () => {
     },
   });
 
+  const { data: sessionData } = useSession();
   const [opened, setOpened] = useState(false);
   const [openedDialog, setOpenedDialog] = useState(false);
   const [projectForDelete, setProjectForDelete] = useState(0);
@@ -29,7 +31,10 @@ const Projects: NextPageWithLayout = () => {
 
   return (
     <>
-      <AppButton label="New Project" onClick={toggleOpened} />
+      <div className="flex gap-2">
+        <AppButton label="New Project" onClick={toggleOpened} />
+        <AppButton label="Toggle Edit Mode" onClick={toggleOpened} />
+      </div>
       <Dialog position={{ left: "50%", top: "25%" }} opened={openedDialog}>
         <Text>
           Confirm project deletion?

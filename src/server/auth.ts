@@ -15,20 +15,20 @@ import AzureADProvider from "next-auth/providers/azure-ad";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  **/
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
-  }
+// declare module "next-auth" {
+//   interface Session extends DefaultSession {
+//     user: {
+//       id: string;
+//       // ...other properties
+//       //role: String;
+//     } & DefaultSession["user"];
+//   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
+// interface User {
+//   // ...other properties
+//   // role: UserRole;
+// }
+// }
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks,
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+        //session.user.role = user.role; //<-- put other properties on the session here
       }
       return session;
     },

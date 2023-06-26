@@ -326,7 +326,7 @@ const PurchaseOrder: NextPageWithLayout = () => {
           value={authorizedBy}
           label="Authorized By (Name)"
           placeholder="Your Name"
-          defaultValue={sessionData?.user.name ?? ""}
+          defaultValue={sessionData?.user?.name ?? ""}
           onChange={(event) => setAuthorizedBy(event.currentTarget.value)}
         />
         <TextInput

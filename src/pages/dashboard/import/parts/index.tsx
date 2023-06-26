@@ -4,9 +4,8 @@ import { useState } from "react";
 import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../../_app";
-import { Button, FileInput, Text, Notification } from "@mantine/core";
+import { FileInput } from "@mantine/core";
 import { AppButton } from "../../../../components/AppButton";
-import ImportPartsUtil from "../../../../utils/importParts";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { api } from "../../../../utils/api";
 import Papa from "papaparse";
@@ -17,37 +16,36 @@ const ImportParts: NextPageWithLayout = () => {
   const [csvFile, setCsvFile] = useState<File | null>(null);
 
   // TODO: Use this mutuate inplace inplace of the prisma.upsert in importParts.ts, you can pass this around as an argument to a function!
-  const {
-    data: importPartsData,
-    mutate: importParts,
-    isLoading: importPartsIsLoading,
-  } = api.parts.importParts.useMutation({
-    onError: (importPartsError) => {
-      notifications.clean();
-      notifications.show({
-        title: "Error Creating Part",
-        message: `${importPartsError?.message || "error message unavailable"}`,
-        icon: <IconX />,
-        color: "red",
-        autoClose: 10000,
-      });
-    },
-    onSuccess: (createPartData) => {
-      close();
-      notifications.clean();
-      notifications.show({
-        title: "Success",
-        message: `${createPartData?.partNumber || "partNumber unavailable"}`,
-        icon: <IconCheck />,
-        color: "green",
-        autoClose: 4000,
-      });
-    },
-  });
+  const { mutate: importParts, isLoading: importPartsIsLoading } =
+    api.parts.importParts.useMutation({
+      onError: (importPartsError) => {
+        notifications.clean();
+        notifications.show({
+          title: "Error Creating Part",
+          message: `${
+            importPartsError?.message || "error message unavailable"
+          }`,
+          icon: <IconX />,
+          color: "red",
+          autoClose: 10000,
+        });
+      },
+      onSuccess: (createPartData) => {
+        close();
+        notifications.clean();
+        notifications.show({
+          title: "Success",
+          message: `${createPartData?.length || "0"} parts created`,
+          icon: <IconCheck />,
+          color: "green",
+          autoClose: 4000,
+        });
+      },
+    });
   if (importPartsIsLoading) {
     notifications.show({
       title: "Loading",
-      message: "",
+      message: "Processing part import request",
       loading: true,
       autoClose: false,
     });

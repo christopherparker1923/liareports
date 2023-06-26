@@ -55,7 +55,7 @@ export function UserDetails({ session }: { session: Session }) {
             "&:hover": { overflow: "visible" },
           }}
         >
-          <Avatar src={session.user.image} radius="xl" />
+          <Avatar src={session?.user?.image} radius="xl" />
           <Box
             sx={{
               flex: 1,
@@ -63,13 +63,16 @@ export function UserDetails({ session }: { session: Session }) {
           >
             <Text size="sm" weight={500}>
               {matches
-                ? shortenString(session.user.name, 27)
-                : shortenString(session.user.name, 10)}
+                ? shortenString(session?.user?.name, 27)
+                : shortenString(session?.user?.name, 10)}
             </Text>
             <Text color="dimmed" size="xs">
               {matches
-                ? shortenString(session.user.email, 30)
-                : shortenString(session.user.email, 12)}
+                ? shortenString(session?.user?.email, 30)
+                : shortenString(session?.user?.email, 12)}
+            </Text>
+            <Text size="sm" weight={500}>
+              {session?.user?.role}
             </Text>
           </Box>
 

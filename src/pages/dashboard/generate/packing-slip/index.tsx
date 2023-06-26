@@ -233,7 +233,7 @@ const PackingSlip: NextPageWithLayout = () => {
           value={userName}
           label="LIA Contact Name"
           placeholder="Your Name"
-          defaultValue={sessionData?.user.name ?? ""}
+          defaultValue={sessionData?.user?.name ?? ""}
           onChange={(event) => setUserName(event.currentTarget.value)}
         />
         <TextInput
@@ -246,7 +246,7 @@ const PackingSlip: NextPageWithLayout = () => {
           value={userEmail}
           label="LIA Contact Email"
           placeholder="Your Email"
-          defaultValue={sessionData?.user.email ?? ""}
+          defaultValue={sessionData?.user?.email ?? ""}
           onChange={(event) => setUserEmail(event.currentTarget.value)}
         />
         <TextInput
