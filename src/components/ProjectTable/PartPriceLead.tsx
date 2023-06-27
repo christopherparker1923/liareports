@@ -12,6 +12,7 @@ export default function PartPriceLead({
   part?: ProjectPart & {
     manufacturerPart: {
       partNumber: string;
+      manufacturerName: string;
     };
   };
   sortBy: String;
@@ -127,7 +128,10 @@ export default function PartPriceLead({
         <Text className="w-24">{`${leadTime} days`}</Text>
         <Text className="w-24">{stock}</Text>
         <Text className="w-24">{startDate.toLocaleDateString()}</Text>
-        {/* <AddPartHistoryModal pnum={ part.manufacturerPart.partNumber} pmanu={part.manufacturerPart. } /> */}
+        <AddPartHistoryModal
+          pnum={part.manufacturerPart.partNumber}
+          pmanu={part.manufacturerPart.manufacturerName}
+        />
         <Checkbox
           icon={IconLock}
           indeterminate

@@ -12,6 +12,7 @@ type ProjectChildWithHistory = Prisma.ProjectChildGetPayload<{
         manufacturerPart: {
           select: {
             partNumber: true;
+            manufacturerName: true;
             VendorPart: {
               select: {
                 VendorPartPriceLeadHistory: {
@@ -34,6 +35,7 @@ type ProjectPartWithHistory = Prisma.ProjectPartGetPayload<{
     manufacturerPart: {
       select: {
         partNumber: true;
+        manufacturerName: true;
         VendorPart: {
           select: {
             VendorPartPriceLeadHistory: {
@@ -135,6 +137,7 @@ type ProjectTree =
         projectParts: (ProjectPart & {
           manufacturerPart: {
             partNumber: string;
+            manufacturerName: string;
           };
         })[];
       }

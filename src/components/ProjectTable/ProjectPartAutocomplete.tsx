@@ -16,6 +16,7 @@ export default function ProjectPartAutocomplete({
   part?: ProjectPart & {
     manufacturerPart: {
       partNumber: string;
+      manufacturerName: string;
     };
   };
   placeholder?: string;
