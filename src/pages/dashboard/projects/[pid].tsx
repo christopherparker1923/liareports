@@ -1,24 +1,27 @@
 // pages/index.tsx
 
-import { Text } from "@mantine/core";
+import { Select, Text } from "@mantine/core";
 import type { GetServerSideProps } from "next";
-import type { ReactElement } from "react";
+import { useState, type ReactElement } from "react";
 import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../_app";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
 import { ProjectDetailTable } from "../../../components/ProjectTable/ProjectDetailTable";
+import { MenuDropdown } from "@mantine/core/lib/Menu/MenuDropdown/MenuDropdown";
 
 const ProjectDetailView: NextPageWithLayout = () => {
   const router = useRouter();
   const { pid } = router.query as { pid: string };
+  const [sortBy, setSortBy] = useState("latest");
 
   const project = api.projects.getProjectById.useQuery(pid, {
     enabled: !!pid,
   });
   if (!project) return <div>Loading...</div>;
   if (!pid) return <div>Invalid project id</div>;
+  console.log("sortBy: ", sortBy);
   return (
     <>
       <div className="flex justify-between">
@@ -29,9 +32,21 @@ const ProjectDetailView: NextPageWithLayout = () => {
           <Text size="lg">{`Lead: ${project.data?.projectLead || ""}`}</Text>
         </div>
         <div>
-          <Text className="w-full" size="lg">
-            Latest Quote:
-          </Text>
+          {/* //TODO replace autocompletes with searchable <Selects></Selects> */}
+
+          <Select
+            label="Sort part price history"
+            placeholder="Sort by"
+            data={[
+              { value: "price", label: "Price" },
+              { value: "lead", label: "Lead time" },
+              { value: "stock", label: "Stock" },
+              { value: "latest", label: "Latest" },
+            ]}
+            defaultValue={"latest"}
+            searchValue={sortBy}
+            onSearchChange={(selected) => setSortBy(selected)} // needs to be modified to provide value instead of label
+          />
           <div className="flex gap-x-1">
             <Text className="w-24" size="lg">
               Vendor
@@ -70,7 +85,7 @@ const ProjectDetailView: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
-      <ProjectDetailTable pid={pid} />
+      <ProjectDetailTable pid={pid} sortBy={sortBy} />
       {/* <TestProjectTable pid={pid} /> */}
     </>
   );

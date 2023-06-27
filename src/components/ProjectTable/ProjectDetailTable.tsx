@@ -47,7 +47,13 @@ type ProjectPartWithHistory = Prisma.ProjectPartGetPayload<{
     };
   };
 }>;
-export function ProjectDetailTable({ pid }: { pid: string }) {
+export function ProjectDetailTable({
+  pid,
+  sortBy,
+}: {
+  pid: string;
+  sortBy: String;
+}) {
   const { data } = api.projects.getProjectChildrenByProjectNumber.useQuery(
     pid,
     {
@@ -109,10 +115,11 @@ export function ProjectDetailTable({ pid }: { pid: string }) {
             parentId={undefined}
             part={part}
             projectId={pid}
+            sortBy={sortBy}
           />
         );
       })}
-      <RecursiveTable data={tree || []} pid={pid} />
+      <RecursiveTable data={tree || []} pid={pid} sortBy={sortBy} />
       <div></div>
       {/* <ProjectChildAutocomplete */}
       {/*   part={undefined} */}
@@ -137,10 +144,12 @@ function RecursiveTable({
   data,
   pid,
   parentId = null,
+  sortBy,
 }: {
   data: ProjectTree;
   pid: string;
   parentId?: string | null;
+  sortBy: String;
 }) {
   if (!data) return null;
 
@@ -160,12 +169,14 @@ function RecursiveTable({
                 part={projectPart}
                 projectId={pid}
                 key={projectPart.id}
+                sortBy={sortBy}
               />
             ))}
             <RecursiveTable
               data={child?.children}
               pid={pid}
               parentId={child.id}
+              sortBy={sortBy}
             />
           </div>
         );
@@ -174,6 +185,7 @@ function RecursiveTable({
         parentId={parentId}
         part={undefined}
         projectId={pid}
+        sortBy={sortBy}
       />
       <ProjectChildAutocomplete
         part={undefined}

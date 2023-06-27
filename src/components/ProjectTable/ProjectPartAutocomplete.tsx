@@ -11,6 +11,7 @@ export default function ProjectPartAutocomplete({
   parentId,
   style,
   projectId,
+  sortBy,
 }: {
   part?: ProjectPart & {
     manufacturerPart: {
@@ -21,6 +22,7 @@ export default function ProjectPartAutocomplete({
   parentId?: string | undefined | null;
   style?: React.CSSProperties;
   projectId: string;
+  sortBy: String;
 }) {
   const [value, setValue] = useState(part?.manufacturerPart.partNumber || "");
 
@@ -102,7 +104,7 @@ export default function ProjectPartAutocomplete({
           </>
         )}
       </div>
-      <PartPriceLead part={part} />
+      <PartPriceLead part={part} sortBy={sortBy} />
       <PartQuantities part={part} projectNumber={projectId} />
     </div>
   );
