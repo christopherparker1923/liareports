@@ -45,7 +45,9 @@ export default function PartPriceLead({
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
             setTempPrice(priceHistory.price);
+            console.log("iterating through history");
             if (tempPrice < lowestPrice) {
+              console.log("updating based on price sort");
               setVendor(vendorPart.Vendor.name);
               setStartDate(priceHistory.startDate);
               setLeadTime(priceHistory.leadTime);
@@ -116,9 +118,6 @@ export default function PartPriceLead({
 
   if (!history[0]?.VendorPart[0]?.VendorPartPriceLeadHistory[0])
     return <Text>No price history</Text>;
-
-  console.log("history", history);
-  console.log("leadTime after sort", leadTime);
   return (
     <>
       <div className="flex flex-row place-items-center gap-x-1">
