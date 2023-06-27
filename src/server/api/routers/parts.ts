@@ -6,7 +6,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const partsRouter = createTRPCRouter({
   getMostRecentPriceLeadHistory: publicProcedure
-    .input(z.string())
+    .input(z.string().optional())
     .query(async ({ input, ctx }) => {
       const history = await ctx.prisma.manufacturerPart.findMany({
         where: {

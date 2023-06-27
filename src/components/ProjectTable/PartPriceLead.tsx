@@ -1,14 +1,8 @@
-import {
-  Checkbox,
-  Text,
-  getBreakpointValue,
-  useMantineTheme,
-} from "@mantine/core";
+import { Checkbox, Text, useMantineTheme } from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IconLock } from "@tabler/icons-react";
-import { useTheme } from "@emotion/react";
 
 export default function PartPriceLead({
   part,
@@ -21,22 +15,27 @@ export default function PartPriceLead({
   };
   sortBy: String;
 }) {
-  if (!part?.id) return <></>;
+  const [leadTime, setLeadTime] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [stock, setStock] = useState(0);
+  const [vendor, setVendor] = useState("");
+  const [startDate, setStartDate] = useState<Date>(new Date("1900-01-01"));
 
-  let leadTime = 0;
-  let price = 0;
-  let stock = 0;
-  let vendor = "";
-  let startDate = new Date("1900-01-01");
+  const [shortestLead, setShortestLead] = useState(999999999);
+  const [lowestPrice, setLowestPrice] = useState(999999999);
+  const [highestStock, setHighestStock] = useState(0);
+  const [latestStartDate, setLatestStartDate] = useState<Date>(
+    new Date("1900-01-01")
+  );
 
-  let latestStartDate = new Date("1900-01-01");
-  let lowestPrice = 999999999;
-  let shortestLead = 999999999;
-  let highestStock = 0;
+  const [tempPrice, setTempPrice] = useState(0);
+  const [tempLead, setTempLead] = useState(0);
+  const [tempStock, setTempStock] = useState(0);
+  const [tempDate, setTempDate] = useState<Date>(new Date("1900-01-01"));
 
   const theme = useMantineTheme();
   const { data: history } = api.parts.getMostRecentPriceLeadHistory.useQuery(
-    part.manufacturerPartId
+    part?.manufacturerPartId
   );
   const updateSorting = () => {
     if (!history) return;
@@ -45,14 +44,14 @@ export default function PartPriceLead({
         console.log("Price");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            const tempPrice = priceHistory.price;
+            setTempPrice(priceHistory.price);
             if (tempPrice < lowestPrice) {
-              vendor = vendorPart.Vendor.name;
-              startDate = priceHistory.startDate;
-              leadTime = priceHistory.leadTime;
-              price = priceHistory.price;
-              stock = priceHistory.stock;
-              lowestPrice = tempPrice;
+              setVendor(vendorPart.Vendor.name);
+              setStartDate(priceHistory.startDate);
+              setLeadTime(priceHistory.leadTime);
+              setPrice(priceHistory.price);
+              setStock(priceHistory.stock);
+              setLowestPrice(tempPrice);
             }
           });
         });
@@ -61,14 +60,14 @@ export default function PartPriceLead({
         console.log("Lead Time");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            const tempLead = priceHistory.leadTime;
+            setTempLead(priceHistory.leadTime);
             if (tempLead < shortestLead) {
-              vendor = vendorPart.Vendor.name;
-              startDate = priceHistory.startDate;
-              leadTime = priceHistory.leadTime;
-              price = priceHistory.price;
-              stock = priceHistory.stock;
-              shortestLead = tempLead;
+              setVendor(vendorPart.Vendor.name);
+              setStartDate(priceHistory.startDate);
+              setLeadTime(priceHistory.leadTime);
+              setPrice(priceHistory.price);
+              setStock(priceHistory.stock);
+              setShortestLead(tempLead);
             }
           });
         });
@@ -77,14 +76,14 @@ export default function PartPriceLead({
         console.log("Stock");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            const tempStock = priceHistory.stock;
+            setTempStock(priceHistory.stock);
             if (tempStock > highestStock) {
-              vendor = vendorPart.Vendor.name;
-              startDate = priceHistory.startDate;
-              leadTime = priceHistory.leadTime;
-              price = priceHistory.price;
-              stock = priceHistory.stock;
-              highestStock = tempStock;
+              setVendor(vendorPart.Vendor.name);
+              setStartDate(priceHistory.startDate);
+              setLeadTime(priceHistory.leadTime);
+              setPrice(priceHistory.price);
+              setStock(priceHistory.stock);
+              setHighestStock(tempStock);
             }
           });
         });
@@ -93,14 +92,14 @@ export default function PartPriceLead({
         console.log("Default");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            const tempDate = new Date(priceHistory.startDate);
+            setTempDate(priceHistory.startDate);
             if (tempDate > latestStartDate) {
-              vendor = vendorPart.Vendor.name;
-              startDate = priceHistory.startDate;
-              leadTime = priceHistory.leadTime;
-              price = priceHistory.price;
-              stock = priceHistory.stock;
-              latestStartDate = tempDate;
+              setVendor(vendorPart.Vendor.name);
+              setStartDate(priceHistory.startDate);
+              setLeadTime(priceHistory.leadTime);
+              setPrice(priceHistory.price);
+              setStock(priceHistory.stock);
+              setLatestStartDate(tempDate);
             }
           });
         });
@@ -112,6 +111,7 @@ export default function PartPriceLead({
     updateSorting();
   }, [sortBy, history]);
 
+  if (!part?.id) return <></>;
   if (!history) return <></>;
 
   if (!history[0]?.VendorPart[0]?.VendorPartPriceLeadHistory[0])
