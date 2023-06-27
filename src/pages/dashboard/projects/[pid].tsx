@@ -25,7 +25,7 @@ const ProjectDetailView: NextPageWithLayout = () => {
   return (
     <>
       <div className="flex justify-between">
-        <div className="g-x-1 w-2/5">
+        <div className="g-x-1 w-1/5">
           <Text size="lg">{`Project: ${
             project.data?.projectNumber || ""
           }`}</Text>{" "}
@@ -62,6 +62,9 @@ const ProjectDetailView: NextPageWithLayout = () => {
             </Text>
             <Text className="w-24" size="lg">
               Date
+            </Text>
+            <Text className="w-24" size="lg">
+              Add Quote
             </Text>
             <Text className="w-24" size="lg">
               Lock Quote

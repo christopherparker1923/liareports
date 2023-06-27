@@ -3,6 +3,7 @@ import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
 import { useEffect, useState } from "react";
 import { IconLock } from "@tabler/icons-react";
+import { AddPartHistoryModal } from "../AddPartHistoryModal";
 
 export default function PartPriceLead({
   part,
@@ -126,6 +127,7 @@ export default function PartPriceLead({
         <Text className="w-24">{`${leadTime} days`}</Text>
         <Text className="w-24">{stock}</Text>
         <Text className="w-24">{startDate.toLocaleDateString()}</Text>
+        {/* <AddPartHistoryModal pnum={ part.manufacturerPart.partNumber} pmanu={part.manufacturerPart. } /> */}
         <Checkbox
           icon={IconLock}
           indeterminate
