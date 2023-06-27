@@ -36,4 +36,26 @@ export const projectPartsRouter = createTRPCRouter({
         },
       });
     }),
+
+  assignVendorPartPriceHistoryToProjectPart: publicProcedure
+    .input(
+      z.object({
+        projectPartId: z.string(),
+        vendorPartPriceLeadHistoryId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.prisma.projectPart.update({
+        where: {
+          id: input.projectPartId,
+        },
+        data: {
+          vendorPartPriceLeadHistory: {
+            connect: {
+              id: input.vendorPartPriceLeadHistoryId,
+            },
+          },
+        },
+      });
+    }),
 });

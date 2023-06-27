@@ -63,6 +63,9 @@ const ProjectDetailView: NextPageWithLayout = () => {
             <Text className="w-24" size="lg">
               Date
             </Text>
+            <Text className="w-24" size="lg">
+              Lock Quote
+            </Text>
           </div>
         </div>
         <div>

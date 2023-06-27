@@ -199,18 +199,18 @@ model ProjectChild {
 }
 
 model ProjectPart {
-  id                           String                     @id @default(cuid())
-  manufacturerPart             ManufacturerPart           @relation(fields: [manufacturerPartId], references: [id])
+  id                           String                      @id @default(cuid())
+  manufacturerPart             ManufacturerPart            @relation(fields: [manufacturerPartId], references: [id])
   manufacturerPartId           String
-  project                      Project?                   @relation(fields: [projectNumber], references: [projectNumber])
+  project                      Project?                    @relation(fields: [projectNumber], references: [projectNumber])
   projectNumber                String?
-  quantityRequired             Int                        @default(1)
-  quantityOrdered              Int                        @default(0)
-  quantityRecieved             Int                        @default(0)
-  quantityCommitted            Int                        @default(0)
-  parent                       ProjectChild?              @relation(fields: [parentId], references: [id])
+  quantityRequired             Int                         @default(1)
+  quantityOrdered              Int                         @default(0)
+  quantityRecieved             Int                         @default(0)
+  quantityCommitted            Int                         @default(0)
+  parent                       ProjectChild?               @relation(fields: [parentId], references: [id])
   parentId                     String?
-  selectedVendorPartPriceLeadHistory   VendorPartPriceLeadHistory? @relation(fields: [vendorPartPriceLeadHistoryId], references: [id])
+  vendorPartPriceLeadHistory   VendorPartPriceLeadHistory? @relation(fields: [vendorPartPriceLeadHistoryId], references: [id])
   vendorPartPriceLeadHistoryId String?
 
   @@index([manufacturerPartId])

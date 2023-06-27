@@ -1,7 +1,14 @@
-import { Text, getBreakpointValue } from "@mantine/core";
+import {
+  Checkbox,
+  Text,
+  getBreakpointValue,
+  useMantineTheme,
+} from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
+import { IconLock } from "@tabler/icons-react";
+import { useTheme } from "@emotion/react";
 
 export default function PartPriceLead({
   part,
@@ -16,14 +23,26 @@ export default function PartPriceLead({
 }) {
   if (!part?.id) return <></>;
 
+  let leadTime = 0;
+  let price = 0;
+  let stock = 0;
+  let vendor = "";
+  let startDate = new Date("1900-01-01");
+
+  let latestStartDate = new Date("1900-01-01");
+  let lowestPrice = 999999999;
+  let shortestLead = 999999999;
+  let highestStock = 0;
+
+  const theme = useMantineTheme();
   const { data: history } = api.parts.getMostRecentPriceLeadHistory.useQuery(
     part.manufacturerPartId
   );
-
   const updateSorting = () => {
     if (!history) return;
     switch (sortBy) {
-      case "price":
+      case "Price":
+        console.log("Price");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
             const tempPrice = priceHistory.price;
@@ -38,7 +57,8 @@ export default function PartPriceLead({
           });
         });
         break;
-      case "lead":
+      case "Lead time":
+        console.log("Lead Time");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
             const tempLead = priceHistory.leadTime;
@@ -53,7 +73,8 @@ export default function PartPriceLead({
           });
         });
         break;
-      case "stock":
+      case "Stock":
+        console.log("Stock");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
             const tempStock = priceHistory.stock;
@@ -69,6 +90,7 @@ export default function PartPriceLead({
         });
         break;
       default:
+        console.log("Default");
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
             const tempDate = new Date(priceHistory.startDate);
@@ -95,26 +117,23 @@ export default function PartPriceLead({
   if (!history[0]?.VendorPart[0]?.VendorPartPriceLeadHistory[0])
     return <Text>No price history</Text>;
 
-  let leadTime = 0;
-  let price = 0;
-  let stock = 0;
-  let vendor = "";
-  let startDate = new Date("1900-01-01");
-
-  let latestStartDate = new Date("1900-01-01");
-  let lowestPrice = 999999999;
-  let shortestLead = 999999999;
-  let highestStock = 0;
-
-  console.log(history);
+  console.log("history", history);
+  console.log("leadTime after sort", leadTime);
   return (
     <>
-      <div className="flex flex-row gap-x-1">
+      <div className="flex flex-row place-items-center gap-x-1">
         <Text className="w-24">{vendor}</Text>
         <Text className="w-24">{`$${price}`}</Text>
         <Text className="w-24">{`${leadTime} days`}</Text>
         <Text className="w-24">{stock}</Text>
         <Text className="w-24">{startDate.toLocaleDateString()}</Text>
+        <Checkbox
+          icon={IconLock}
+          indeterminate
+          size="sm"
+          color={theme.colorScheme === "dark" ? "dark" : "gray"}
+          //onChange={}
+        />
       </div>
     </>
   );
