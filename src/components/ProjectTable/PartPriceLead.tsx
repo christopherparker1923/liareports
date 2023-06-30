@@ -17,11 +17,19 @@ export default function PartPriceLead({
   };
   sortBy: String;
 }) {
-  const [leadTime, setLeadTime] = useState(0);
-  const [price, setPrice] = useState(0);
-  const [stock, setStock] = useState(0);
-  const [vendor, setVendor] = useState("");
-  const [startDate, setStartDate] = useState<Date>(new Date("1900-01-01"));
+  const [vendorPartPriceLeadDisplay, setVendorPartPriceLeadDisplay] = useState<{
+    leadTime: Number;
+    price: Number;
+    stock: Number;
+    vendor: String;
+    startDate: Date;
+  }>({
+    leadTime: 0,
+    price: 0,
+    stock: 0,
+    vendor: "",
+    startDate: new Date("1900-01-01"),
+  });
 
   const [shortestLead, setShortestLead] = useState(999999999);
   const [lowestPrice, setLowestPrice] = useState(999999999);
@@ -30,80 +38,86 @@ export default function PartPriceLead({
     new Date("1900-01-01")
   );
 
-  const [tempPrice, setTempPrice] = useState(0);
-  const [tempLead, setTempLead] = useState(0);
-  const [tempStock, setTempStock] = useState(0);
-  const [tempDate, setTempDate] = useState<Date>(new Date("1900-01-01"));
-
   const theme = useMantineTheme();
   const { data: history } = api.parts.getMostRecentPriceLeadHistory.useQuery(
     part?.manufacturerPartId
   );
   const updateSorting = () => {
     if (!history) return;
+    console.log(history);
     switch (sortBy) {
       case "Price":
-        console.log("Price");
+        setLowestPrice(999999999);
+        console.log("This is the price data that is working");
+        console.log(part);
+        console.log(history);
+        console.log(history.length);
         history[0]?.VendorPart.forEach((vendorPart) => {
+          console.log(vendorPart.id);
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            setTempPrice(priceHistory.price);
-            console.log("iterating through history");
-            if (tempPrice < lowestPrice) {
+            console.log(priceHistory.id);
+            console.log(priceHistory.price);
+            if (priceHistory.price < lowestPrice) {
               console.log("updating based on price sort");
-              setVendor(vendorPart.Vendor.name);
-              setStartDate(priceHistory.startDate);
-              setLeadTime(priceHistory.leadTime);
-              setPrice(priceHistory.price);
-              setStock(priceHistory.stock);
-              setLowestPrice(tempPrice);
+              setVendorPartPriceLeadDisplay({
+                leadTime: priceHistory.leadTime,
+                price: priceHistory.price,
+                stock: priceHistory.stock,
+                vendor: vendorPart.Vendor.name,
+                startDate: priceHistory.startDate,
+              });
+              setLowestPrice(priceHistory.price);
             }
           });
         });
         break;
       case "Lead time":
-        console.log("Lead Time");
+        setShortestLead(999999999);
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            setTempLead(priceHistory.leadTime);
-            if (tempLead < shortestLead) {
-              setVendor(vendorPart.Vendor.name);
-              setStartDate(priceHistory.startDate);
-              setLeadTime(priceHistory.leadTime);
-              setPrice(priceHistory.price);
-              setStock(priceHistory.stock);
-              setShortestLead(tempLead);
+            if (priceHistory.leadTime < shortestLead) {
+              setVendorPartPriceLeadDisplay({
+                leadTime: priceHistory.leadTime,
+                price: priceHistory.price,
+                stock: priceHistory.stock,
+                vendor: vendorPart.Vendor.name,
+                startDate: priceHistory.startDate,
+              });
+              setShortestLead(priceHistory.leadTime);
             }
           });
         });
         break;
       case "Stock":
-        console.log("Stock");
+        setHighestStock(0);
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            setTempStock(priceHistory.stock);
-            if (tempStock > highestStock) {
-              setVendor(vendorPart.Vendor.name);
-              setStartDate(priceHistory.startDate);
-              setLeadTime(priceHistory.leadTime);
-              setPrice(priceHistory.price);
-              setStock(priceHistory.stock);
-              setHighestStock(tempStock);
+            if (priceHistory.stock > highestStock) {
+              setVendorPartPriceLeadDisplay({
+                leadTime: priceHistory.leadTime,
+                price: priceHistory.price,
+                stock: priceHistory.stock,
+                vendor: vendorPart.Vendor.name,
+                startDate: priceHistory.startDate,
+              });
+              setHighestStock(priceHistory.stock);
             }
           });
         });
         break;
       default:
-        console.log("Default");
+        setLatestStartDate(new Date("1900-01-01"));
         history[0]?.VendorPart.forEach((vendorPart) => {
           vendorPart.VendorPartPriceLeadHistory.forEach((priceHistory) => {
-            setTempDate(priceHistory.startDate);
-            if (tempDate > latestStartDate) {
-              setVendor(vendorPart.Vendor.name);
-              setStartDate(priceHistory.startDate);
-              setLeadTime(priceHistory.leadTime);
-              setPrice(priceHistory.price);
-              setStock(priceHistory.stock);
-              setLatestStartDate(tempDate);
+            if (priceHistory.startDate > latestStartDate) {
+              setVendorPartPriceLeadDisplay({
+                leadTime: priceHistory.leadTime,
+                price: priceHistory.price,
+                stock: priceHistory.stock,
+                vendor: vendorPart.Vendor.name,
+                startDate: priceHistory.startDate,
+              });
+              setLatestStartDate(priceHistory.startDate);
             }
           });
         });
@@ -113,21 +127,28 @@ export default function PartPriceLead({
 
   useEffect(() => {
     updateSorting();
-  }, [sortBy, history]);
+  }, [sortBy, history, part]);
 
   if (!part?.id) return <></>;
   if (!history) return <></>;
 
   if (!history[0]?.VendorPart[0]?.VendorPartPriceLeadHistory[0])
-    return <Text>No price history</Text>;
+    return (
+      <AddPartHistoryModal
+        pnum={part.manufacturerPart.partNumber}
+        pmanu={part.manufacturerPart.manufacturerName}
+      />
+    );
   return (
     <>
       <div className="flex flex-row place-items-center gap-x-1">
-        <Text className="w-24">{vendor}</Text>
-        <Text className="w-24">{`$${price}`}</Text>
-        <Text className="w-24">{`${leadTime} days`}</Text>
-        <Text className="w-24">{stock}</Text>
-        <Text className="w-24">{startDate.toLocaleDateString()}</Text>
+        <Text className="w-24">{vendorPartPriceLeadDisplay.vendor}</Text>
+        <Text className="w-24">{`$${vendorPartPriceLeadDisplay.price}`}</Text>
+        <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
+        <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
+        <Text className="w-24">
+          {vendorPartPriceLeadDisplay.startDate.toLocaleDateString()}
+        </Text>
         <AddPartHistoryModal
           pnum={part.manufacturerPart.partNumber}
           pmanu={part.manufacturerPart.manufacturerName}
