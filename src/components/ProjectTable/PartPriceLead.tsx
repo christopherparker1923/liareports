@@ -1,29 +1,24 @@
 import { Checkbox, Text, useMantineTheme } from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
-import { ChangeEvent, useEffect, useState } from "react";
-import { IconLock } from "@tabler/icons-react";
+import { ChangeEvent, useEffect, useState, useMemo } from "react";
+import { IconLock, IconX, IconCheck } from "@tabler/icons-react";
 import { AddPartHistoryModal } from "../AddPartHistoryModal";
-import { useEventListener } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 
 export default function PartPriceLead({
   part,
   sortBy,
+  projectNumber,
 }: {
   part?: ProjectPart & {
     manufacturerPart: {
       partNumber: string;
       manufacturerName: string;
     };
-    // vendorPartPriceLeadHistory?: {
-    //   price: Number;
-    //   leadTime: Number;
-    //   stock: Number;
-    //   startDate: Date;
-    //   vendor: String;
-    // };
   };
   sortBy: String;
+  projectNumber: string;
 }) {
   const [vendorPartPriceLeadDisplay, setVendorPartPriceLeadDisplay] = useState<{
     leadTime: Number;
@@ -40,12 +35,7 @@ export default function PartPriceLead({
     startDate: new Date("1900-01-01"),
     id: "",
   });
-  const [isChecked, setIsChecked] = useState(
-    part?.vendorPartPriceLeadHistoryId != null &&
-      part?.vendorPartPriceLeadHistoryId != ""
-      ? true
-      : false
-  );
+
   const utils = api.useContext();
   const theme = useMantineTheme();
   const { data: history } = api.parts.getMostRecentPriceLeadHistory.useQuery(
@@ -56,30 +46,26 @@ export default function PartPriceLead({
     mutate: assignVendorPartPriceHistoryToProjectPart,
     isLoading: assignVendorPartPriceHistoryToProjectPartisLoading,
   } = api.projectParts.assignVendorPartPriceHistoryToProjectPart.useMutation({
-    // onError: (createPartError) => {
-    //   console.log("returned error: ", createPartError);
-    //   //notifications.clean();
-    //   console.log("error");
-    //   notifications.show({
-    //     title: "Error Creating Part",
-    //     message: `${createPartError?.message || "error message unavailable"}`,
-    //     icon: <IconX />,
-    //     color: "red",
-    //     autoClose: 4000,
-    //   });
-    // },
-    onSuccess: (createPartData) => {
+    onError: (error) => {
+      notifications.clean();
+      notifications.show({
+        title: "Error Creating Part",
+        message: `${error?.message || "error message unavailable"}`,
+        icon: <IconX />,
+        color: "red",
+        autoClose: 4000,
+      });
+    },
+    onSuccess: (data) => {
       refetchGetPartHistoryById();
-      //   close();
-      //   console.log("returned data: ", createPartData);
-      //   //notifications.clean();
-      //   notifications.show({
-      //     title: "Success",
-      //     message: `${createPartData?.partNumber || "partNumber unavailable"}`,
-      //     icon: <IconCheck />,
-      //     color: "green",
-      //     autoClose: 4000,
-      //   });
+      notifications.clean();
+      notifications.show({
+        title: "Success",
+        message: `${data?.vendorPartPriceLeadHistoryId || "Part unlocked"}`,
+        icon: <IconCheck />,
+        color: "green",
+        autoClose: 4000,
+      });
     },
   });
 
@@ -89,6 +75,13 @@ export default function PartPriceLead({
     refetch: refetchGetPartHistoryById,
   } = api.vendorPartPriceLeadHistory.getPartHistoryById.useQuery(
     part?.vendorPartPriceLeadHistoryId || ""
+  );
+
+  const [isChecked, setIsChecked] = useState(
+    part?.vendorPartPriceLeadHistoryId != null &&
+      part?.vendorPartPriceLeadHistoryId != ""
+      ? true
+      : false
   );
 
   //updateSorting uses sortBy to determine which piece of the history data to prioritize for display
@@ -174,13 +167,19 @@ export default function PartPriceLead({
     });
   };
 
-  useEffect(() => {
+  useMemo(() => {
     updateSorting();
   }, [sortBy, history, part]);
 
-  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.currentTarget.checked;
     setIsChecked(newValue);
+    notifications.show({
+      title: "Loading",
+      message: "",
+      loading: true,
+      autoClose: false,
+    });
 
     // Run your query or perform any action here based on the new checkbox value
     if (newValue) {
@@ -200,8 +199,10 @@ export default function PartPriceLead({
       // Run your query or perform any action for unchecked state
     }
 
-    utils.projects.getProjectChildrenByProjectNumber.invalidate();
-    refetchGetPartHistoryById();
+    await utils.projects.getProjectChildrenByProjectNumber.invalidate(
+      projectNumber
+    );
+    await refetchGetPartHistoryById();
   };
 
   if (!part?.id) return <></>;
@@ -215,25 +216,11 @@ export default function PartPriceLead({
       />
     );
 
-  console.log("sortBy: ", sortBy);
-  console.log("part: ", part);
-  console.log("history lookup id: ", part.vendorPartPriceLeadHistoryId);
-  console.log("getPartHistoryByID: ", getPartHistoryById);
   return (
     <>
       <div className="flex flex-row place-items-center gap-x-1">
-        {getPartHistoryById?.History === null ||
-        getPartHistoryById?.Vendor === null ? (
-          <div className="flex flex-row place-items-center gap-x-1">
-            <Text className="w-24">{`${vendorPartPriceLeadDisplay.vendor}`}</Text>
-            <Text className="w-24">{`$${vendorPartPriceLeadDisplay.price}`}</Text>
-            <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
-            <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
-            <Text className="w-24">
-              {vendorPartPriceLeadDisplay.startDate.toLocaleDateString()}
-            </Text>
-          </div>
-        ) : (
+        {part?.vendorPartPriceLeadHistoryId != null &&
+        part?.vendorPartPriceLeadHistoryId != "" ? (
           <div className="flex flex-row place-items-center gap-x-1">
             <Text className="w-24">{`Locked ${getPartHistoryById?.Vendor?.vendorPart?.Vendor.name}`}</Text>
             <Text className="w-24">{`Locked $${getPartHistoryById?.History?.price}`}</Text>
@@ -241,6 +228,16 @@ export default function PartPriceLead({
             <Text className="w-24">{`Locked ${getPartHistoryById?.History?.stock}`}</Text>
             <Text className="w-24">
               {getPartHistoryById?.History?.startDate.toLocaleDateString()}
+            </Text>
+          </div>
+        ) : (
+          <div className="flex flex-row place-items-center gap-x-1">
+            <Text className="w-24">{`${vendorPartPriceLeadDisplay.vendor}`}</Text>
+            <Text className="w-24">{`$${vendorPartPriceLeadDisplay.price}`}</Text>
+            <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
+            <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
+            <Text className="w-24">
+              {vendorPartPriceLeadDisplay.startDate.toLocaleDateString()}
             </Text>
           </div>
         )}
@@ -254,15 +251,7 @@ export default function PartPriceLead({
           size="sm"
           color={theme.colorScheme === "dark" ? "dark" : "gray"}
           checked={isChecked}
-          //onChange={handleCheckboxChange}
-          // defaultValue={
-          //   typeof part.vendorPartPriceLeadHistoryId === "string" ? true : false
-          // }
-          // checked={
-          //   typeof part.vendorPartPriceLeadHistoryId === "string" ? true : false
-          // }
           onChange={(event) => {
-            console.log(vendorPartPriceLeadDisplay.id, part.id);
             handleCheckboxChange(event);
           }}
         />

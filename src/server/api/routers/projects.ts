@@ -96,8 +96,6 @@ export const projectsRouter = createTRPCRouter({
           },
         },
       });
-      console.log(rootParts);
-
       const tree = buildTree(projectChildren, input);
       return { rootParts, tree };
     }),

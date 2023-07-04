@@ -112,7 +112,7 @@ export default function ProjectPartAutocomplete({
           </>
         )}
       </div>
-      <PartPriceLead part={part} sortBy={sortBy} />
+      <PartPriceLead part={part} sortBy={sortBy} projectNumber={projectId} />
       <PartQuantities part={part} projectNumber={projectId} />
     </div>
   );
