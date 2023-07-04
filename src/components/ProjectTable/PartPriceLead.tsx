@@ -167,7 +167,7 @@ export default function PartPriceLead({
     });
   };
 
-  useMemo(() => {
+  useEffect(() => {
     updateSorting();
   }, [sortBy, history, part]);
 
