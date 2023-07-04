@@ -50,11 +50,7 @@ export const projectPartsRouter = createTRPCRouter({
           id: input.projectPartId,
         },
         data: {
-          vendorPartPriceLeadHistory: {
-            connect: {
-              id: input.vendorPartPriceLeadHistoryId,
-            },
-          },
+          vendorPartPriceLeadHistoryId: input.vendorPartPriceLeadHistoryId,
         },
       });
     }),

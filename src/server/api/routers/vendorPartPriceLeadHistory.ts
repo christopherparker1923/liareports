@@ -18,6 +18,18 @@ export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
       return vendorPartPriceLeadHistory;
     }),
 
+  getPartHistoryById: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const vendorPartPriceLeadHistory =
+        await ctx.prisma.vendorPartPriceLeadHistory.findFirst({
+          where: {
+            id: input,
+          },
+        });
+      return vendorPartPriceLeadHistory;
+    }),
+
   createVendorPartPriceLeadHistory: publicProcedure
     .input(vendorPartPriceLeadHistorySchema)
     .mutation(async ({ input, ctx }) => {
@@ -71,8 +83,4 @@ export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
   //       },
   //     });
   //   }),
-
-  getSecretMessage: publicProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
 });
