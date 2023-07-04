@@ -1,9 +1,10 @@
 import { Checkbox, Text, useMantineTheme } from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { IconLock } from "@tabler/icons-react";
 import { AddPartHistoryModal } from "../AddPartHistoryModal";
+import { useEventListener } from "@mantine/hooks";
 
 export default function PartPriceLead({
   part,
@@ -40,8 +41,12 @@ export default function PartPriceLead({
     id: "",
   });
   const [isChecked, setIsChecked] = useState(
-    typeof part?.vendorPartPriceLeadHistoryId === "string" ? true : false
+    part?.vendorPartPriceLeadHistoryId != null &&
+      part?.vendorPartPriceLeadHistoryId != ""
+      ? true
+      : false
   );
+  const utils = api.useContext();
   const theme = useMantineTheme();
   const { data: history } = api.parts.getMostRecentPriceLeadHistory.useQuery(
     part?.manufacturerPartId
@@ -63,25 +68,30 @@ export default function PartPriceLead({
     //     autoClose: 4000,
     //   });
     // },
-    // onSuccess: (createPartData) => {
-    //   close();
-    //   console.log("returned data: ", createPartData);
-    //   //notifications.clean();
-    //   notifications.show({
-    //     title: "Success",
-    //     message: `${createPartData?.partNumber || "partNumber unavailable"}`,
-    //     icon: <IconCheck />,
-    //     color: "green",
-    //     autoClose: 4000,
-    //   });
-    // },
+    onSuccess: (createPartData) => {
+      refetchGetPartHistoryById();
+      //   close();
+      //   console.log("returned data: ", createPartData);
+      //   //notifications.clean();
+      //   notifications.show({
+      //     title: "Success",
+      //     message: `${createPartData?.partNumber || "partNumber unavailable"}`,
+      //     icon: <IconCheck />,
+      //     color: "green",
+      //     autoClose: 4000,
+      //   });
+    },
   });
 
-  const { data: getPartHistoryById, isLoading: getPartHistoryByIdIsLoading } =
-    api.vendorPartPriceLeadHistory.getPartHistoryById.useQuery(
-      part?.vendorPartPriceLeadHistoryId || ""
-    );
+  const {
+    data: getPartHistoryById,
+    isLoading: getPartHistoryByIdIsLoading,
+    refetch: refetchGetPartHistoryById,
+  } = api.vendorPartPriceLeadHistory.getPartHistoryById.useQuery(
+    part?.vendorPartPriceLeadHistoryId || ""
+  );
 
+  //updateSorting uses sortBy to determine which piece of the history data to prioritize for display
   const updateSorting = () => {
     if (!history) return;
 
@@ -168,7 +178,7 @@ export default function PartPriceLead({
     updateSorting();
   }, [sortBy, history, part]);
 
-  const handleCheckboxChange = (event) => {
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.currentTarget.checked;
     setIsChecked(newValue);
 
@@ -179,6 +189,7 @@ export default function PartPriceLead({
         vendorPartPriceLeadHistoryId: vendorPartPriceLeadDisplay.id,
         projectPartId: part?.id || "",
       });
+
       // Run your query or perform any action for checked state
     } else {
       assignVendorPartPriceHistoryToProjectPart({
@@ -188,6 +199,9 @@ export default function PartPriceLead({
       // Checkbox is unchecked
       // Run your query or perform any action for unchecked state
     }
+
+    utils.projects.getProjectChildrenByProjectNumber.invalidate();
+    refetchGetPartHistoryById();
   };
 
   if (!part?.id) return <></>;
@@ -202,21 +216,34 @@ export default function PartPriceLead({
     );
 
   console.log("sortBy: ", sortBy);
-  console.log(part.id);
+  console.log("part: ", part);
+  console.log("history lookup id: ", part.vendorPartPriceLeadHistoryId);
+  console.log("getPartHistoryByID: ", getPartHistoryById);
   return (
     <>
       <div className="flex flex-row place-items-center gap-x-1">
-        <Text className="w-24">
-          {getPartHistoryById != null ??
-            (part.vendorPartPriceLeadHistory?.vendor ||
-              vendorPartPriceLeadDisplay.vendor)}
-        </Text>
-        <Text className="w-24">{`$${vendorPartPriceLeadDisplay.price}`}</Text>
-        <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
-        <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
-        <Text className="w-24">
-          {vendorPartPriceLeadDisplay.startDate.toLocaleDateString()}
-        </Text>
+        {getPartHistoryById?.History === null ||
+        getPartHistoryById?.Vendor === null ? (
+          <div className="flex flex-row place-items-center gap-x-1">
+            <Text className="w-24">{`${vendorPartPriceLeadDisplay.vendor}`}</Text>
+            <Text className="w-24">{`$${vendorPartPriceLeadDisplay.price}`}</Text>
+            <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
+            <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
+            <Text className="w-24">
+              {vendorPartPriceLeadDisplay.startDate.toLocaleDateString()}
+            </Text>
+          </div>
+        ) : (
+          <div className="flex flex-row place-items-center gap-x-1">
+            <Text className="w-24">{`Locked ${getPartHistoryById?.Vendor?.vendorPart?.Vendor.name}`}</Text>
+            <Text className="w-24">{`Locked $${getPartHistoryById?.History?.price}`}</Text>
+            <Text className="w-24">{`Locked ${getPartHistoryById?.History?.leadTime} days`}</Text>
+            <Text className="w-24">{`Locked ${getPartHistoryById?.History?.stock}`}</Text>
+            <Text className="w-24">
+              {getPartHistoryById?.History?.startDate.toLocaleDateString()}
+            </Text>
+          </div>
+        )}
         <AddPartHistoryModal
           pnum={part?.manufacturerPart.partNumber || ""}
           pmanu={part?.manufacturerPart.manufacturerName || ""}

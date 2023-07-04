@@ -18,6 +18,13 @@ export default function ProjectPartAutocomplete({
       partNumber: string;
       manufacturerName: string;
     };
+    // vendorPartPriceLeadHistory?: {
+    //   price: Number;
+    //   leadTime: Number;
+    //   stock: Number;
+    //   startDate: Date;
+    //   vendor: String;
+    // };
   };
   placeholder?: string;
   parentId?: string | undefined | null;

@@ -26,8 +26,29 @@ export const vendorPartPriceLeadHistoryRouter = createTRPCRouter({
           where: {
             id: input,
           },
+          select: {
+            price: true,
+            leadTime: true,
+            stock: true,
+            startDate: true,
+          },
         });
-      return vendorPartPriceLeadHistory;
+      const vendor = await ctx.prisma.vendorPartPriceLeadHistory.findFirst({
+        where: {
+          id: input,
+        },
+        include: {
+          vendorPart: {
+            include: {
+              Vendor: true,
+            },
+          },
+        },
+      });
+      return {
+        Vendor: vendor,
+        History: vendorPartPriceLeadHistory,
+      };
     }),
 
   createVendorPartPriceLeadHistory: publicProcedure
