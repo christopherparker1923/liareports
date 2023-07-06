@@ -2,6 +2,7 @@ import { Checkbox, Text, useMantineTheme } from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
 import { ChangeEvent, useEffect, useState, useMemo } from "react";
+
 import { IconLock, IconX, IconCheck } from "@tabler/icons-react";
 import { AddPartHistoryModal } from "../AddPartHistoryModal";
 import { notifications } from "@mantine/notifications";
@@ -57,7 +58,7 @@ export default function PartPriceLead({
       });
     },
     onSuccess: (data) => {
-      refetchGetPartHistoryById();
+      // refetchGetPartHistoryById();
       notifications.clean();
       notifications.show({
         title: "Success",
@@ -78,10 +79,7 @@ export default function PartPriceLead({
   );
 
   const [isChecked, setIsChecked] = useState(
-    part?.vendorPartPriceLeadHistoryId != null &&
-      part?.vendorPartPriceLeadHistoryId != ""
-      ? true
-      : false
+    part?.vendorPartPriceLeadHistoryId ? true : false
   );
 
   //updateSorting uses sortBy to determine which piece of the history data to prioritize for display
@@ -166,7 +164,6 @@ export default function PartPriceLead({
       });
     });
   };
-
   useEffect(() => {
     updateSorting();
   }, [sortBy, history, part]);
@@ -174,6 +171,8 @@ export default function PartPriceLead({
   const handleCheckboxChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.currentTarget.checked;
     setIsChecked(newValue);
+
+    // Open a notification indicating that the mutation to link project part to part history is loading
     notifications.show({
       title: "Loading",
       message: "",
@@ -219,8 +218,7 @@ export default function PartPriceLead({
   return (
     <>
       <div className="flex flex-row place-items-center gap-x-1">
-        {part?.vendorPartPriceLeadHistoryId != null &&
-        part?.vendorPartPriceLeadHistoryId != "" ? (
+        {part?.vendorPartPriceLeadHistoryId ? (
           <div className="flex flex-row place-items-center gap-x-1">
             <Text className="w-24">{`Locked ${getPartHistoryById?.Vendor?.vendorPart?.Vendor.name}`}</Text>
             <Text className="w-24">{`Locked $${getPartHistoryById?.History?.price}`}</Text>
@@ -251,8 +249,8 @@ export default function PartPriceLead({
           size="sm"
           color={theme.colorScheme === "dark" ? "dark" : "gray"}
           checked={isChecked}
-          onChange={(event) => {
-            handleCheckboxChange(event);
+          onChange={async (event) => {
+            await handleCheckboxChange(event);
           }}
         />
       </div>

@@ -10,6 +10,7 @@ import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { Logo } from "./Logo";
+import Clock from "./Clock";
 
 type HeaderProps = {
   opened: boolean;
@@ -51,6 +52,7 @@ export const HeaderResponsive = ({ opened, setOpen }: HeaderProps) => {
             <Logo width={48} height={48} />
           </Link>
         </Tooltip>
+        <Clock className="ml-2 text-black dark:text-gray-300" />
       </div>
       <div className="flex w-full justify-evenly xs:w-fit">
         {/* <NavButton>Dashboard</NavButton>
