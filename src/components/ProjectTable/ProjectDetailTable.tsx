@@ -13,6 +13,7 @@ type ProjectChildWithHistory = Prisma.ProjectChildGetPayload<{
           select: {
             partNumber: true;
             manufacturerName: true;
+            description: true;
             VendorPart: {
               select: {
                 VendorPartPriceLeadHistory: {
@@ -36,6 +37,7 @@ type ProjectPartWithHistory = Prisma.ProjectPartGetPayload<{
       select: {
         partNumber: true;
         manufacturerName: true;
+        description: true;
         VendorPart: {
           select: {
             VendorPartPriceLeadHistory: {
@@ -52,9 +54,13 @@ type ProjectPartWithHistory = Prisma.ProjectPartGetPayload<{
 export function ProjectDetailTable({
   pid,
   sortBy,
+  totalCost,
+  updateTotalCost,
 }: {
   pid: string;
   sortBy: String;
+  totalCost: number;
+  updateTotalCost: (cost: number) => void;
 }) {
   const { data } = api.projects.getProjectChildrenByProjectNumber.useQuery(
     pid,
@@ -62,8 +68,6 @@ export function ProjectDetailTable({
       refetchOnWindowFocus: false,
     }
   );
-  const [totalCost, setTotalCost] = useState(0);
-  console.log(data);
 
   const totalPrice = useMemo(() => {
     function sumPart(part: ProjectPartWithHistory): number {
@@ -101,7 +105,7 @@ export function ProjectDetailTable({
       if (!child.children) return acc;
       return acc + parseTree(child as ProjectChildWithHistory);
     }, 0);
-    setTotalCost((rootPartCost ?? 0) + (treeCost ?? 0));
+    updateTotalCost((rootPartCost ?? 0) + (treeCost ?? 0));
   }, [data]);
   if (!data) return null;
 
@@ -109,7 +113,6 @@ export function ProjectDetailTable({
 
   return (
     <>
-      <div>Total cost: {totalCost}</div>
       {rootParts.map((part) => {
         return (
           <ProjectPartAutocomplete
@@ -123,11 +126,6 @@ export function ProjectDetailTable({
       })}
       <RecursiveTable data={tree || []} pid={pid} sortBy={sortBy} />
       <div></div>
-      {/* <ProjectChildAutocomplete */}
-      {/*   part={undefined} */}
-      {/*   parentId={null} */}
-      {/*   projectId={pid} */}
-      {/* /> */}
     </>
   );
 }

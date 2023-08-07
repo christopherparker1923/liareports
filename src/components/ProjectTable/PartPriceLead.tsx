@@ -1,4 +1,4 @@
-import { Checkbox, Text, useMantineTheme } from "@mantine/core";
+import { Checkbox, HoverCard, Text, useMantineTheme } from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
 import { ChangeEvent, useEffect, useState, useMemo } from "react";
@@ -232,8 +232,22 @@ export default function PartPriceLead({
           <div className="flex flex-row place-items-center gap-x-1">
             <Text className="w-24">{`${vendorPartPriceLeadDisplay.vendor}`}</Text>
             <Text className="w-24">{`$${vendorPartPriceLeadDisplay.price}`}</Text>
-            <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
-            <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
+            <HoverCard>
+              <HoverCard.Target>
+                <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
+              </HoverCard.Target>
+              <HoverCard.Dropdown>
+                <Text>Lead Time</Text>
+              </HoverCard.Dropdown>
+            </HoverCard>
+            <HoverCard>
+              <HoverCard.Target>
+                <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
+              </HoverCard.Target>
+              <HoverCard.Dropdown>
+                <Text>Vendor Stock</Text>
+              </HoverCard.Dropdown>
+            </HoverCard>
             <Text className="w-24">
               {vendorPartPriceLeadDisplay.startDate.toLocaleDateString()}
             </Text>
@@ -246,7 +260,7 @@ export default function PartPriceLead({
         <Checkbox
           icon={IconLock}
           indeterminate
-          size="sm"
+          size="xl"
           color={theme.colorScheme === "dark" ? "dark" : "gray"}
           checked={isChecked}
           onChange={async (event) => {

@@ -102,7 +102,7 @@ export default function ProjectChildAutocomplete({
     });
   }
   return (
-    <div className="flex w-2/5">
+    <div className="mb-4 flex w-2/5">
       {part && (
         <div className="flex items-center">
           <TextInput
@@ -120,7 +120,7 @@ export default function ProjectChildAutocomplete({
         </div>
       )}
       <Autocomplete
-        className={`${!part && parentId ? "pl-8" : ""} w-full`}
+        className={`${!part && parentId ? "pl-" : ""}  w-full`}
         value={value}
         onChange={(value) => setValue(value)}
         data={childrenType.map((type) => ({ value: type }))}

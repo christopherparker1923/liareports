@@ -1,6 +1,6 @@
 // pages/index.tsx
 
-import { Select, Text } from "@mantine/core";
+import { Flex, Select, Text } from "@mantine/core";
 import type { GetServerSideProps } from "next";
 import { useState, type ReactElement } from "react";
 import { Layout } from "../../../components/Layout";
@@ -15,84 +15,56 @@ const ProjectDetailView: NextPageWithLayout = () => {
   const router = useRouter();
   const { pid } = router.query as { pid: string };
   const [sortBy, setSortBy] = useState("latest");
+  const [totalCost, setTotalCost] = useState(0);
 
   const project = api.projects.getProjectById.useQuery(pid, {
     enabled: !!pid,
   });
+
+  const handleNewTotalCost = (cost: number) => {
+    setTotalCost(cost);
+  };
+
   if (!project) return <div>Loading...</div>;
   if (!pid) return <div>Invalid project id</div>;
   console.log("sortBy: ", sortBy);
   return (
     <>
-      <div className="flex justify-between">
-        <div className="g-x-1 w-1/5">
-          <Text size="lg">{`Project: ${
-            project.data?.projectNumber || ""
-          }`}</Text>{" "}
-          <Text size="lg">{`Lead: ${project.data?.projectLead || ""}`}</Text>
-        </div>
-        <div>
-          {/* //TODO replace autocompletes with searchable <Selects></Selects> */}
-
-          <Select
-            label="Sort part price history"
-            placeholder="Sort by"
-            data={[
-              { value: "price", label: "Price" },
-              { value: "lead", label: "Lead time" },
-              { value: "stock", label: "Stock" },
-              { value: "latest", label: "Latest" },
-            ]}
-            defaultValue={"latest"}
-            searchValue={sortBy}
-            onSearchChange={(selected) => setSortBy(selected)} // needs to be modified to provide value instead of label
-          />
-          <div className="flex gap-x-1">
-            <Text className="w-24" size="lg">
-              Vendor
-            </Text>
-            <Text className="w-24" size="lg">
-              Price
-            </Text>
-            <Text className="w-24" size="lg">
-              Lead Time
-            </Text>
-            <Text className="w-24" size="lg">
-              Stock
-            </Text>
-            <Text className="w-24" size="lg">
-              Date
-            </Text>
-            <Text className="w-24" size="lg">
-              Add Quote
-            </Text>
-            <Text className="w-24" size="lg">
-              Lock Quote
-            </Text>
-          </div>
-        </div>
-        <div>
-          <Text className="w-full" size="lg">
-            Inventory Tracking:
-          </Text>
-          <div className="flex gap-x-1 align-bottom">
-            <Text className="w-20" size="lg">
-              Required
-            </Text>
-            <Text className="w-20" size="lg">
-              Ordered
-            </Text>
-            <Text className="w-20" size="lg">
-              Received
-            </Text>
-            <Text className="w-20" size="lg">
-              Committed
-            </Text>
-          </div>
-        </div>
-      </div>
-      <ProjectDetailTable pid={pid} sortBy={sortBy} />
-      {/* <TestProjectTable pid={pid} /> */}
+      <Flex
+        className="mb-4 w-full justify-around"
+        wrap="wrap"
+        gap="xl"
+        justify="center"
+        direction="row"
+        align="center"
+      >
+        <Text className="flex-" size="lg">{`Project: ${
+          project.data?.projectNumber || ""
+        }`}</Text>{" "}
+        <Text size="lg">{`Project Lead: ${
+          project.data?.projectLead || ""
+        }`}</Text>
+        <Select
+          className="w-32"
+          placeholder="Sort by"
+          data={[
+            { value: "price", label: "Price" },
+            { value: "lead", label: "Lead time" },
+            { value: "stock", label: "Stock" },
+            { value: "latest", label: "Latest" },
+          ]}
+          defaultValue={"latest"}
+          searchValue={sortBy}
+          onSearchChange={(selected) => setSortBy(selected)} // needs to be modified to provide value instead of label
+        />
+        <Text size="lg">{`BOM Cost: $${totalCost || ""}`}</Text>
+      </Flex>
+      <ProjectDetailTable
+        pid={pid}
+        sortBy={sortBy}
+        totalCost={totalCost}
+        updateTotalCost={handleNewTotalCost}
+      />
     </>
   );
 };

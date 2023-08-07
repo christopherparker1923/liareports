@@ -1,4 +1,4 @@
-import { Autocomplete, Button } from "@mantine/core";
+import { Autocomplete, Button, Flex, Group, Text } from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { useState } from "react";
 import { api } from "../../utils/api";
@@ -17,14 +17,8 @@ export default function ProjectPartAutocomplete({
     manufacturerPart: {
       partNumber: string;
       manufacturerName: string;
+      description?: string | null;
     };
-    // vendorPartPriceLeadHistory?: {
-    //   price: Number;
-    //   leadTime: Number;
-    //   stock: Number;
-    //   startDate: Date;
-    //   vendor: String;
-    // };
   };
   placeholder?: string;
   parentId?: string | undefined | null;
@@ -70,50 +64,60 @@ export default function ProjectPartAutocomplete({
   }
   return (
     <div className="my-1 flex w-full justify-between gap-x-1">
-      <div className={`${parentId ? "pl-8" : ""} flex w-1/5 flex-row`}>
-        <Autocomplete
-          className="w-full"
-          maxDropdownHeight={300}
-          value={value}
-          onChange={(value) => setValue(value)}
-          placeholder={placeholder || "Part number"}
-          limit={50}
-          style={style}
-          onItemSubmit={handlePartChange}
-          data={
-            data?.map((part) => ({
-              value: part.partNumber || "No Description",
-              id: part.id,
-              description: part.description,
-            })) || []
-          }
-        />
-        {part?.id && (
-          <>
-            <Button
-              sx={(theme) => ({
-                color:
-                  theme.colorScheme === "dark"
-                    ? theme.colors.dark[0]
-                    : theme.black,
-
-                "&:hover": {
-                  backgroundColor:
+      <Flex
+        gap="sm"
+        justify="flex-start"
+        align="center"
+        direction="row"
+        wrap="wrap"
+        className={`${parentId ? "pl-4" : ""} mb-4 w-full justify-between`}
+      >
+        <Group noWrap spacing={0}>
+          <Autocomplete
+            className="w-fit min-w-fit"
+            maxDropdownHeight={300}
+            value={value}
+            onChange={(value) => setValue(value)}
+            placeholder={placeholder || "Part number"}
+            limit={50}
+            style={style}
+            onItemSubmit={handlePartChange}
+            data={
+              data?.map((part) => ({
+                value: part.partNumber || "No Description",
+                id: part.id,
+                description: part.description,
+              })) || []
+            }
+          />
+          {part?.id && (
+            <>
+              <Button
+                sx={(theme) => ({
+                  color:
                     theme.colorScheme === "dark"
-                      ? theme.colors.dark[8]
-                      : theme.colors.gray[2],
-                },
-              })}
-              className="border border-gray-500"
-              onClick={() => deleteProjectPart.mutate(part.id)}
-            >
-              Remove
-            </Button>
-          </>
-        )}
-      </div>
-      <PartPriceLead part={part} sortBy={sortBy} projectNumber={projectId} />
-      <PartQuantities part={part} projectNumber={projectId} />
+                      ? theme.colors.dark[0]
+                      : theme.black,
+
+                  "&:hover": {
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[8]
+                        : theme.colors.gray[2],
+                  },
+                })}
+                className="border border-gray-500"
+                onClick={() => deleteProjectPart.mutate(part.id)}
+              >
+                X
+              </Button>
+              <Text className="mx-2">{part.manufacturerPart.description}</Text>
+            </>
+          )}
+        </Group>
+        <PartPriceLead part={part} sortBy={sortBy} projectNumber={projectId} />
+        <PartQuantities part={part} projectNumber={projectId} />
+      </Flex>
     </div>
   );
 }

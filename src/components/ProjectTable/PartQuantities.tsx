@@ -1,4 +1,4 @@
-import { NumberInput } from "@mantine/core";
+import { HoverCard, NumberInput, Text } from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { useState } from "react";
 import { api } from "../../utils/api";
@@ -43,58 +43,86 @@ export default function PartQuantities({
     <div className="flex flex-row gap-x-1">
       {part?.id && (
         <>
-          <NumberInput
-            min={0}
-            value={partQuantities.required}
-            onChange={(e) =>
-              setPartQuantities({
-                ...partQuantities,
-                required: e || 1,
-              })
-            }
-            wrapperProps={{ onBlur: handleQuantityChange }}
-            className="w-20"
-            noClampOnBlur={true}
-          />
-          <NumberInput
-            min={0}
-            value={partQuantities.ordered}
-            onChange={(e) =>
-              setPartQuantities({
-                ...partQuantities,
-                ordered: e || 0,
-              })
-            }
-            wrapperProps={{ onBlur: handleQuantityChange }}
-            className="w-20"
-            noClampOnBlur={true}
-          />
-          <NumberInput
-            min={0}
-            value={partQuantities.recieved}
-            onChange={(e) =>
-              setPartQuantities({
-                ...partQuantities,
-                recieved: e || 0,
-              })
-            }
-            wrapperProps={{ onBlur: handleQuantityChange }}
-            className="w-20"
-            noClampOnBlur={true}
-          />
-          <NumberInput
-            min={0}
-            value={partQuantities.committed}
-            onChange={(e) =>
-              setPartQuantities({
-                ...partQuantities,
-                committed: e || 0,
-              })
-            }
-            wrapperProps={{ onBlur: handleQuantityChange }}
-            className="w-20"
-            noClampOnBlur={true}
-          />
+          <HoverCard>
+            <HoverCard.Target>
+              <NumberInput
+                min={0}
+                value={partQuantities.required}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    required: e || 1,
+                  })
+                }
+                wrapperProps={{ onBlur: handleQuantityChange }}
+                className="w-20"
+                noClampOnBlur={true}
+              />
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text>Required</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
+          <HoverCard>
+            <HoverCard.Target>
+              <NumberInput
+                min={0}
+                value={partQuantities.ordered}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    ordered: e || 0,
+                  })
+                }
+                wrapperProps={{ onBlur: handleQuantityChange }}
+                className="w-20"
+                noClampOnBlur={true}
+              />
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text>Ordered</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
+          <HoverCard>
+            <HoverCard.Target>
+              <NumberInput
+                min={0}
+                value={partQuantities.recieved}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    recieved: e || 0,
+                  })
+                }
+                wrapperProps={{ onBlur: handleQuantityChange }}
+                className="w-20"
+                noClampOnBlur={true}
+              />
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text>Received</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
+          <HoverCard>
+            <HoverCard.Target>
+              <NumberInput
+                min={0}
+                value={partQuantities.committed}
+                onChange={(e) =>
+                  setPartQuantities({
+                    ...partQuantities,
+                    committed: e || 0,
+                  })
+                }
+                wrapperProps={{ onBlur: handleQuantityChange }}
+                className="w-20"
+                noClampOnBlur={true}
+              />
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text>Comitted</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
         </>
       )}
     </div>

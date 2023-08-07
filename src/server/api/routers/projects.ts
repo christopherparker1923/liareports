@@ -55,6 +55,7 @@ export const projectsRouter = createTRPCRouter({
                 select: {
                   partNumber: true,
                   manufacturerName: true,
+                  description: true,
                   VendorPart: {
                     select: {
                       VendorPartPriceLeadHistory: {
@@ -83,6 +84,7 @@ export const projectsRouter = createTRPCRouter({
             select: {
               partNumber: true,
               manufacturerName: true,
+              description: true,
               VendorPart: {
                 select: {
                   VendorPartPriceLeadHistory: {
