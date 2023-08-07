@@ -7,7 +7,7 @@ import {
 import type { PaginationState } from "@tanstack/react-table";
 import { api } from "../utils/api";
 import Link from "next/link";
-import { AddPartModal } from "./AddPartModal";
+import { AddPartModal } from "./AddDataModals/AddPartModal";
 import { useDebouncedValue } from "@mantine/hooks";
 import { Input } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";

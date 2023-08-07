@@ -14,9 +14,9 @@ import { notifications } from "@mantine/notifications";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { PartTypes, PartTags } from "@prisma/client";
-import { api } from "../utils/api";
-import { AppButton } from "./AppButton";
-import { partSchema } from "./ZodSchemas";
+import { api } from "../../utils/api";
+import { AppButton } from "../AppButton";
+import { partSchema } from "../ZodSchemas";
 import { IconCheck, IconX } from "@tabler/icons-react";
 
 export function AddPartModal() {

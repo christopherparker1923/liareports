@@ -9,6 +9,7 @@ type ProjectChildWithHistory = Prisma.ProjectChildGetPayload<{
   include: {
     projectParts: {
       include: {
+        vendorPartPriceLeadHistory: true;
         manufacturerPart: {
           select: {
             partNumber: true;
@@ -33,6 +34,7 @@ type ProjectChildWithHistory = Prisma.ProjectChildGetPayload<{
 };
 type ProjectPartWithHistory = Prisma.ProjectPartGetPayload<{
   include: {
+    vendorPartPriceLeadHistory: true;
     manufacturerPart: {
       select: {
         partNumber: true;
@@ -71,21 +73,20 @@ export function ProjectDetailTable({
 
   const totalPrice = useMemo(() => {
     function sumPart(part: ProjectPartWithHistory): number {
-      let newest =
-        part.manufacturerPart?.VendorPart[0]?.VendorPartPriceLeadHistory[0]
-          ?.price ?? 0;
+      let newest = part.vendorPartPriceLeadHistory?.price ?? 0;
+      // part.manufacturerPart?.VendorPart[0]?.VendorPartPriceLeadHistory[0]
+      //   ?.price ?? 0;
 
-      part.manufacturerPart.VendorPart.forEach((vp) => {
-        if (vp.VendorPartPriceLeadHistory[0]?.price ?? 0 > newest)
-          newest = vp.VendorPartPriceLeadHistory[0]?.price ?? 0;
-      });
+      // part.manufacturerPart.VendorPart.forEach((vp) => {
+      //   if (vp.VendorPartPriceLeadHistory[0]?.price ?? 0 > newest)
+      //     newest = vp.VendorPartPriceLeadHistory[0]?.price ?? 0;
+      // });
       return newest * part.quantityRequired;
     }
     function parseTree(
       branch: ProjectChildWithHistory | ProjectPartWithHistory
     ): number {
       if ("name" in branch) {
-        console.log("CHILD", branch.children);
         const childSum = branch.children.reduce((acc, child) => {
           return acc + parseTree(child);
         }, 0);

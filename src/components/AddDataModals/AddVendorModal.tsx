@@ -1,9 +1,9 @@
 import { Modal, TextInput, Text, NumberInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { api } from "../utils/api";
-import { AppButton } from "./AppButton";
-import { vendorSchema } from "./ZodSchemas";
+import { api } from "../../utils/api";
+import { AppButton } from "../AppButton";
+import { vendorSchema } from "../ZodSchemas";
 
 export function AddVendorModal() {
   const [opened, { open, close }] = useDisclosure(false);

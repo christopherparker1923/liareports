@@ -51,6 +51,7 @@ export const projectsRouter = createTRPCRouter({
         include: {
           projectParts: {
             include: {
+              vendorPartPriceLeadHistory: true,
               manufacturerPart: {
                 select: {
                   partNumber: true,
@@ -80,6 +81,7 @@ export const projectsRouter = createTRPCRouter({
           AND: [{ projectNumber: input }, { parentId: null }],
         },
         include: {
+          vendorPartPriceLeadHistory: true,
           manufacturerPart: {
             select: {
               partNumber: true,
@@ -239,6 +241,9 @@ export const projectsRouter = createTRPCRouter({
       return await ctx.prisma.project.findUnique({
         where: {
           projectNumber: input,
+        },
+        include: {
+          createdBy: true,
         },
       });
     }),

@@ -10,7 +10,7 @@ import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProp
 import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
 import { VendorAddPartAutoComplete } from "../../../components/VendorAddPartAutocomplete";
-import { AddVendorModal } from "../../../components/AddVendorModal";
+import { AddVendorModal } from "../../../components/AddDataModals/AddVendorModal";
 import Link from "next/link";
 
 const Vendors: NextPageWithLayout = () => {

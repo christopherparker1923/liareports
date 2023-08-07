@@ -1,10 +1,16 @@
-import { Checkbox, HoverCard, Text, useMantineTheme } from "@mantine/core";
+import {
+  Checkbox,
+  Flex,
+  HoverCard,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import type { ProjectPart } from "@prisma/client";
 import { api } from "../../utils/api";
 import { ChangeEvent, useEffect, useState, useMemo } from "react";
 
 import { IconLock, IconX, IconCheck } from "@tabler/icons-react";
-import { AddPartHistoryModal } from "../AddPartHistoryModal";
+import { AddPartHistoryModal } from "../AddDataModals/AddPartHistoryModal";
 import { notifications } from "@mantine/notifications";
 
 export default function PartPriceLead({
@@ -36,6 +42,8 @@ export default function PartPriceLead({
     startDate: new Date("1900-01-01"),
     id: "",
   });
+
+  const [dummyState, setDummyState] = useState(false);
 
   const utils = api.useContext();
   const theme = useMantineTheme();
@@ -183,6 +191,7 @@ export default function PartPriceLead({
     // Run your query or perform any action here based on the new checkbox value
     if (newValue) {
       // Checkbox is checked
+      console.log("Positive Check transition, ", vendorPartPriceLeadDisplay.id);
       assignVendorPartPriceHistoryToProjectPart({
         vendorPartPriceLeadHistoryId: vendorPartPriceLeadDisplay.id,
         projectPartId: part?.id || "",
@@ -219,22 +228,39 @@ export default function PartPriceLead({
     <>
       <div className="flex flex-row place-items-center gap-x-1">
         {part?.vendorPartPriceLeadHistoryId ? (
-          <div className="flex flex-row place-items-center gap-x-1">
-            <Text className="w-24">{`Locked ${getPartHistoryById?.Vendor?.vendorPart?.Vendor.name}`}</Text>
-            <Text className="w-24">{`Locked $${getPartHistoryById?.History?.price}`}</Text>
-            <Text className="w-24">{`Locked ${getPartHistoryById?.History?.leadTime} days`}</Text>
-            <Text className="w-24">{`Locked ${getPartHistoryById?.History?.stock}`}</Text>
-            <Text className="w-24">
+          <Flex
+            wrap="wrap"
+            justify="center"
+            align="center"
+            gap="md"
+            direction="row"
+            className="mx-4"
+          >
+            {/* <div className="flex flex-row place-items-center gap-x-1"> */}
+            <Text>{`${getPartHistoryById?.Vendor?.vendorPart?.Vendor.name}`}</Text>
+            <Text>{`$${getPartHistoryById?.History?.price}`}</Text>
+            <Text>{`${getPartHistoryById?.History?.leadTime} days`}</Text>
+            <Text>{`${getPartHistoryById?.History?.stock}`}</Text>
+            <Text>
               {getPartHistoryById?.History?.startDate.toLocaleDateString()}
             </Text>
-          </div>
+            {/* </div> */}
+          </Flex>
         ) : (
-          <div className="flex flex-row place-items-center gap-x-1">
-            <Text className="w-24">{`${vendorPartPriceLeadDisplay.vendor}`}</Text>
-            <Text className="w-24">{`$${vendorPartPriceLeadDisplay.price}`}</Text>
+          <Flex
+            wrap="wrap"
+            justify="center"
+            align="center"
+            gap="md"
+            direction="row"
+            className="mx-4"
+          >
+            {/* <div className="flex flex-row place-items-center gap-x-1"> */}
+            <Text>{`${vendorPartPriceLeadDisplay.vendor}`}</Text>
+            <Text>{`$${vendorPartPriceLeadDisplay.price}`}</Text>
             <HoverCard>
               <HoverCard.Target>
-                <Text className="w-24">{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
+                <Text>{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
               </HoverCard.Target>
               <HoverCard.Dropdown>
                 <Text>Lead Time</Text>
@@ -242,31 +268,40 @@ export default function PartPriceLead({
             </HoverCard>
             <HoverCard>
               <HoverCard.Target>
-                <Text className="w-24">{`${vendorPartPriceLeadDisplay.stock}`}</Text>
+                <Text>{`${vendorPartPriceLeadDisplay.stock}`}</Text>
               </HoverCard.Target>
               <HoverCard.Dropdown>
                 <Text>Vendor Stock</Text>
               </HoverCard.Dropdown>
             </HoverCard>
-            <Text className="w-24">
+            <Text>
               {vendorPartPriceLeadDisplay.startDate.toLocaleDateString()}
             </Text>
-          </div>
+            {/* </div> */}
+          </Flex>
         )}
         <AddPartHistoryModal
           pnum={part?.manufacturerPart.partNumber || ""}
           pmanu={part?.manufacturerPart.manufacturerName || ""}
         />
-        <Checkbox
-          icon={IconLock}
-          indeterminate
-          size="xl"
-          color={theme.colorScheme === "dark" ? "dark" : "gray"}
-          checked={isChecked}
-          onChange={async (event) => {
-            await handleCheckboxChange(event);
-          }}
-        />
+        <HoverCard>
+          <HoverCard.Target>
+            <Checkbox
+              icon={IconLock}
+              indeterminate
+              size="xl"
+              color={theme.colorScheme === "dark" ? "dark" : "gray"}
+              checked={isChecked}
+              onChange={async (event) => {
+                await handleCheckboxChange(event);
+                setDummyState(!dummyState);
+              }}
+            />
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <Text>Lock Quote</Text>
+          </HoverCard.Dropdown>
+        </HoverCard>
       </div>
     </>
   );

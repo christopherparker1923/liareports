@@ -10,7 +10,7 @@ import { Layout } from "../../../components/Layout";
 import { getBasicServerSideProps } from "../../../services/getBasicSeverSideProps";
 import { api } from "../../../utils/api";
 import type { NextPageWithLayout } from "../../_app";
-import { AddManufacturerModal } from "../../../components/AddManufacturerModal";
+import { AddManufacturerModal } from "../../../components/AddDataModals/AddManufacturerModal";
 
 const Manufacturers: NextPageWithLayout = () => {
   const allManufacturers =

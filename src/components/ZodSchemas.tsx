@@ -29,6 +29,13 @@ export const manufacturerSchema = z.object({
   name: z.string({ required_error: "Required" }),
 });
 
+export const newRevisionSchema = z.object({
+  revision: z.string({ required_error: "Required" }),
+  status: z.string({ required_error: "Required" }),
+  description: z.string({ required_error: "Required" }),
+  projectLead: z.string({ required_error: "Required" }),
+});
+
 export const vendorSchema = z.object({
   name: z.string({ required_error: "Required" }),
   addressNo: z.number({ required_error: "Required" }),

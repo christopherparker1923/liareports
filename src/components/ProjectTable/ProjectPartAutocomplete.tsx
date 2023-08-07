@@ -70,7 +70,7 @@ export default function ProjectPartAutocomplete({
         align="center"
         direction="row"
         wrap="wrap"
-        className={`${parentId ? "pl-4" : ""} mb-4 w-full justify-between`}
+        className={`${parentId ? "pl-8" : ""} mb-4 w-full justify-between`}
       >
         <Group noWrap spacing={0}>
           <Autocomplete

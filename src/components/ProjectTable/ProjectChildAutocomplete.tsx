@@ -120,7 +120,7 @@ export default function ProjectChildAutocomplete({
         </div>
       )}
       <Autocomplete
-        className={`${!part && parentId ? "pl-" : ""}  w-full`}
+        className={`${!part && parentId ? "pl-8" : ""}  w-full`}
         value={value}
         onChange={(value) => setValue(value)}
         data={childrenType.map((type) => ({ value: type }))}

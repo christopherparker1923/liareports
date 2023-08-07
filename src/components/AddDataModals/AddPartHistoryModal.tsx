@@ -4,9 +4,9 @@ import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCurrencyDollar } from "@tabler/icons-react";
 import { useState } from "react";
-import { api } from "../utils/api";
-import { AppButton } from "./AppButton";
-import { vendorPartPriceLeadHistorySchema } from "./ZodSchemas";
+import { api } from "../../utils/api";
+import { AppButton } from "../AppButton";
+import { vendorPartPriceLeadHistorySchema } from "../ZodSchemas";
 
 export function AddPartHistoryModal({
   pnum,

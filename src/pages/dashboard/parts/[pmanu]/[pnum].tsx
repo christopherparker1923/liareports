@@ -5,7 +5,7 @@ import { Layout } from "../../../../components/Layout";
 import { getBasicServerSideProps } from "../../../../services/getBasicSeverSideProps";
 import type { NextPageWithLayout } from "../../../_app";
 import { useRouter } from "next/router";
-import { AddPartHistoryModal } from "../../../../components/AddPartHistoryModal";
+import { AddPartHistoryModal } from "../../../../components/AddDataModals/AddPartHistoryModal";
 import { PlotPartHistory } from "../../../../components/PlotPartHistory";
 import { api } from "../../../../utils/api";
 import { VendorPartPriceLeadHistory } from "@prisma/client";
