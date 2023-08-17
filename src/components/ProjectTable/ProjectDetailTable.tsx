@@ -60,7 +60,7 @@ export function ProjectDetailTable({
   updateTotalCost,
 }: {
   pid: string;
-  sortBy: String;
+  sortBy: string;
   totalCost: number;
   updateTotalCost: (cost: number) => void;
 }) {
@@ -73,7 +73,7 @@ export function ProjectDetailTable({
 
   const totalPrice = useMemo(() => {
     function sumPart(part: ProjectPartWithHistory): number {
-      let newest = part.vendorPartPriceLeadHistory?.price ?? 0;
+      const newest = part.vendorPartPriceLeadHistory?.price ?? 0;
       // part.manufacturerPart?.VendorPart[0]?.VendorPartPriceLeadHistory[0]
       //   ?.price ?? 0;
 
@@ -151,7 +151,7 @@ function RecursiveTable({
   data: ProjectTree;
   pid: string;
   parentId?: string | null;
-  sortBy: String;
+  sortBy: string;
 }) {
   if (!data) return null;
 

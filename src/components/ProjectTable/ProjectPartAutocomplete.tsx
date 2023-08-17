@@ -24,7 +24,7 @@ export default function ProjectPartAutocomplete({
   parentId?: string | undefined | null;
   style?: React.CSSProperties;
   projectId: string;
-  sortBy: String;
+  sortBy: string;
 }) {
   const [value, setValue] = useState(part?.manufacturerPart.partNumber || "");
 

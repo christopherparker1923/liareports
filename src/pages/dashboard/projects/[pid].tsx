@@ -63,8 +63,12 @@ const ProjectDetailView: NextPageWithLayout = () => {
         />
         <Text size="lg">{`BOM Cost: $${totalCost || ""}`}</Text>
         <div>
-          <Text size="lg">{`Revision: ${project.data?.revision} - ${project.data?.status}`}</Text>
-          <Text size="lg">{`Revision Owner: ${project.data?.createdBy?.name}`}</Text>
+          <Text size="lg">{`Revision: ${project.data?.revision || ""} - ${
+            project.data?.status || ""
+          }`}</Text>
+          <Text size="lg">{`Revision Owner: ${
+            project.data?.createdBy?.name || ""
+          }`}</Text>
         </div>
         {project.data && (
           <AddNewRevisionModal

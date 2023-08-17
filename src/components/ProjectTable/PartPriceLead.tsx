@@ -24,14 +24,14 @@ export default function PartPriceLead({
       manufacturerName: string;
     };
   };
-  sortBy: String;
+  sortBy: string;
   projectNumber: string;
 }) {
   const [vendorPartPriceLeadDisplay, setVendorPartPriceLeadDisplay] = useState<{
-    leadTime: Number;
-    price: Number;
-    stock: Number;
-    vendor: String;
+    leadTime: number;
+    price: number;
+    stock: number;
+    vendor: string;
     startDate: Date;
     id: string;
   }>({
@@ -237,10 +237,18 @@ export default function PartPriceLead({
             className="mx-4"
           >
             {/* <div className="flex flex-row place-items-center gap-x-1"> */}
-            <Text>{`${getPartHistoryById?.Vendor?.vendorPart?.Vendor.name}`}</Text>
-            <Text>{`$${getPartHistoryById?.History?.price}`}</Text>
-            <Text>{`${getPartHistoryById?.History?.leadTime} days`}</Text>
-            <Text>{`${getPartHistoryById?.History?.stock}`}</Text>
+            <Text>{`${
+              getPartHistoryById?.Vendor?.vendorPart?.Vendor.name || ""
+            }`}</Text>
+            <Text>{`$${
+              getPartHistoryById?.History?.price.toString() || ""
+            }`}</Text>
+            <Text>{`${
+              getPartHistoryById?.History?.leadTime.toString() || ""
+            } days`}</Text>
+            <Text>{`${
+              getPartHistoryById?.History?.stock.toString() || ""
+            }`}</Text>
             <Text>
               {getPartHistoryById?.History?.startDate.toLocaleDateString()}
             </Text>
@@ -257,10 +265,10 @@ export default function PartPriceLead({
           >
             {/* <div className="flex flex-row place-items-center gap-x-1"> */}
             <Text>{`${vendorPartPriceLeadDisplay.vendor}`}</Text>
-            <Text>{`$${vendorPartPriceLeadDisplay.price}`}</Text>
+            <Text>{`$${vendorPartPriceLeadDisplay.price.toString()}`}</Text>
             <HoverCard>
               <HoverCard.Target>
-                <Text>{`${vendorPartPriceLeadDisplay.leadTime} days`}</Text>
+                <Text>{`${vendorPartPriceLeadDisplay.leadTime.toString()} days`}</Text>
               </HoverCard.Target>
               <HoverCard.Dropdown>
                 <Text>Lead Time</Text>
@@ -268,7 +276,7 @@ export default function PartPriceLead({
             </HoverCard>
             <HoverCard>
               <HoverCard.Target>
-                <Text>{`${vendorPartPriceLeadDisplay.stock}`}</Text>
+                <Text>{`${vendorPartPriceLeadDisplay.stock.toString()}`}</Text>
               </HoverCard.Target>
               <HoverCard.Dropdown>
                 <Text>Vendor Stock</Text>
