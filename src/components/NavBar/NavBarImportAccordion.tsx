@@ -33,7 +33,11 @@ export const NavBarImportAccordion = ({
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
           <Link href="/dashboard/import/partHistory" className="p-0">
-            <MainLink color={colour} icon={icon} label="Part History" />
+            <MainLink
+              color={colour}
+              icon={icon}
+              label="Part History - Placeholder"
+            />
           </Link>
         </Accordion.Panel>
         <Accordion.Panel className="ml-4">
