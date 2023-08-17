@@ -64,7 +64,7 @@ model User {
   sessions                   Session[]
   Project                    Project[]
   VendorPartPriceLeadHistory VendorPartPriceLeadHistory[]
-  ProjectRevHistory          ProjectRevHistory[]
+  // ProjectRevHistory          ProjectRevHistory[]
 }
 
 model VerificationToken {
@@ -182,21 +182,21 @@ model Project {
   @@index([userId])
 }
 
-model ProjectRevHistory {
-  id              Int            @id @default(autoincrement())
-  projectNumber   String         @unique
-  name            String
-  description     String
-  revision        String
-  status          String?
-  projectLead     String?
-  createdBy       User?          @relation(fields: [userId], references: [id])
-  parts           ProjectPart[]
-  projectChildren ProjectChild[]
-  userId          String?
+// model ProjectRevHistory {
+//   id              Int            @id @default(autoincrement())
+//   projectNumber   String         @unique
+//   name            String
+//   description     String
+//   revision        String
+//   status          String?
+//   projectLead     String?
+//   createdBy       User?          @relation(fields: [userId], references: [id])
+//   parts           ProjectPart[]
+//   projectChildren ProjectChild[]
+//   userId          String?
 
-  @@index([userId])
-}
+//   @@index([userId])
+// }
 
 model ProjectChild {
   id                  String             @id @default(cuid())
@@ -210,8 +210,8 @@ model ProjectChild {
   status              String
   projectParts        ProjectPart[]
   childType           ChildTypes
-  ProjectRevHistory   ProjectRevHistory? @relation(fields: [projectRevHistoryId], references: [id])
-  projectRevHistoryId Int?
+  // ProjectRevHistory   ProjectRevHistory? @relation(fields: [projectRevHistoryId], references: [id])
+  // projectRevHistoryId Int?
 
   @@index([projectNumber])
   @@index([parentId])
@@ -231,8 +231,8 @@ model ProjectPart {
   parentId                     String?
   vendorPartPriceLeadHistory   VendorPartPriceLeadHistory? @relation(fields: [vendorPartPriceLeadHistoryId], references: [id])
   vendorPartPriceLeadHistoryId String?
-  ProjectRevHistory            ProjectRevHistory?          @relation(fields: [projectRevHistoryId], references: [id])
-  projectRevHistoryId          Int?
+  // ProjectRevHistory            ProjectRevHistory?          @relation(fields: [projectRevHistoryId], references: [id])
+  // projectRevHistoryId          Int?
 
   @@index([manufacturerPartId])
   @@index([projectNumber])

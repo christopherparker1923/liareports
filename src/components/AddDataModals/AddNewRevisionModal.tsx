@@ -61,7 +61,7 @@ export function AddNewRevisionModal({
 
   return (
     <>
-      <AppButton label="New Revision" onClick={open} />
+      <AppButton label="New Revision - WIP" onClick={open} />
       <Modal opened={opened} onClose={close} title="New Revision" centered>
         <form onSubmit={form.onSubmit((values) => handleNewRevision())}>
           <Text>{name}</Text>
@@ -90,8 +90,10 @@ export function AddNewRevisionModal({
             {...form.getInputProps("projectLead")}
           />
           <div className="mt-2 flex items-center justify-around">
-            <AppButton label={"Submit"} type="submit" />
-            <AppButton label={"Clear"} onClick={() => form.reset()}></AppButton>
+            {/* TODO uncomment and finish implementing New Revision Functionality */}
+
+            {/* <AppButton label={"Submit"} type="submit" />
+            <AppButton label={"Clear"} onClick={() => form.reset()}></AppButton> */}
           </div>
         </form>
       </Modal>
